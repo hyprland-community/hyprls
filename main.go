@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -13,8 +15,16 @@ import (
 )
 
 func main() {
-	logger, _ := zap.NewDevelopmentConfig().Build()
-	StartServer(logger, "")
+	contents, _ := os.ReadFile("./test.hl")
+	result, err := Parse(string(contents))
+	if err != nil {
+		fmt.Printf("while parsing config: %s", err.Error())
+	}
+	jsoned, _ := json.Marshal(result)
+	os.WriteFile("./test.json", jsoned, 0644)
+
+	// logger, _ := zap.NewDevelopmentConfig().Build()
+	// StartServer(logger, "")
 }
 
 func StartServer(logger *zap.Logger, logClientIn string) {
