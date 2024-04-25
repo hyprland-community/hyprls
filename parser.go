@@ -9,10 +9,13 @@ var RootSection = "____root____"
 type Assignment struct {
 	Key   string `json:"k"`
 	Value string `json:"v"`
+	Line  int    `json:"l"`
 }
 
 type Section struct {
 	Name        string       `json:"n"`
+	StartLine   int          `json:"sl"`
+	EndLine     int          `json:"el"`
 	Assignments []Assignment `json:"a"`
 	Subsections []Section    `json:"s"`
 }
@@ -22,11 +25,13 @@ func Parse(input string) (Section, error) {
 		Name:        RootSection,
 		Assignments: []Assignment{},
 		Subsections: []Section{},
+		StartLine:   1,
 	}
 
 	sectionsStack := []*Section{&document}
 	sectionDepth := 0
-	for _, line := range strings.Split(input, "\n") {
+	endLine := 0
+	for i, line := range strings.Split(input, "\n") {
 		currentSection := sectionsStack[sectionDepth]
 		line = strings.TrimSpace(line)
 		if strings.HasPrefix(line, "#") || line == "" {
@@ -36,14 +41,18 @@ func Parse(input string) (Section, error) {
 		if strings.HasSuffix(line, "{") {
 			sectionDepth++
 			section := parseSectionStart(line)
+			section.StartLine = i + 1
 			sectionsStack = append(sectionsStack, &section)
 		}
 
 		if strings.Contains(line, "=") {
-			currentSection.Assignments = append(currentSection.Assignments, parseAssignment(line))
+			ass := parseAssignment(line)
+			ass.Line = i + 1
+			currentSection.Assignments = append(currentSection.Assignments, ass)
 		}
 
 		if line == "}" {
+			currentSection.EndLine = i + 1
 			sectionsStack[sectionDepth-1].Subsections = append(sectionsStack[sectionDepth-1].Subsections, *sectionsStack[sectionDepth])
 			sectionsStack = sectionsStack[:sectionDepth]
 			sectionDepth--
@@ -51,8 +60,9 @@ func Parse(input string) (Section, error) {
 				panic("unbalanced section")
 			}
 		}
-
+		endLine = i
 	}
+	document.EndLine = endLine + 1
 	return document, nil
 }
 
