@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"strings"
 )
 
@@ -31,14 +30,9 @@ func Parse(input string) (Section, error) {
 		currentSection := sectionsStack[sectionDepth]
 		line = strings.TrimSpace(line)
 		if strings.HasPrefix(line, "#") || line == "" {
-			fmt.Printf("skipping comment: %s\n", line)
 			continue
 		}
 
-		fmt.Printf("current stack:\n")
-		for i, s := range sectionsStack {
-			fmt.Printf("\t%d %#v\n", i, s)
-		}
 		if strings.HasSuffix(line, "{") {
 			sectionDepth++
 			section := parseSectionStart(line)
@@ -50,7 +44,6 @@ func Parse(input string) (Section, error) {
 		}
 
 		if line == "}" {
-			fmt.Printf("closing section: %s\n", sectionsStack[sectionDepth].Name)
 			sectionsStack[sectionDepth-1].Subsections = append(sectionsStack[sectionDepth-1].Subsections, *sectionsStack[sectionDepth])
 			sectionsStack = sectionsStack[:sectionDepth]
 			sectionDepth--
@@ -64,7 +57,6 @@ func Parse(input string) (Section, error) {
 }
 
 func parseAssignment(line string) Assignment {
-	fmt.Printf("parsing assignment: %s\n", line)
 	parts := strings.Split(line, "=")
 	parts[1] = strings.SplitN(parts[1], " #", 2)[0]
 	return Assignment{
@@ -74,7 +66,6 @@ func parseAssignment(line string) Assignment {
 }
 
 func parseSectionStart(line string) Section {
-	fmt.Printf("parsing section start: %s\n", line)
 	return Section{
 		Name:        strings.TrimSpace(strings.TrimSuffix(line, "{")),
 		Subsections: []Section{},
