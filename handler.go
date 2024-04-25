@@ -1,14 +1,45 @@
-package main
+package hyprls
 
 import (
 	"context"
 	"errors"
+	"fmt"
+	"os"
+	"strings"
 
+	"github.com/MakeNowJust/heredoc"
+	parser_data "github.com/ewen-lbh/hyprlang-lsp/parser/data"
 	"go.lsp.dev/protocol"
 	"go.uber.org/zap"
 )
 
 var logger *zap.Logger
+
+var openedFiles = make(map[protocol.URI]string)
+
+func file(uri protocol.URI) (string, error) {
+	if contents, ok := openedFiles[uri]; ok {
+		return contents, nil
+	}
+
+	contents, err := os.ReadFile(uri.Filename())
+	if err != nil {
+		return "", err
+	}
+
+	openedFiles[uri] = string(contents)
+	return string(contents), nil
+}
+
+func currentLine(uri protocol.URI, position protocol.Position) (string, error) {
+	contents, err := file(uri)
+	if err != nil {
+		return "", err
+	}
+
+	lines := strings.Split(contents, "\n")
+	return lines[position.Line], nil
+}
 
 type state struct {
 }
@@ -35,8 +66,7 @@ func (h Handler) Initialize(ctx context.Context, params *protocol.InitializePara
 	h.Logger.Debug("Initializing ortfols server")
 	return &protocol.InitializeResult{
 		Capabilities: protocol.ServerCapabilities{
-			DefinitionProvider: true,
-			HoverProvider:      true,
+			HoverProvider: true,
 		},
 		ServerInfo: &protocol.ServerInfo{
 			Name:    "hyprlsp",
@@ -162,7 +192,33 @@ func (h Handler) Formatting(ctx context.Context, params *protocol.DocumentFormat
 }
 
 func (h Handler) Hover(ctx context.Context, params *protocol.HoverParams) (*protocol.Hover, error) {
-	return nil, errors.New("unimplemented")
+	line, err := currentLine(params.TextDocument.URI, params.Position)
+	if err != nil {
+		return nil, fmt.Errorf("while getting current line of file: %w", err)
+	}
+
+	if !strings.Contains(line, "=") {
+		return nil, nil
+	}
+
+	// key is word before the equal sign. [0] is safe since we checked for "=" above
+	key := strings.TrimSpace(strings.Split(line, "=")[0])
+	for _, section := range parser_data.Sections {
+		if def := section.VariableDefinition(key); def != nil {
+			return &protocol.Hover{
+				Contents: protocol.MarkupContent{
+					Kind: protocol.Markdown,
+					Value: heredoc.Docf(`### %s: %s (%s)
+						%s
+						
+						- Defaults to: %s
+					`, strings.Join(section.Path, ":"), def.Name, def.Type, def.Description, def.Default),
+				},
+			}, nil
+		}
+	}
+
+	return nil, nil
 }
 
 func (h Handler) Implementation(ctx context.Context, params *protocol.ImplementationParams) ([]protocol.Location, error) {

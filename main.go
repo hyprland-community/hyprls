@@ -1,9 +1,7 @@
-package main
+package hyprls
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -14,24 +12,12 @@ import (
 	"go.uber.org/zap"
 )
 
-func main() {
-	contents, _ := os.ReadFile("./test.hl")
-	result, err := Parse(string(contents))
-	if err != nil {
-		fmt.Printf("while parsing config: %s", err.Error())
-	}
-	jsoned, _ := json.Marshal(result)
-	os.WriteFile("./test.json", jsoned, 0644)
-
-	// logger, _ := zap.NewDevelopmentConfig().Build()
-	// StartServer(logger, "")
-}
-
 func StartServer(logger *zap.Logger, logClientIn string) {
+	logger.Debug("starting server")
 	conn := jsonrpc2.NewConn(jsonrpc2.NewStream(&readWriteCloser{
 		reader: os.Stdin,
 		writer: os.Stdout,
-		logAt:  logClientIn,
+		// logAt:  logClientIn,
 	}))
 	handler, ctx, err := NewHandler(context.Background(), protocol.ServerDispatcher(conn, logger), logger)
 	if err != nil {

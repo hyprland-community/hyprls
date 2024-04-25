@@ -1,0 +1,1106 @@
+[
+  {
+    "Path": [
+      "General"
+    ],
+    "Subsections": [],
+    "Variables": [
+      {
+        "Name": "sensitivity",
+        "Description": "mouse sensitivity (legacy, may cause bugs if not 1, prefer input:sensitivity)",
+        "Type": "float",
+        "Default": "1.0"
+      },
+      {
+        "Name": "border_size",
+        "Description": "size of the border around windows",
+        "Type": "int",
+        "Default": "1"
+      },
+      {
+        "Name": "no_border_on_floating",
+        "Description": "disable borders for floating windows",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "gaps_in",
+        "Description": "gaps between windows, also supports css style gaps (top, right, bottom, left -> 5,10,15,20)",
+        "Type": "int",
+        "Default": "5"
+      },
+      {
+        "Name": "gaps_out",
+        "Description": "gaps between windows and monitor edges, also supports css style gaps (top, right, bottom, left -> 5,10,15,20)",
+        "Type": "int",
+        "Default": "20"
+      },
+      {
+        "Name": "gaps_workspaces",
+        "Description": "gaps between workspaces. Stacks with gaps_out.",
+        "Type": "int",
+        "Default": "0"
+      },
+      {
+        "Name": "col.inactive_border",
+        "Description": "border color for inactive windows",
+        "Type": "gradient",
+        "Default": "0xff444444"
+      },
+      {
+        "Name": "col.active_border",
+        "Description": "border color for the active window",
+        "Type": "gradient",
+        "Default": "0xffffffff"
+      },
+      {
+        "Name": "col.nogroup_border",
+        "Description": "inactive border color for window that cannot be added to a group (see denywindowfromgroup dispatcher)",
+        "Type": "gradient",
+        "Default": "0xffffaaff"
+      },
+      {
+        "Name": "col.nogroup_border_active",
+        "Description": "active border color for window that cannot be added to a group",
+        "Type": "gradient",
+        "Default": "0xffff00ff"
+      },
+      {
+        "Name": "cursor_inactive_timeout",
+        "Description": "in seconds, after how many seconds of cursor's inactivity to hide it. Set to 0 for never.",
+        "Type": "int",
+        "Default": "0"
+      },
+      {
+        "Name": "layout",
+        "Description": "which layout to use. [dwindle/master]",
+        "Type": "str",
+        "Default": "dwindle"
+      },
+      {
+        "Name": "no_cursor_warps",
+        "Description": "if true, will not warp the cursor in many cases (focusing, keybinds, etc)",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "no_focus_fallback",
+        "Description": "if true, will not fall back to the next available window when moving focus in a direction where no window was found",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "apply_sens_to_raw",
+        "Description": "if on, will also apply the sensitivity to raw mouse output (e.g. sensitivity in games) NOTICE: really not recommended.",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "resize_on_border",
+        "Description": "enables resizing windows by clicking and dragging on borders and gaps",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "extend_border_grab_area",
+        "Description": "extends the area around the border where you can click and drag on, only used when general:resize_on_border is on.",
+        "Type": "int",
+        "Default": "15"
+      },
+      {
+        "Name": "hover_icon_on_border",
+        "Description": "show a cursor icon when hovering over borders, only used when general:resize_on_border is on.",
+        "Type": "bool",
+        "Default": "true"
+      },
+      {
+        "Name": "allow_tearing",
+        "Description": "master switch for allowing tearing to occur. See the Tearing page.",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "resize_corner",
+        "Description": "force floating windows to use a specific corner when being resized (1-4 going clockwise from top left, 0 to disable)",
+        "Type": "int",
+        "Default": "0"
+      }
+    ]
+  },
+  {
+    "Path": [
+      "Decoration"
+    ],
+    "Subsections": [
+      {
+        "Path": [
+          "Decoration",
+          "Blur"
+        ],
+        "Subsections": null,
+        "Variables": [
+          {
+            "Name": "enabled",
+            "Description": "enable kawase window background blur",
+            "Type": "bool",
+            "Default": "true"
+          },
+          {
+            "Name": "size",
+            "Description": "blur size (distance)",
+            "Type": "int",
+            "Default": "8"
+          },
+          {
+            "Name": "passes",
+            "Description": "the amount of passes to perform",
+            "Type": "int",
+            "Default": "1"
+          },
+          {
+            "Name": "ignore_opacity",
+            "Description": "make the blur layer ignore the opacity of the window",
+            "Type": "bool",
+            "Default": "false"
+          },
+          {
+            "Name": "new_optimizations",
+            "Description": "whether to enable further optimizations to the blur. Recommended to leave on, as it will massively improve performance.",
+            "Type": "bool",
+            "Default": "true"
+          },
+          {
+            "Name": "xray",
+            "Description": "if enabled, floating windows will ignore tiled windows in their blur. Only available if blur_new_optimizations is true. Will reduce overhead on floating blur significantly.",
+            "Type": "bool",
+            "Default": "false"
+          },
+          {
+            "Name": "noise",
+            "Description": "how much noise to apply. [0.0 - 1.0]",
+            "Type": "float",
+            "Default": "0.0117"
+          },
+          {
+            "Name": "contrast",
+            "Description": "contrast modulation for blur. [0.0 - 2.0]",
+            "Type": "float",
+            "Default": "0.8916"
+          },
+          {
+            "Name": "brightness",
+            "Description": "brightness modulation for blur. [0.0 - 2.0]",
+            "Type": "float",
+            "Default": "0.8172"
+          },
+          {
+            "Name": "vibrancy",
+            "Description": "Increase saturation of blurred colors. [0.0 - 1.0]",
+            "Type": "float",
+            "Default": "0.1696"
+          },
+          {
+            "Name": "vibrancy_darkness",
+            "Description": "How strong the effect of vibrancy is on dark areas . [0.0 - 1.0]",
+            "Type": "float",
+            "Default": "0.0"
+          },
+          {
+            "Name": "special",
+            "Description": "whether to blur behind the special workspace (note: expensive)",
+            "Type": "bool",
+            "Default": "false"
+          },
+          {
+            "Name": "popups",
+            "Description": "whether to blur popups (e.g. right-click menus)",
+            "Type": "bool",
+            "Default": "false"
+          },
+          {
+            "Name": "popups_ignorealpha",
+            "Description": "works like ignorealpha in layer rules. If pixel opacity is below set value, will not blur. [0.0 - 1.0]",
+            "Type": "float",
+            "Default": "0.2"
+          }
+        ]
+      }
+    ],
+    "Variables": [
+      {
+        "Name": "rounding",
+        "Description": "rounded corners' radius (in layout px)",
+        "Type": "int",
+        "Default": "0"
+      },
+      {
+        "Name": "active_opacity",
+        "Description": "opacity of active windows. [0.0 - 1.0]",
+        "Type": "float",
+        "Default": "1.0"
+      },
+      {
+        "Name": "inactive_opacity",
+        "Description": "opacity of inactive windows. [0.0 - 1.0]",
+        "Type": "float",
+        "Default": "1.0"
+      },
+      {
+        "Name": "fullscreen_opacity",
+        "Description": "opacity of fullscreen windows. [0.0 - 1.0]",
+        "Type": "float",
+        "Default": "1.0"
+      },
+      {
+        "Name": "drop_shadow",
+        "Description": "enable drop shadows on windows",
+        "Type": "bool",
+        "Default": "true"
+      },
+      {
+        "Name": "shadow_range",
+        "Description": "Shadow range (\"size\") in layout px",
+        "Type": "int",
+        "Default": "4"
+      },
+      {
+        "Name": "shadow_render_power",
+        "Description": "in what power to render the falloff (more power, the faster the falloff) [1 - 4]",
+        "Type": "int",
+        "Default": "3"
+      },
+      {
+        "Name": "shadow_ignore_window",
+        "Description": "if true, the shadow will not be rendered behind the window itself, only around it.",
+        "Type": "bool",
+        "Default": "true"
+      },
+      {
+        "Name": "col.shadow",
+        "Description": "shadow's color. Alpha dictates shadow's opacity.",
+        "Type": "color",
+        "Default": "0xee1a1a1a"
+      },
+      {
+        "Name": "col.shadow_inactive",
+        "Description": "inactive shadow color. (if not set, will fall back to col.shadow)",
+        "Type": "color",
+        "Default": "unset"
+      },
+      {
+        "Name": "shadow_offset",
+        "Description": "shadow's rendering offset.",
+        "Type": "vec2",
+        "Default": "[0, 0]"
+      },
+      {
+        "Name": "shadow_scale",
+        "Description": "shadow's scale. [0.0 - 1.0]",
+        "Type": "float",
+        "Default": "1.0"
+      },
+      {
+        "Name": "dim_inactive",
+        "Description": "enables dimming of inactive windows",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "dim_strength",
+        "Description": "how much inactive windows should be dimmed [0.0 - 1.0]",
+        "Type": "float",
+        "Default": "0.5"
+      },
+      {
+        "Name": "dim_special",
+        "Description": "how much to dim the rest of the screen by when a special workspace is open. [0.0 - 1.0]",
+        "Type": "float",
+        "Default": "0.2"
+      },
+      {
+        "Name": "dim_around",
+        "Description": "how much the dimaround window rule should dim by. [0.0 - 1.0]",
+        "Type": "float",
+        "Default": "0.4"
+      },
+      {
+        "Name": "screen_shader",
+        "Description": "a path to a custom shader to be applied at the end of rendering. See examples/screenShader.frag for an example.",
+        "Type": "str",
+        "Default": "[[Empty]]"
+      }
+    ]
+  },
+  {
+    "Path": [
+      "Animations"
+    ],
+    "Subsections": [],
+    "Variables": [
+      {
+        "Name": "enabled",
+        "Description": "enable animations",
+        "Type": "bool",
+        "Default": "true"
+      },
+      {
+        "Name": "first_launch_animation",
+        "Description": "enable first launch animation",
+        "Type": "bool",
+        "Default": "true"
+      }
+    ]
+  },
+  {
+    "Path": [
+      "Input"
+    ],
+    "Subsections": [],
+    "Variables": [
+      {
+        "Name": "kb_model",
+        "Description": "Appropriate XKB keymap parameter. See the note below.",
+        "Type": "str",
+        "Default": "[[Empty]]"
+      },
+      {
+        "Name": "kb_layout",
+        "Description": "Appropriate XKB keymap parameter",
+        "Type": "str",
+        "Default": "us"
+      },
+      {
+        "Name": "kb_variant",
+        "Description": "Appropriate XKB keymap parameter",
+        "Type": "str",
+        "Default": "[[Empty]]"
+      },
+      {
+        "Name": "kb_options",
+        "Description": "Appropriate XKB keymap parameter",
+        "Type": "str",
+        "Default": "[[Empty]]"
+      },
+      {
+        "Name": "kb_rules",
+        "Description": "Appropriate XKB keymap parameter",
+        "Type": "str",
+        "Default": "[[Empty]]"
+      },
+      {
+        "Name": "kb_file",
+        "Description": "If you prefer, you can use a path to your custom .xkb file.",
+        "Type": "str",
+        "Default": "[[Empty]]"
+      },
+      {
+        "Name": "numlock_by_default",
+        "Description": "Engage numlock by default.",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "resolve_binds_by_sym",
+        "Description": "Determines how keybinds act when multiple layouts are used. If false, keybinds will always act as if the first specified layout is active. If true, keybinds specified by symbols are activated when you type the respective symbol with the current layout.",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "repeat_rate",
+        "Description": "The repeat rate for held-down keys, in repeats per second.",
+        "Type": "int",
+        "Default": "25"
+      },
+      {
+        "Name": "repeat_delay",
+        "Description": "Delay before a held-down key is repeated, in milliseconds.",
+        "Type": "int",
+        "Default": "600"
+      },
+      {
+        "Name": "sensitivity",
+        "Description": "Sets the mouse input sensitivity. Value is clamped to the range -1.0 to 1.0. libinput#pointer-acceleration",
+        "Type": "float",
+        "Default": "0.0"
+      },
+      {
+        "Name": "accel_profile",
+        "Description": "Sets the cursor acceleration profile. Can be one of adaptive, flat. Can also be custom, see below. Leave empty to use libinput's default mode for your input device. libinput#pointer-acceleration [adaptive/flat/custom]",
+        "Type": "str",
+        "Default": "[[Empty]]"
+      },
+      {
+        "Name": "force_no_accel",
+        "Description": "Force no cursor acceleration. This bypasses most of your pointer settings to get as raw of a signal as possible. Enabling this is not recommended due to potential cursor desynchronization.",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "left_handed",
+        "Description": "Switches RMB and LMB",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "scroll_points",
+        "Description": "Sets the scroll acceleration profile, when accel_profile is set to custom. Has to be in the form <step> <points>. Leave empty to have a flat scroll curve.",
+        "Type": "str",
+        "Default": "[[Empty]]"
+      },
+      {
+        "Name": "scroll_method",
+        "Description": "Sets the scroll method. Can be one of 2fg (2 fingers), edge, on_button_down, no_scroll. libinput#scrolling [2fg/edge/on_button_down/no_scroll]",
+        "Type": "str",
+        "Default": "[[Empty]]"
+      },
+      {
+        "Name": "scroll_button",
+        "Description": "Sets the scroll button. Has to be an int, cannot be a string. Check wev if you have any doubts regarding the ID. 0 means default.",
+        "Type": "int",
+        "Default": "0"
+      },
+      {
+        "Name": "scroll_button_lock",
+        "Description": "If the scroll button lock is enabled, the button does not need to be held down. Pressing and releasing the button toggles the button lock, which logically holds the button down or releases it. While the button is logically held down, motion events are converted to scroll events.",
+        "Type": "bool",
+        "Default": "0"
+      },
+      {
+        "Name": "scroll_factor",
+        "Description": "Multiplier added to scroll movement for external mice. Note that there is a separate setting for touchpad scroll_factor.",
+        "Type": "float",
+        "Default": "1.0"
+      },
+      {
+        "Name": "natural_scroll",
+        "Description": "Inverts scrolling direction. When enabled, scrolling moves content directly, rather than manipulating a scrollbar.",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "follow_mouse",
+        "Description": "Specify if and how cursor movement should affect window focus. See the note below. [0/1/2/3]",
+        "Type": "int",
+        "Default": "1"
+      },
+      {
+        "Name": "mouse_refocus",
+        "Description": "If disabled, mouse focus won't switch to the hovered window unless the mouse crosses a window boundary when follow_mouse=1.",
+        "Type": "bool",
+        "Default": "true"
+      },
+      {
+        "Name": "float_switch_override_focus",
+        "Description": "If enabled (1 or 2), focus will change to the window under the cursor when changing from tiled-to-floating and vice versa. If 2, focus will also follow mouse on float-to-float switches.",
+        "Type": "int",
+        "Default": "1"
+      },
+      {
+        "Name": "special_fallthrough",
+        "Description": "if enabled, having only floating windows in the special workspace will not block focusing windows in the regular workspace.",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "off_window_axis_events",
+        "Description": "Handles axis events around (gaps/border for tiled, dragarea/border for floated) a focused window. 0 ignores axis events 1 sends out-of-bound coordinates 2 fakes pointer coordinates to the closest point inside the window 3 warps the cursor to the closest point inside the window",
+        "Type": "int",
+        "Default": "1"
+      }
+    ]
+  },
+  {
+    "Path": [
+      "Gestures"
+    ],
+    "Subsections": [],
+    "Variables": [
+      {
+        "Name": "workspace_swipe",
+        "Description": "enable workspace swipe gesture on touchpad",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "workspace_swipe_fingers",
+        "Description": "how many fingers for the touchpad gesture",
+        "Type": "int",
+        "Default": "3"
+      },
+      {
+        "Name": "workspace_swipe_distance",
+        "Description": "in px, the distance of the touchpad gesture",
+        "Type": "int",
+        "Default": "300"
+      },
+      {
+        "Name": "workspace_swipe_touch",
+        "Description": "enable workspace swiping from the edge of a touchscreen",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "workspace_swipe_invert",
+        "Description": "invert the direction",
+        "Type": "bool",
+        "Default": "true"
+      },
+      {
+        "Name": "workspace_swipe_min_speed_to_force",
+        "Description": "minimum speed in px per timepoint to force the change ignoring cancel_ratio. Setting to 0 will disable this mechanic.",
+        "Type": "int",
+        "Default": "30"
+      },
+      {
+        "Name": "workspace_swipe_cancel_ratio",
+        "Description": "how much the swipe has to proceed in order to commence it. (0.7 -> if > 0.7 * distance, switch, if less, revert) [0.0 - 1.0]",
+        "Type": "float",
+        "Default": "0.5"
+      },
+      {
+        "Name": "workspace_swipe_create_new",
+        "Description": "whether a swipe right on the last workspace should create a new one.",
+        "Type": "bool",
+        "Default": "true"
+      },
+      {
+        "Name": "workspace_swipe_direction_lock",
+        "Description": "if enabled, switching direction will be locked when you swipe past the direction_lock_threshold (touchpad only).",
+        "Type": "bool",
+        "Default": "true"
+      },
+      {
+        "Name": "workspace_swipe_direction_lock_threshold",
+        "Description": "in px, the distance to swipe before direction lock activates (touchpad only).",
+        "Type": "int",
+        "Default": "10"
+      },
+      {
+        "Name": "workspace_swipe_forever",
+        "Description": "if enabled, swiping will not clamp at the neighboring workspaces but continue to the further ones.",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "workspace_swipe_use_r",
+        "Description": "if enabled, swiping will use the r prefix instead of the m prefix for finding workspaces.",
+        "Type": "bool",
+        "Default": "false"
+      }
+    ]
+  },
+  {
+    "Path": [
+      "Group"
+    ],
+    "Subsections": [
+      {
+        "Path": [
+          "Group",
+          "Groupbar"
+        ],
+        "Subsections": null,
+        "Variables": [
+          {
+            "Name": "enabled",
+            "Description": "enables groupbars",
+            "Type": "bool",
+            "Default": "true"
+          },
+          {
+            "Name": "font_family",
+            "Description": "font used to display groupbar titles",
+            "Type": "string",
+            "Default": "Sans"
+          },
+          {
+            "Name": "font_size",
+            "Description": "font size of groupbar title",
+            "Type": "int",
+            "Default": "8"
+          },
+          {
+            "Name": "gradients",
+            "Description": "enables gradients",
+            "Type": "bool",
+            "Default": "true"
+          },
+          {
+            "Name": "height",
+            "Description": "height of the groupbar",
+            "Type": "int",
+            "Default": "14"
+          },
+          {
+            "Name": "priority",
+            "Description": "sets the decoration priority for groupbars",
+            "Type": "int",
+            "Default": "3"
+          },
+          {
+            "Name": "render_titles",
+            "Description": "whether to render titles in the group bar decoration",
+            "Type": "bool",
+            "Default": "true"
+          },
+          {
+            "Name": "scrolling",
+            "Description": "whether scrolling in the groupbar changes group active window",
+            "Type": "bool",
+            "Default": "true"
+          },
+          {
+            "Name": "text_color",
+            "Description": "controls the group bar text color",
+            "Type": "color",
+            "Default": "0xffffffff"
+          },
+          {
+            "Name": "col.active",
+            "Description": "active group border color",
+            "Type": "gradient",
+            "Default": "0x66ffff00"
+          },
+          {
+            "Name": "col.inactive",
+            "Description": "inactive (out of focus) group border color",
+            "Type": "gradient",
+            "Default": "0x66777700"
+          },
+          {
+            "Name": "col.locked_active",
+            "Description": "active locked group border color",
+            "Type": "gradient",
+            "Default": "0x66ff5500"
+          },
+          {
+            "Name": "col.locked_inactive",
+            "Description": "inactive locked group border color",
+            "Type": "gradient",
+            "Default": "0x66775500"
+          }
+        ]
+      }
+    ],
+    "Variables": [
+      {
+        "Name": "insert_after_current",
+        "Description": "whether new windows in a group spawn after current or at group tail",
+        "Type": "bool",
+        "Default": "true"
+      },
+      {
+        "Name": "focus_removed_window",
+        "Description": "whether Hyprland should focus on the window that has just been moved out of the group",
+        "Type": "bool",
+        "Default": "true"
+      },
+      {
+        "Name": "col.border_active",
+        "Description": "active group border color",
+        "Type": "gradient",
+        "Default": "0x66ffff00"
+      },
+      {
+        "Name": "col.border_inactive",
+        "Description": "inactive (out of focus) group border color",
+        "Type": "gradient",
+        "Default": "0x66777700"
+      },
+      {
+        "Name": "col.border_locked_active",
+        "Description": "active locked group border color",
+        "Type": "gradient",
+        "Default": "0x66ff5500"
+      },
+      {
+        "Name": "col.border_locked_inactive",
+        "Description": "inactive locked group border color",
+        "Type": "gradient",
+        "Default": "0x66775500"
+      }
+    ]
+  },
+  {
+    "Path": [
+      "Misc"
+    ],
+    "Subsections": [],
+    "Variables": [
+      {
+        "Name": "disable_hyprland_logo",
+        "Description": "disables the random Hyprland logo / anime girl background. :(",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "disable_splash_rendering",
+        "Description": "disables the Hyprland splash rendering. (requires a monitor reload to take effect)",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "col.splash",
+        "Description": "Changes the color of the splash text (requires a monitor reload to take effect).",
+        "Type": "color",
+        "Default": "0xffffffff"
+      },
+      {
+        "Name": "splash_font_family",
+        "Description": "Changes the font used to render the splash text, selected from system fonts (requires a monitor reload to take effect).",
+        "Type": "string",
+        "Default": "Sans"
+      },
+      {
+        "Name": "force_default_wallpaper",
+        "Description": "Enforce any of the 3 default wallpapers. Setting this to 0 or 1 disables the anime background. -1 means \"random\". [-1/0/1/2]",
+        "Type": "int",
+        "Default": "-1"
+      },
+      {
+        "Name": "vfr",
+        "Description": "controls the VFR status of Hyprland. Heavily recommended to leave enabled to conserve resources.",
+        "Type": "bool",
+        "Default": "true"
+      },
+      {
+        "Name": "vrr",
+        "Description": "controls the VRR (Adaptive Sync) of your monitors. 0 - off, 1 - on, 2 - fullscreen only [0/1/2]",
+        "Type": "int",
+        "Default": "0"
+      },
+      {
+        "Name": "mouse_move_enables_dpms",
+        "Description": "If DPMS is set to off, wake up the monitors if the mouse moves.",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "key_press_enables_dpms",
+        "Description": "If DPMS is set to off, wake up the monitors if a key is pressed.",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "always_follow_on_dnd",
+        "Description": "Will make mouse focus follow the mouse when drag and dropping. Recommended to leave it enabled, especially for people using focus follows mouse at 0.",
+        "Type": "bool",
+        "Default": "true"
+      },
+      {
+        "Name": "layers_hog_keyboard_focus",
+        "Description": "If true, will make keyboard-interactive layers keep their focus on mouse move (e.g. wofi, bemenu)",
+        "Type": "bool",
+        "Default": "true"
+      },
+      {
+        "Name": "animate_manual_resizes",
+        "Description": "If true, will animate manual window resizes/moves",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "animate_mouse_windowdragging",
+        "Description": "If true, will animate windows being dragged by mouse, note that this can cause weird behavior on some curves",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "disable_autoreload",
+        "Description": "If true, the config will not reload automatically on save, and instead needs to be reloaded with hyprctl reload. Might save on battery.",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "enable_swallow",
+        "Description": "Enable window swallowing",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "swallow_regex",
+        "Description": "The class regex to be used for windows that should be swallowed (usually, a terminal). To know more about the list of regex which can be used use this cheatsheet.",
+        "Type": "str",
+        "Default": "[[Empty]]"
+      },
+      {
+        "Name": "swallow_exception_regex",
+        "Description": "The title regex to be used for windows that should not be swallowed by the windows specified in swallow_regex  (e.g. wev). The regex is matched against the parent (e.g. Kitty) window's title on the assumption that it changes to whatever process it's running.",
+        "Type": "str",
+        "Default": "[[Empty]]"
+      },
+      {
+        "Name": "focus_on_activate",
+        "Description": "Whether Hyprland should focus an app that requests to be focused (an activate request)",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "no_direct_scanout",
+        "Description": "Disables direct scanout. Direct scanout attempts to reduce lag when there is only one fullscreen application on a screen (e.g. game). It is also recommended to set this to true if the fullscreen application shows graphical glitches.",
+        "Type": "bool",
+        "Default": "true"
+      },
+      {
+        "Name": "hide_cursor_on_touch",
+        "Description": "Hides the cursor when the last input was a touch input until a mouse input is done.",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "hide_cursor_on_key_press",
+        "Description": "Hides the cursor when you press any key until the mouse is moved.",
+        "Type": "bool",
+        "Default": "true"
+      },
+      {
+        "Name": "mouse_move_focuses_monitor",
+        "Description": "Whether mouse moving into a different monitor should focus it",
+        "Type": "bool",
+        "Default": "true"
+      },
+      {
+        "Name": "suppress_portal_warnings",
+        "Description": "disables warnings about incompatible portal implementations.",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "render_ahead_of_time",
+        "Description": "[Warning: buggy] starts rendering before your monitor displays a frame in order to lower latency",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "render_ahead_safezone",
+        "Description": "how many ms of safezone to add to rendering ahead of time. Recommended 1-2.",
+        "Type": "int",
+        "Default": "1"
+      },
+      {
+        "Name": "cursor_zoom_factor",
+        "Description": "the factor to zoom by around the cursor. Like a magnifying glass. Minimum 1.0 (meaning no zoom)",
+        "Type": "float",
+        "Default": "1.0"
+      },
+      {
+        "Name": "cursor_zoom_rigid",
+        "Description": "whether the zoom should follow the cursor rigidly (cursor is always centered if it can be) or loosely",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "allow_session_lock_restore",
+        "Description": "if true, will allow you to restart a lockscreen app in case it crashes (red screen of death)",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "background_color",
+        "Description": "change the background color. (requires enabled disable_hyprland_logo)",
+        "Type": "color",
+        "Default": "0x111111"
+      },
+      {
+        "Name": "close_special_on_empty",
+        "Description": "close the special workspace if the last window is removed",
+        "Type": "bool",
+        "Default": "true"
+      },
+      {
+        "Name": "new_window_takes_over_fullscreen",
+        "Description": "if there is a fullscreen window, whether a new tiled window opened should replace the fullscreen one or stay behind. 0 - behind, 1 - takes over, 2 - unfullscreen the current fullscreen window [0/1/2]",
+        "Type": "int",
+        "Default": "0"
+      },
+      {
+        "Name": "enable_hyprcursor",
+        "Description": "whether to enable hyprcursor support",
+        "Type": "bool",
+        "Default": "true"
+      },
+      {
+        "Name": "initial_workspace_tracking",
+        "Description": "if enabled, windows will open on the workspace they were invoked on. 0 - disabled, 1 - single-shot, 2 - persistent (all children too)",
+        "Type": "int",
+        "Default": "1"
+      }
+    ]
+  },
+  {
+    "Path": [
+      "Binds"
+    ],
+    "Subsections": [],
+    "Variables": [
+      {
+        "Name": "pass_mouse_when_bound",
+        "Description": "if disabled, will not pass the mouse events to apps / dragging windows around if a keybind has been triggered.",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "scroll_event_delay",
+        "Description": "in ms, how many ms to wait after a scroll event to allow passing another one for the binds.",
+        "Type": "int",
+        "Default": "300"
+      },
+      {
+        "Name": "workspace_back_and_forth",
+        "Description": "If enabled, an attempt to switch to the currently focused workspace will instead switch to the previous workspace. Akin to i3's auto_back_and_forth.",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "allow_workspace_cycles",
+        "Description": "If enabled, workspaces don't forget their previous workspace, so cycles can be created by switching to the first workspace in a sequence, then endlessly going to the previous workspace.",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "workspace_center_on",
+        "Description": "Whether switching workspaces should center the cursor on the workspace (0) or on the last active window for that workspace (1)",
+        "Type": "int",
+        "Default": "0"
+      },
+      {
+        "Name": "focus_preferred_method",
+        "Description": "sets the preferred focus finding method when using focuswindow/movewindow/etc with a direction. 0 - history (recent have priority), 1 - length (longer shared edges have priority)",
+        "Type": "int",
+        "Default": "0"
+      },
+      {
+        "Name": "ignore_group_lock",
+        "Description": "If enabled, dispatchers like moveintogroup, moveoutofgroup and movewindoworgroup will ignore lock per group.",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "movefocus_cycles_fullscreen",
+        "Description": "If enabled, when on a fullscreen window, movefocus will cycle fullscreen, if not, it will move the focus in a direction.",
+        "Type": "bool",
+        "Default": "true"
+      },
+      {
+        "Name": "disable_keybind_grabbing",
+        "Description": "If enabled, apps that request keybinds to be disabled (e.g. VMs) will not be able to do so.",
+        "Type": "bool",
+        "Default": "false"
+      }
+    ]
+  },
+  {
+    "Path": [
+      "XWayland"
+    ],
+    "Subsections": [],
+    "Variables": [
+      {
+        "Name": "use_nearest_neighbor",
+        "Description": "uses the nearest neigbor filtering for xwayland apps, making them pixelated rather than blurry",
+        "Type": "bool",
+        "Default": "true"
+      },
+      {
+        "Name": "force_zero_scaling",
+        "Description": "forces a scale of 1 on xwayland windows on scaled displays.",
+        "Type": "bool",
+        "Default": "false"
+      }
+    ]
+  },
+  {
+    "Path": [
+      "OpenGL"
+    ],
+    "Subsections": [],
+    "Variables": [
+      {
+        "Name": "nvidia_anti_flicker",
+        "Description": "reduces flickering on nvidia at the cost of possible frame drops on lower-end GPUs. On non-nvidia, this is ignored.",
+        "Type": "bool",
+        "Default": "true"
+      },
+      {
+        "Name": "force_introspection",
+        "Description": "forces introspection at all times. Introspection is aimed at reducing GPU usage in certain cases, but might cause graphical glitches on nvidia. 0 - nothing, 1 - force always on, 2 - force always on if nvidia",
+        "Type": "int",
+        "Default": "2"
+      }
+    ]
+  },
+  {
+    "Path": [
+      "Debug"
+    ],
+    "Subsections": [],
+    "Variables": [
+      {
+        "Name": "overlay",
+        "Description": "print the debug performance overlay. Disable VFR for accurate results.",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "damage_blink",
+        "Description": "(epilepsy warning!) flash areas updated with damage tracking",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "disable_logs",
+        "Description": "disable logging to a file",
+        "Type": "bool",
+        "Default": "true"
+      },
+      {
+        "Name": "disable_time",
+        "Description": "disables time logging",
+        "Type": "bool",
+        "Default": "true"
+      },
+      {
+        "Name": "damage_tracking",
+        "Description": "redraw only the needed bits of the display. Do not change. (default: full - 2) monitor - 1, none - 0",
+        "Type": "int",
+        "Default": "2"
+      },
+      {
+        "Name": "enable_stdout_logs",
+        "Description": "enables logging to stdout",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "manual_crash",
+        "Description": "set to 1 and then back to 0 to crash Hyprland.",
+        "Type": "int",
+        "Default": "0"
+      },
+      {
+        "Name": "suppress_errors",
+        "Description": "if true, do not display config file parsing errors.",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "watchdog_timeout",
+        "Description": "sets the timeout in seconds for watchdog to abort processing of a signal of the main thread. Set to 0 to disable.",
+        "Type": "int",
+        "Default": "5"
+      },
+      {
+        "Name": "disable_scale_checks",
+        "Description": "disables verification of the scale factors. Will result in pixel alignment and rounding errors.",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "error_limit",
+        "Description": "limits the number of displayed config file parsing errors.",
+        "Type": "int",
+        "Default": "5"
+      }
+    ]
+  }
+]
