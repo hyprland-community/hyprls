@@ -17,7 +17,7 @@ func StartServer(logger *zap.Logger, logClientIn string) {
 	conn := jsonrpc2.NewConn(jsonrpc2.NewStream(&readWriteCloser{
 		reader: os.Stdin,
 		writer: os.Stdout,
-		// logAt:  logClientIn,
+		logAt:  logClientIn,
 	}))
 	handler, ctx, err := NewHandler(context.Background(), protocol.ServerDispatcher(conn, logger), logger)
 	if err != nil {

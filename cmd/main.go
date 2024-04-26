@@ -3,14 +3,19 @@ package main
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	hyprls "github.com/ewen-lbh/hyprlang-lsp"
 	"go.uber.org/zap"
 )
 
+var OutputServerLogs string
+
 func main() {
 	logconf := zap.NewDevelopmentConfig()
-	// logconf.OutputPaths = []string{"./logs/server.log", "stderr"}
+	if OutputServerLogs != "" {
+		logconf.OutputPaths = []string{OutputServerLogs, "stderr"}
+	}
 	logger, err := logconf.Build()
 	if err != nil {
 		fmt.Printf("while building logger: %s", err)
@@ -18,5 +23,9 @@ func main() {
 	}
 
 	logger.Debug("going to start server")
-	hyprls.StartServer(logger, "")
+	if OutputServerLogs != "" {
+		hyprls.StartServer(logger, filepath.Dir(OutputServerLogs))
+	} else {
+		hyprls.StartServer(logger, "")
+	}
 }

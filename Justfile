@@ -1,3 +1,5 @@
+serverLogsFilepath := `realpath ./logs/server.log`
+
 run:
 	just build
 	./hyprlang-lsp
@@ -5,7 +7,7 @@ run:
 build:
 	cp hyprland-wiki/pages/Configuring/Variables.md parser/data/
 	go mod tidy
-	go build -o hyprlang-lsp cmd/main.go
+	go build -ldflags "-X main.OutputServerLogs={{ serverLogsFilepath }}" -o hyprlang-lsp cmd/main.go
 
 install:
 	just build
