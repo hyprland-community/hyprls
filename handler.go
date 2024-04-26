@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/MakeNowJust/heredoc"
+	"github.com/ewen-lbh/hyprlang-lsp/parser"
 	parser_data "github.com/ewen-lbh/hyprlang-lsp/parser/data"
 	"go.lsp.dev/protocol"
 	"go.uber.org/zap"
@@ -16,6 +17,15 @@ import (
 var logger *zap.Logger
 
 var openedFiles = make(map[protocol.URI]string)
+
+func parse(uri protocol.URI) (parser.Section, error) {
+	contents, err := file(uri)
+	if err != nil {
+		return parser.Section{}, err
+	}
+
+	return parser.Parse(contents)
+}
 
 func file(uri protocol.URI) (string, error) {
 	if contents, ok := openedFiles[uri]; ok {
@@ -132,7 +142,8 @@ func (h Handler) Declaration(ctx context.Context, params *protocol.DeclarationPa
 }
 
 func (h Handler) DidChange(ctx context.Context, params *protocol.DidChangeTextDocumentParams) error {
-	return errors.New("unimplemented")
+	openedFiles[params.TextDocument.URI] = params.ContentChanges[len(params.ContentChanges)-1].Text
+	return nil
 }
 
 func (h Handler) DidChangeConfiguration(ctx context.Context, params *protocol.DidChangeConfigurationParams) error {
@@ -148,11 +159,13 @@ func (h Handler) DidChangeWorkspaceFolders(ctx context.Context, params *protocol
 }
 
 func (h Handler) DidClose(ctx context.Context, params *protocol.DidCloseTextDocumentParams) error {
-	return errors.New("unimplemented")
+	delete(openedFiles, params.TextDocument.URI)
+	return nil
 }
 
 func (h Handler) DidOpen(ctx context.Context, params *protocol.DidOpenTextDocumentParams) error {
-	return errors.New("unimplemented")
+	file(params.TextDocument.URI)
+	return nil
 }
 
 func (h Handler) DidSave(ctx context.Context, params *protocol.DidSaveTextDocumentParams) error {
