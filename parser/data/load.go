@@ -178,6 +178,13 @@ func (s SectionDefinition) Typedef() string {
 	return out
 }
 
+func (v VariableDefinition) PrettyDefault() string {
+	if v.Default == "[[Empty]]" {
+		return "*(empty)*"
+	}
+	return v.Default
+}
+
 func (v VariableDefinition) GoType() string {
 	switch v.Type {
 	case "int":

@@ -212,7 +212,7 @@ func (h Handler) Hover(ctx context.Context, params *protocol.HoverParams) (*prot
 						%s
 						
 						- Defaults to: %s
-					`, strings.Join(section.Path, ":"), def.Name, def.Type, def.Description, def.Default),
+					`, strings.Join(section.Path, ":"), def.Name, def.Type, def.Description, def.PrettyDefault()),
 				},
 			}, nil
 		}
