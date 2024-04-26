@@ -1,0 +1,44 @@
+{
+  "name": "vscode-hyprlang",
+  "description": "VSCode extension for HyprLS",
+  "author": "Ewen Le Bihan <hey@ewen.works>",
+  "license": "MIT",
+  "version": "0.1.3",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ewen-lbh/hyprlang-ls"
+  },
+  "publisher": "ewen-lbh",
+  "categories": [],
+  "keywords": [],
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "activationEvents": [
+    "onLanguage:plaintext"
+  ],
+  "main": "./out/extension",
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -b",
+    "watch": "tsc -b -w",
+    "lint": "eslint ./src --ext .ts,.tsx",
+    "test": "sh ./scripts/e2e.sh"
+  },
+  "devDependencies": {
+    "@ortfo/db": "^1.5.0",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^18.14.6",
+    "@types/vscode": "^1.75.1",
+    "@typescript-eslint/eslint-plugin": "^7.1.0",
+    "@typescript-eslint/parser": "^7.1.0",
+    "@vscode/test-electron": "^2.3.9",
+    "@vscode/vsce": "^2.26.0",
+    "eslint": "^8.57.0",
+    "mocha": "^10.3.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^9.0.1"
+  }
+}

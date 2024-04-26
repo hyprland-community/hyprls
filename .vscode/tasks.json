@@ -1,0 +1,40 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "bun",
+      "script": "compile",
+      "group": "build",
+      "presentation": {
+        "panel": "dedicated",
+        "reveal": "never"
+      },
+      "problemMatcher": ["$tsc"]
+    },
+    {
+      "label": "bun:watch",
+      "type": "bun",
+      "options": {
+        "cwd": "${workspaceFolder}/vscode"
+      },
+      "script": "watch",
+      "isBackground": true,
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "panel": "dedicated",
+        "reveal": "never"
+      },
+      "problemMatcher": ["$tsc-watch"],
+			"dependsOn": ["go:compile"]
+    },
+		{
+			"label": "go:compile",
+			"type": "shell",
+			"command": "just",
+			"args": ["install"]
+		}
+  ]
+}
