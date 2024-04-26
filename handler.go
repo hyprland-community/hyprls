@@ -73,7 +73,6 @@ func NewHandler(ctx context.Context, server protocol.Server, logger *zap.Logger)
 
 func (h Handler) Initialize(ctx context.Context, params *protocol.InitializeParams) (*protocol.InitializeResult, error) {
 	logger = h.Logger
-	h.Logger.Debug("Initializing ortfols server")
 	return &protocol.InitializeResult{
 		Capabilities: protocol.ServerCapabilities{
 			HoverProvider: true,
@@ -216,6 +215,14 @@ func (h Handler) Hover(ctx context.Context, params *protocol.HoverParams) (*prot
 
 	// key is word before the equal sign. [0] is safe since we checked for "=" above
 	key := strings.TrimSpace(strings.Split(line, "=")[0])
+
+	indexOfFirstNonWhitespace := strings.IndexFunc(line, func(r rune) bool {
+		return r != ' ' && r != '\t'
+	})
+	indexOfLastNonWhitespace := strings.LastIndexFunc(line, func(r rune) bool {
+		return r != ' ' && r != '\t'
+	}) + 1
+
 	for _, section := range parser_data.Sections {
 		if def := section.VariableDefinition(key); def != nil {
 			return &protocol.Hover{
@@ -226,6 +233,16 @@ func (h Handler) Hover(ctx context.Context, params *protocol.HoverParams) (*prot
 						
 						- Defaults to: %s
 					`, strings.Join(section.Path, ":"), def.Name, def.Type, def.Description, def.PrettyDefault()),
+				},
+				Range: &protocol.Range{
+					Start: protocol.Position{
+						Line:      params.Position.Line,
+						Character: uint32(indexOfFirstNonWhitespace),
+					},
+					End: protocol.Position{
+						Line:      params.Position.Line,
+						Character: uint32(indexOfLastNonWhitespace),
+					},
 				},
 			}, nil
 		}
