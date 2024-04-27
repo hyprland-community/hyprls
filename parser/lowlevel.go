@@ -533,7 +533,7 @@ func decodeHexComponent(matches []string, component string, fallback uint8) uint
 }
 
 func parseBool(raw string) (bool, error) {
-	switch raw {
+	switch strings.TrimSpace(raw) {
 	case "true", "yes", "on", "1":
 		return true, nil
 	case "false", "no", "off", "0":
