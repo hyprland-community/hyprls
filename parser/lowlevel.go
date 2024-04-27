@@ -143,6 +143,32 @@ type Value struct {
 	End      Position      `json:"end"`
 }
 
+func (v Value) GoValue() any {
+	switch v.Kind {
+	case Integer:
+		return v.Integer
+	case Bool:
+		return v.Bool
+	case Float:
+		return v.Float
+	case Color:
+		return v.Color
+	case Vec2:
+		return v.Vec2
+	case Modmask:
+		return v.Modmask
+	case String:
+		return v.String
+	case Gradient:
+		return v.Gradient
+	case Custom:
+		return v.Custom
+	default:
+		return nil
+	}
+
+}
+
 func (k ValueKind) LSP() protocol.SymbolKind {
 	switch k {
 	case Integer:
@@ -525,5 +551,14 @@ func (s Section) WalkValues(f func(assignment *Assignment, v *Value)) {
 		s.WalkValues(func(a *Assignment, v *Value) {
 			f(a, v)
 		})
+	}
+}
+
+func (s Section) WalkCustomVariables(f func(v *CustomVariable)) {
+	for _, v := range s.Variables {
+		f(&v)
+	}
+	for _, s := range s.Subsections {
+		s.WalkCustomVariables(f)
 	}
 }
