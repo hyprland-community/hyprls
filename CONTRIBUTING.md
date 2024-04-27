@@ -20,7 +20,7 @@ just build
 Then, you can build a binary locally with `just build`.
 To create a "debug build" that logs all the requests, responses and server logs to files (useful for debugging), you can run `just build-debug`.
 
-The debug binary is named `hyprls-debug` and the regular binary is named `hyprls`.
+The debug binary is named `hyprlang-lsp` and the regular binary is named `hyprls`.
 
 ### VSCode
 
