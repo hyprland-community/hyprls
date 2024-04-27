@@ -73,6 +73,7 @@ vim.api.nvim_create_autocmd({'BufEnter', 'BufWinEnter'}, {
 
 ### VSCode
 
+Install it [from the marketplace](https://marketplace.visualstudio.com/items?itemName=ewen-lbh.vscode-hyprls).
+
 _Combine with [FireBlast's Hyprlang extension](https://marketplace.visualstudio.com/items?itemName=fireblast.hyprlang-vscode) for syntax highlighting._
 
-<!-- Go to Extensions > Install from VSIX... and select `vscode/vscode-hyprlang-X.X.X.vsix` from this repo. -->
