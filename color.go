@@ -1,6 +1,7 @@
 package hyprls
 
 import (
+	"context"
 	"fmt"
 	"math"
 	"strings"
@@ -10,6 +11,48 @@ import (
 	"go.lsp.dev/protocol"
 	"go.uber.org/zap"
 )
+
+func (h Handler) ColorPresentation(ctx context.Context, params *protocol.ColorPresentationParams) ([]protocol.ColorPresentation, error) {
+	logger.Debug("LSP:ColorPresentation", zap.Any("color", params.Color), zap.Any("range", params.Range))
+	return []protocol.ColorPresentation{
+		{
+			Label: encodeColorLiteral(params.Color),
+			TextEdit: &protocol.TextEdit{
+				Range:   params.Range,
+				NewText: encodeColorLiteral(params.Color),
+			},
+		},
+	}, nil
+}
+
+func (h Handler) DocumentColor(ctx context.Context, params *protocol.DocumentColorParams) ([]protocol.ColorInformation, error) {
+	document, err := parse(params.TextDocument.URI)
+	if err != nil {
+		return []protocol.ColorInformation{}, fmt.Errorf("while parsing: %w", err)
+	}
+	colors := make([]protocol.ColorInformation, 0)
+	document.WalkValues(func(a *parser.Assignment, v *parser.Value) {
+		if v.Kind == parser.Gradient {
+			for _, stop := range v.Gradient.Stops {
+				colors = append(colors, protocol.ColorInformation{
+					Color: stop.LSPColor(),
+					Range: stop.LSPRange(),
+				})
+			}
+			return
+		}
+
+		if v.Kind != parser.Color {
+			return
+		}
+
+		colors = append(colors, protocol.ColorInformation{
+			Color: v.LSPColor(),
+			Range: v.LSPRange(),
+		})
+	})
+	return colors, nil
+}
 
 func decodeColorLiteral(raw string) protocol.Color {
 	logger.Debug("decodeColorLiteral", zap.String("raw", raw))

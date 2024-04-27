@@ -1,9 +1,24 @@
 package hyprls
 
 import (
+	"context"
+	"fmt"
+
 	"github.com/ewen-lbh/hyprls/parser"
 	"go.lsp.dev/protocol"
 )
+
+func (h Handler) DocumentSymbol(ctx context.Context, params *protocol.DocumentSymbolParams) ([]interface{}, error) {
+	document, err := parse(params.TextDocument.URI)
+	if err != nil {
+		return nil, fmt.Errorf("while parsing: %w", err)
+	}
+	symbols := make([]interface{}, 0)
+	for _, symb := range gatherAllSymbols(document) {
+		symbols = append(symbols, &symb)
+	}
+	return symbols, nil
+}
 
 func gatherAllSymbols(root parser.Section) []protocol.DocumentSymbol {
 	symbols := make([]protocol.DocumentSymbol, 0)
