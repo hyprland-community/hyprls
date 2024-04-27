@@ -10,7 +10,7 @@ func gatherAllSymbols(root parser.Section) []protocol.DocumentSymbol {
 	for _, variable := range root.Assignments {
 		symbols = append(symbols, protocol.DocumentSymbol{
 			Name:           variable.Key,
-			Kind:           protocol.SymbolKindField,
+			Kind:           variable.Value.Kind.LSP(),
 			Detail:         variable.ValueRaw,
 			Range:          collapsedRange(variable.Position.LSP()),
 			SelectionRange: collapsedRange(variable.Position.LSP()),

@@ -143,6 +143,25 @@ type Value struct {
 	End      Position      `json:"end"`
 }
 
+func (k ValueKind) LSP() protocol.SymbolKind {
+	switch k {
+	case Integer:
+		return protocol.SymbolKindNumber
+	case Bool:
+		return protocol.SymbolKindBoolean
+	case Float:
+		return protocol.SymbolKindNumber
+	case Vec2:
+		return protocol.SymbolKindArray
+	case Modmask:
+		return protocol.SymbolKindArray
+	case String:
+		return protocol.SymbolKindString
+	default:
+		return protocol.SymbolKindField
+	}
+}
+
 func (v *Value) LSPRange() protocol.Range {
 	return protocol.Range{
 		Start: v.Start.LSP(),
@@ -451,8 +470,8 @@ func parseGradient(raw string, valueStart Position) (GradientValue, error) {
 		value.Stops = append(value.Stops, Value{
 			Kind:  Color,
 			Color: color,
-			Start: Position{valueStart.Line, valueStart.Column + cursorAt-1},
-			End:   Position{valueStart.Line, valueStart.Column + cursorAt + len(arg)-1},
+			Start: Position{valueStart.Line, valueStart.Column + cursorAt - 1},
+			End:   Position{valueStart.Line, valueStart.Column + cursorAt + len(arg) - 1},
 		})
 		cursorAt += len(arg)
 	}
