@@ -2,10 +2,10 @@
 started: "2024-04-25"
 made with:
     - go
+    - hyprland
 tags:
     - language
     - programming
-wip: true
 aliases: [hyprlang-lsp]
 layout:
     - [m1, p1]
