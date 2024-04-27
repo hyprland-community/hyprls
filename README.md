@@ -2,10 +2,11 @@
 
 <table>
 <tr>
+	<td> <img src="./demo-completion.png">
 	<td> <img src="./demo-hover.png">
-	<td> <img src="./demo-hover-keyword.png">
 </tr>
 <tr>
+	<td> <img src="./demo-hover-keyword.png">
 	<td> <img src="./demo-symbols.png">
 	<td> <img src="./demo-colors.png">
 </tr>
