@@ -9,7 +9,9 @@ wip: true
 aliases: [hyprlang-lsp]
 layout:
     - [p1, l1]
-    - [m1, m2, m3]
+    - [m1, m2]
+    - [m3, m4]
+thumbnail: ../demo-hover-keyword.png
 ---
 
 # HyprLS
@@ -21,6 +23,8 @@ A [LSP](https://en.wikipedia.org/wiki/Language_Server_Protocol) server for [Hypr
 [Source code](https://github.com/ewen-lbh/hyprlang-lsp.git)
 
 ![](../demo-hover.png)
+
+![](../demo-hover-keyword.png)
 
 ![](../demo-symbols.png)
 
@@ -34,6 +38,8 @@ Un serveur [LSP](https://en.wikipedia.org/wiki/Language_Server_Protocol) pour le
 [Code source](https://github.com/ewen-lbh/hyprlang-lsp.git)
 
 ![](../demo-hover.png)
+
+![](../demo-hover-keyword.png)
 
 ![](../demo-symbols.png)
 

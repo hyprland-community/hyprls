@@ -2,31 +2,42 @@ package parser_data
 
 import (
 	"bytes"
+	"embed"
 	_ "embed"
 	"fmt"
+	"os"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
 
+	"github.com/PuerkitoBio/goquery"
 	"github.com/anaskhan96/soup"
+	"github.com/metal3d/go-slugify"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/extension"
+
+	html2markdown "github.com/evorts/html-to-markdown"
 )
 
+var html2md = html2markdown.NewConverter("wiki.hyprlang.org", true, &html2markdown.Options{})
 var md = goldmark.New(goldmark.WithExtensions(extension.GFM))
 
 func debug(msg string, fmtArgs ...any) {
 	// fmt.Fprintf(os.Stderr, msg, fmtArgs...)
 }
 
-//go:embed Variables.md
+//go:embed sources/Variables.md
 var documentationSource []byte
 
-//go:embed Master-Layout.md
+//go:embed sources/Master-Layout.md
 var masterLayoutDocumentationSource []byte
 
-//go:embed Dwindle-Layout.md
+//go:embed sources/Dwindle-Layout.md
 var dwindleLayoutDocumentationSource []byte
+
+//go:embed sources/*.md
+var documentationSources embed.FS
 
 var Sections = []SectionDefinition{}
 
@@ -49,10 +60,61 @@ func (s SectionDefinition) VariableDefinition(name string) *VariableDefinition {
 }
 
 func init() {
+	html2md.AddRules(html2markdown.Rule{
+		Filter: []string{"a"},
+		Replacement: func(content string, selec *goquery.Selection, options *html2markdown.Options) *string {
+			href, _ := selec.Attr("href")
+			if strings.HasPrefix(href, "../") {
+				href = strings.Replace(href, "../", "https://wiki.hyprland.org/Configuring/", 1)
+			}
+			result := fmt.Sprintf("[%s](%s)", content, href)
+			return html2markdown.String(result)
+		},
+	})
+
 	Sections = parseDocumentationMarkdown(documentationSource, 3)
 	Sections = append(Sections, parseDocumentationMarkdownWithRootSectionName(masterLayoutDocumentationSource, 2, "Master")...)
 	Sections = append(Sections, parseDocumentationMarkdownWithRootSectionName(dwindleLayoutDocumentationSource, 2, "Dwindle")...)
 	addVariableDefsOnSection("General", undocumentedGeneralSectionVariables)
+
+	for i, kw := range Keywords {
+		if kw.Description != "" {
+			continue
+		}
+
+		content, err := documentationSources.ReadFile(filepath.Join("sources", kw.documentationFile+".md"))
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Failed to read documentation file for %s: %s\n", kw.Name, err)
+			continue
+		}
+
+		document := markdownToHTML(content)
+		headings := make([]soup.Root, 0)
+		for _, t := range []string{"h1", "h2", "h3", "h4", "h5", "h6"} {
+			headings = append(headings, document.FindAll(t)...)
+		}
+		var heading soup.Root
+		found := false
+		for _, h := range headings {
+			if id, ok := h.Attrs()["id"]; ok && id == kw.documentationHeadingSlug {
+				heading = h
+				found = true
+				break
+			}
+			anchor := slugify.Marshal(strings.TrimSpace(h.Text()), true)
+			anchor = regexp.MustCompile(`^weight-%d+-title-`).ReplaceAllString(anchor, "")
+			if anchor == kw.documentationHeadingSlug {
+				heading = h
+				found = true
+				break
+			}
+		}
+		if !found {
+			fmt.Fprintf(os.Stderr, "Failed to find heading %s in %s\n", kw.documentationHeadingSlug, kw.documentationFile)
+			continue
+		}
+		Keywords[i].Description, _ = html2md.ConvertString(htmlBetweenHeadingAndNextHeading(heading, heading))
+	}
 }
 
 func addVariableDefsOnSection(sectionName string, variables []VariableDefinition) {
@@ -72,14 +134,18 @@ func parseDocumentationMarkdownWithRootSectionName(source []byte, headingRootLev
 	return sections
 }
 
-func parseDocumentationMarkdown(source []byte, headingRootLevel int) (sections []SectionDefinition) {
+func markdownToHTML(source []byte) soup.Root {
 	var html bytes.Buffer
 	err := md.Convert(source, &html)
 	if err != nil {
 		panic(err)
 	}
 
-	document := soup.HTMLParse(html.String())
+	return soup.HTMLParse(html.String())
+}
+
+func parseDocumentationMarkdown(source []byte, headingRootLevel int) (sections []SectionDefinition) {
+	document := markdownToHTML(source)
 	for _, table := range document.FindAll("table") {
 		if !arraysEqual(tableHeaderCells(table), []string{"name", "description", "type", "default"}) {
 			continue
@@ -162,122 +228,34 @@ func backtrackToNearestHeader(element soup.Root) soup.Root {
 	return backtrackToNearestHeader(prev)
 }
 
-var MarkdownHeaderPattern = regexp.MustCompile(`^(#+)\s+(.*)$`)
-var MarkdownTableStart = `| name | description | type | default |`
-
-type SectionDefinition struct {
-	Path        []string
-	Subsections []SectionDefinition
-	Variables   []VariableDefinition
-}
-
-func (s SectionDefinition) Name() string {
-	if len(s.Path) == 0 {
+func htmlBetweenHeadingAndNextHeading(heading soup.Root, element soup.Root) string {
+	next := element.FindNextElementSibling()
+	if isHeading(next) && headingLevel(next) == headingLevel(heading) {
 		return ""
 	}
-	return s.Path[len(s.Path)-1]
+
+	defer func() string {
+		if crash := recover(); crash != nil {
+			fmt.Fprintf(os.Stderr, "Panic while rendering %s\n", next.HTML())
+		}
+		return ""
+	}()
+
+	rendered := next.HTML()
+
+	return rendered + htmlBetweenHeadingAndNextHeading(heading, next)
 }
 
-func (s SectionDefinition) JSONName() string {
-	return strings.ToLower(s.Name())
+func isHeading(element soup.Root) bool {
+	return regexp.MustCompile(`^h[1-6]$`).MatchString(element.NodeValue)
 }
 
-type VariableDefinition struct {
-	Name        string
-	Description string
-	Type        string
-	Default     string
-}
-
-func (s SectionDefinition) TypeName() string {
-	return "Configuration" + toPascalCase(strings.Join(s.Path, "_"))
-}
-
-func (s SectionDefinition) Typedef() string {
-	out := fmt.Sprintf("type %s struct {\n", s.TypeName())
-	for _, def := range s.Variables {
-		out += fmt.Sprintf("\t// %s\n", def.Description)
-		out += fmt.Sprintf("\t%s %s `json:\"%s\"`\n", def.PascalCaseName(), def.GoType(), def.Name)
-		out += "\n"
+func headingLevel(heading soup.Root) int {
+	level, err := strconv.Atoi(heading.NodeValue[1:])
+	if err != nil {
+		panic(err)
 	}
-	for _, sec := range s.Subsections {
-		out += fmt.Sprintf("\t%s %s `json:\"%s\"`\n", sec.Name(), sec.TypeName(), strings.ToLower(sec.Name()))
-	}
-	out += "}\n"
-	out += "\n"
-
-	for _, sec := range s.Subsections {
-		out += sec.Typedef()
-	}
-	return out
-}
-
-func (v VariableDefinition) PrettyDefault() string {
-	if v.Default == "[[Empty]]" {
-		return "*(empty)*"
-	}
-	return v.Default
-}
-
-func (v VariableDefinition) GoType() string {
-	switch v.Type {
-	case "int":
-		return "int"
-	case "bool":
-		return "bool"
-	case "float", "floatvalue":
-		return "float32"
-	case "color":
-		return "color.RGBA"
-	case "vec2":
-		return "[2]float32"
-	case "MOD":
-		return "[]ModKey"
-	case "str", "string":
-		return "string"
-	case "gradient":
-		return "GradientValue"
-	default:
-		panic("unknown type: " + v.Type)
-	}
-
-}
-
-func (v VariableDefinition) ParserType() string {
-	// Integer ValueKind = iota
-	// Bool
-	// Float
-	// Color
-	// Vec2
-	// Modmask
-	// String
-	// Gradient
-	// Custom
-
-	switch v.Type {
-	case "int":
-		return "Integer"
-	case "bool":
-		return "Bool"
-	case "float":
-		return "Float"
-	case "color":
-		return "Color"
-	case "vec2":
-		return "Vec2"
-	case "MOD":
-		return "Modmask"
-	case "str", "string":
-		return "String"
-	case "gradient":
-		return "Gradient"
-	default:
-		panic("unknown type: " + v.Type)
-	}
-}
-
-func (v VariableDefinition) PascalCaseName() string {
-	return toPascalCase(v.Name)
+	return level
 }
 
 func arraysEqual(a, b []string) bool {
@@ -298,21 +276,4 @@ func toPascalCase(s string) string {
 		out += strings.ToUpper(word[:1]) + word[1:]
 	}
 	return out
-}
-
-func FindSectionDefinitionByName(name string) *SectionDefinition {
-	for _, sec := range Sections {
-		if sec.Name() == name || sec.JSONName() == name {
-			return &sec
-		}
-	}
-	return nil
-}
-
-func FindVariableDefinitionInSection(sectionName, variableName string) *VariableDefinition {
-	sec := FindSectionDefinitionByName(sectionName)
-	if sec == nil {
-		return nil
-	}
-	return sec.VariableDefinition(variableName)
 }

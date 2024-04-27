@@ -294,6 +294,27 @@ func (h Handler) Hover(ctx context.Context, params *protocol.HoverParams) (*prot
 					},
 				},
 			}, nil
+		} else if kw, found := parser_data.FindKeyword(key); found {
+			flagsLine := ""
+			if len(kw.Flags) > 0 {
+				flagsLine = fmt.Sprintf("\n- Accepts the following flags: %s\n", strings.Join(kw.Flags, ", "))
+			}
+			return &protocol.Hover{
+				Contents: protocol.MarkupContent{
+					Kind:  protocol.Markdown,
+					Value: fmt.Sprintf("### %s [[docs]](%s)%s\n%s", kw.Name, kw.DocumentationLink(), flagsLine, kw.Description),
+				},
+				Range: &protocol.Range{
+					Start: protocol.Position{
+						Line:      params.Position.Line,
+						Character: uint32(indexOfFirstNonWhitespace),
+					},
+					End: protocol.Position{
+						Line:      params.Position.Line,
+						Character: uint32(indexOfLastNonWhitespace),
+					},
+				},
+			}, nil
 		}
 	}
 

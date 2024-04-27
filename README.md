@@ -3,6 +3,7 @@
 <table>
 <tr>
 	<td> <img src="./demo-hover.png">
+	<td> <img src="./demo-hover-keyword.png">
 	<td> <img src="./demo-symbols.png">
 	<td> <img src="./demo-colors.png">
 </tr>

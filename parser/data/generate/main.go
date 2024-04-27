@@ -17,7 +17,13 @@ func main() {
 		}
 	}
 
-	jsoned, _ := json.Marshal(rootSections)
+	jsoned, _ := json.Marshal(struct {
+		Sections []SectionDefinition `json:"sections"`
+		Keywords []KeywordDefinition `json:"keywords"`
+	}{
+		Sections: rootSections,
+		Keywords: Keywords,
+	})
 	os.WriteFile(os.Args[1], jsoned, 0644)
 
 	fmt.Println(heredoc.Doc(`package parser

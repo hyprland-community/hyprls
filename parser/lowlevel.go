@@ -9,6 +9,7 @@ import (
 	"strings"
 	"unicode"
 
+	parser_data "github.com/ewen-lbh/hyprls/parser/data"
 	"go.lsp.dev/protocol"
 )
 
@@ -270,7 +271,7 @@ func parseEqualLine(line string, originalLine string, start Position) (ass Assig
 	// valueRaw := strings.TrimSpace(parts[1])
 	key := strings.TrimSpace(parts[0])
 	isCustomVar = strings.HasPrefix(key, "$")
-	isStatement = IsKeyword(key)
+	_, isStatement = parser_data.FindKeyword(key)
 
 	var valueRaw string
 	encounteredEquals := false
