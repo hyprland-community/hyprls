@@ -25,7 +25,7 @@ export function activate(context: ExtensionContext) {
       transport: TransportKind.stdio,
     },
     debug: {
-      command: "/home/uwun/projects/hyprlang-lsp/hyprlang-lsp",
+      command: "/home/uwun/projects/hyprls/hyprlang-lsp",
       transport: TransportKind.stdio,
     },
   }
