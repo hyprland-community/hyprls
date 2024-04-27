@@ -3,7 +3,7 @@
   "description": "VSCode extension for HyprLS",
   "author": "Ewen Le Bihan <hey@ewen.works>",
   "license": "MIT",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/ewen-lbh/hyprlang-ls"
@@ -15,19 +15,31 @@
     "vscode": "^1.75.0"
   },
   "contributes": {
-    "languages": [{
-      "id": "hyprlang",
-      "aliases": ["HyprLang"],
-      "extensions": [".hl"],
-      "filenamePatterns": ["hypr*.conf"]
-    }],
-    "commands": [{
-      "category": "HyprLS",
-      "title": "Restart language server",
-      "command": "vscode-hyprls.restart-lsp"
-    }]
+    "languages": [
+      {
+        "id": "hyprlang",
+        "aliases": [
+          "HyprLang"
+        ],
+        "extensions": [
+          ".hl"
+        ],
+        "filenamePatterns": [
+          "hypr*.conf"
+        ]
+      }
+    ],
+    "commands": [
+      {
+        "category": "HyprLS",
+        "title": "Restart language server",
+        "command": "vscode-hyprls.restart-lsp"
+      }
+    ]
   },
-  "activationEvents": [ "onLanguage:hyprlang" ],
+  "activationEvents": [
+    "onLanguage:hyprlang"
+  ],
   "main": "./out/extension",
   "scripts": {
     "vscode:prepublish": "npm run compile",
