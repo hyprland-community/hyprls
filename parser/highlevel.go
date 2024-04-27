@@ -5,21 +5,20 @@ import "image/color"
 type Configuration struct {
 	CustomVariables map[string]string
 
-	General ConfigurationGeneral
-	Decoration ConfigurationDecoration
-	Animations ConfigurationAnimations
-	Input ConfigurationInput
-	Gestures ConfigurationGestures
-	Group ConfigurationGroup
-	Misc ConfigurationMisc
-	Binds ConfigurationBinds
-	XWayland ConfigurationXWayland
-	OpenGL ConfigurationOpenGL
-	Debug ConfigurationDebug
-	Master ConfigurationMaster
-	Dwindle ConfigurationDwindle
+	General    ConfigurationGeneral    `json:"general"`
+	Decoration ConfigurationDecoration `json:"decoration"`
+	Animations ConfigurationAnimations `json:"animations"`
+	Input      ConfigurationInput      `json:"input"`
+	Gestures   ConfigurationGestures   `json:"gestures"`
+	Group      ConfigurationGroup      `json:"group"`
+	Misc       ConfigurationMisc       `json:"misc"`
+	Binds      ConfigurationBinds      `json:"binds"`
+	XWayland   ConfigurationXWayland   `json:"xwayland"`
+	OpenGL     ConfigurationOpenGL     `json:"opengl"`
+	Debug      ConfigurationDebug      `json:"debug"`
+	Master     ConfigurationMaster     `json:"master"`
+	Dwindle    ConfigurationDwindle    `json:"dwindle"`
 }
-
 
 type ConfigurationGeneral struct {
 	// mouse sensitivity (legacy, may cause bugs if not 1, prefer input:sensitivity)
@@ -81,9 +80,7 @@ type ConfigurationGeneral struct {
 
 	// force floating windows to use a specific corner when being resized (1-4 going clockwise from top left, 0 to disable)
 	ResizeCorner int `json:"resize_corner"`
-
 }
-
 
 type ConfigurationDecoration struct {
 	// rounded corners' radius (in layout px)
@@ -182,9 +179,7 @@ type ConfigurationDecorationBlur struct {
 
 	// works like ignorealpha in layer rules. If pixel opacity is below set value, will not blur. [0.0 - 1.0]
 	PopupsIgnorealpha float32 `json:"popups_ignorealpha"`
-
 }
-
 
 type ConfigurationAnimations struct {
 	// enable animations
@@ -192,9 +187,7 @@ type ConfigurationAnimations struct {
 
 	// enable first launch animation
 	FirstLaunchAnimation bool `json:"first_launch_animation"`
-
 }
-
 
 type ConfigurationInput struct {
 	// Appropriate XKB keymap parameter. See the note below.
@@ -271,9 +264,7 @@ type ConfigurationInput struct {
 
 	// Handles axis events around (gaps/border for tiled, dragarea/border for floated) a focused window. 0 ignores axis events 1 sends out-of-bound coordinates 2 fakes pointer coordinates to the closest point inside the window 3 warps the cursor to the closest point inside the window
 	OffWindowAxisEvents int `json:"off_window_axis_events"`
-
 }
-
 
 type ConfigurationGestures struct {
 	// enable workspace swipe gesture on touchpad
@@ -311,9 +302,7 @@ type ConfigurationGestures struct {
 
 	// if enabled, swiping will use the r prefix instead of the m prefix for finding workspaces.
 	WorkspaceSwipeUseR bool `json:"workspace_swipe_use_r"`
-
 }
-
 
 type ConfigurationGroup struct {
 	// whether new windows in a group spawn after current or at group tail
@@ -376,9 +365,7 @@ type ConfigurationGroupGroupbar struct {
 
 	// inactive locked group border color
 	ColLockedInactive GradientValue `json:"col.locked_inactive"`
-
 }
-
 
 type ConfigurationMisc struct {
 	// disables the random Hyprland logo / anime girl background. :(
@@ -479,9 +466,7 @@ type ConfigurationMisc struct {
 
 	// if enabled, windows will open on the workspace they were invoked on. 0 - disabled, 1 - single-shot, 2 - persistent (all children too)
 	InitialWorkspaceTracking int `json:"initial_workspace_tracking"`
-
 }
-
 
 type ConfigurationBinds struct {
 	// if disabled, will not pass the mouse events to apps / dragging windows around if a keybind has been triggered.
@@ -510,9 +495,7 @@ type ConfigurationBinds struct {
 
 	// If enabled, apps that request keybinds to be disabled (e.g. VMs) will not be able to do so.
 	DisableKeybindGrabbing bool `json:"disable_keybind_grabbing"`
-
 }
-
 
 type ConfigurationXWayland struct {
 	// uses the nearest neigbor filtering for xwayland apps, making them pixelated rather than blurry
@@ -520,9 +503,7 @@ type ConfigurationXWayland struct {
 
 	// forces a scale of 1 on xwayland windows on scaled displays.
 	ForceZeroScaling bool `json:"force_zero_scaling"`
-
 }
-
 
 type ConfigurationOpenGL struct {
 	// reduces flickering on nvidia at the cost of possible frame drops on lower-end GPUs. On non-nvidia, this is ignored.
@@ -530,9 +511,7 @@ type ConfigurationOpenGL struct {
 
 	// forces introspection at all times. Introspection is aimed at reducing GPU usage in certain cases, but might cause graphical glitches on nvidia. 0 - nothing, 1 - force always on, 2 - force always on if nvidia
 	ForceIntrospection int `json:"force_introspection"`
-
 }
-
 
 type ConfigurationDebug struct {
 	// print the debug performance overlay. Disable VFR for accurate results.
@@ -567,9 +546,7 @@ type ConfigurationDebug struct {
 
 	// limits the number of displayed config file parsing errors.
 	ErrorLimit int `json:"error_limit"`
-
 }
-
 
 type ConfigurationMaster struct {
 	// enable adding additional master windows in a horizontal split style
@@ -604,9 +581,7 @@ type ConfigurationMaster struct {
 
 	// when enabled, dragging and dropping windows will put them at the cursor position. Otherwise, when dropped at the stack side, they will go to the top/bottom of the stack depending on new_on_top.
 	DropAtCursor bool `json:"drop_at_cursor"`
-
 }
-
 
 type ConfigurationDwindle struct {
 	// enable pseudotiling. Pseudotiled windows retain their floating size when tiled.
@@ -641,10 +616,4 @@ type ConfigurationDwindle struct {
 
 	// the default split ratio on window open. 1 means even 50/50 split. [0.1 - 1.9]
 	DefaultSplitRatio float32 `json:"default_split_ratio"`
-
 }
-
-
-
-
-

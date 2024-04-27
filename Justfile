@@ -21,4 +21,5 @@ parser-data:
 	cd parser/data/generate
 	go build -o generator main.go 
 	./generator > ../../highlevel.go ast.json
+	gofmt -s -w ../../highlevel.go
 	jq . < ast.json | sponge ast.json
