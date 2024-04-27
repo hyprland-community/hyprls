@@ -1102,5 +1102,153 @@
         "Default": "5"
       }
     ]
+  },
+  {
+    "Path": [
+      "Master"
+    ],
+    "Subsections": [],
+    "Variables": [
+      {
+        "Name": "allow_small_split",
+        "Description": "enable adding additional master windows in a horizontal split style",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "special_scale_factor",
+        "Description": "the scale of the special workspace windows. [0.0 - 1.0]",
+        "Type": "float",
+        "Default": "1"
+      },
+      {
+        "Name": "mfact",
+        "Description": "master split factor, the ratio of master split, relative float delta (e.g -0.2 or +0.2) or exact followed by a the exact float value (e.g. exact 0.55) [0.0 - 1.0]",
+        "Type": "floatvalue",
+        "Default": "0.55"
+      },
+      {
+        "Name": "new_is_master",
+        "Description": "whether a newly open window should replace the master or join the slaves.",
+        "Type": "bool",
+        "Default": "true"
+      },
+      {
+        "Name": "new_on_top",
+        "Description": "whether a newly open window should be on the top of the stack",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "no_gaps_when_only",
+        "Description": "whether to apply gaps when there is only one window on a workspace, aka. smart gaps. (default: disabled - 0) no border - 1, with border - 2 [0/1/2]",
+        "Type": "int",
+        "Default": "0"
+      },
+      {
+        "Name": "orientation",
+        "Description": "default placement of the master area, can be left, right, top, bottom or center",
+        "Type": "string",
+        "Default": "left"
+      },
+      {
+        "Name": "inherit_fullscreen",
+        "Description": "inherit fullscreen status when cycling/swapping to another window (e.g. monocle layout)",
+        "Type": "bool",
+        "Default": "true"
+      },
+      {
+        "Name": "always_center_master",
+        "Description": "when using orientation=center, keep the master window centered, even when it is the only window in the workspace.",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "smart_resizing",
+        "Description": "if enabled, resizing direction will be determined by the mouse's position on the window (nearest to which corner). Else, it is based on the window's tiling position.",
+        "Type": "bool",
+        "Default": "true"
+      },
+      {
+        "Name": "drop_at_cursor",
+        "Description": "when enabled, dragging and dropping windows will put them at the cursor position. Otherwise, when dropped at the stack side, they will go to the top/bottom of the stack depending on new_on_top.",
+        "Type": "bool",
+        "Default": "true"
+      }
+    ]
+  },
+  {
+    "Path": [
+      "Dwindle"
+    ],
+    "Subsections": [],
+    "Variables": [
+      {
+        "Name": "pseudotile",
+        "Description": "enable pseudotiling. Pseudotiled windows retain their floating size when tiled.",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "force_split",
+        "Description": "0 -> split follows mouse, 1 -> always split to the left (new = left or top) 2 -> always split to the right (new = right or bottom)",
+        "Type": "int",
+        "Default": "0"
+      },
+      {
+        "Name": "preserve_split",
+        "Description": "if enabled, the split (side/top) will not change regardless of what happens to the container.",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "smart_split",
+        "Description": "if enabled, allows a more precise control over the window split direction based on the cursor's position. The window is conceptually divided into four triangles, and cursor's triangle determines the split direction. This feature also turns on preserve_split.",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "smart_resizing",
+        "Description": "if enabled, resizing direction will be determined by the mouse's position on the window (nearest to which corner). Else, it is based on the window's tiling position.",
+        "Type": "bool",
+        "Default": "true"
+      },
+      {
+        "Name": "permanent_direction_override",
+        "Description": "if enabled, makes the preselect direction persist until either this mode is turned off, another direction is specified, or a non-direction is specified (anything other than l,r,u/t,d/b)",
+        "Type": "bool",
+        "Default": "false"
+      },
+      {
+        "Name": "special_scale_factor",
+        "Description": "specifies the scale factor of windows on the special workspace [0 - 1]",
+        "Type": "float",
+        "Default": "1"
+      },
+      {
+        "Name": "split_width_multiplier",
+        "Description": "specifies the auto-split width multiplier",
+        "Type": "float",
+        "Default": "1.0"
+      },
+      {
+        "Name": "no_gaps_when_only",
+        "Description": "whether to apply gaps when there is only one window on a workspace, aka. smart gaps. (default: disabled - 0) no border - 1, with border - 2 [0/1/2]",
+        "Type": "int",
+        "Default": "0"
+      },
+      {
+        "Name": "use_active_for_splits",
+        "Description": "whether to prefer the active window or the mouse position for splits",
+        "Type": "bool",
+        "Default": "true"
+      },
+      {
+        "Name": "default_split_ratio",
+        "Description": "the default split ratio on window open. 1 means even 50/50 split. [0.1 - 1.9]",
+        "Type": "float",
+        "Default": "1.0"
+      }
+    ]
   }
 ]

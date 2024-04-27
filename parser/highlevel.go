@@ -16,6 +16,8 @@ type Configuration struct {
 	XWayland ConfigurationXWayland
 	OpenGL ConfigurationOpenGL
 	Debug ConfigurationDebug
+	Master ConfigurationMaster
+	Dwindle ConfigurationDwindle
 }
 
 
@@ -565,6 +567,80 @@ type ConfigurationDebug struct {
 
 	// limits the number of displayed config file parsing errors.
 	ErrorLimit int `json:"error_limit"`
+
+}
+
+
+type ConfigurationMaster struct {
+	// enable adding additional master windows in a horizontal split style
+	AllowSmallSplit bool `json:"allow_small_split"`
+
+	// the scale of the special workspace windows. [0.0 - 1.0]
+	SpecialScaleFactor float32 `json:"special_scale_factor"`
+
+	// master split factor, the ratio of master split, relative float delta (e.g -0.2 or +0.2) or exact followed by a the exact float value (e.g. exact 0.55) [0.0 - 1.0]
+	Mfact float32 `json:"mfact"`
+
+	// whether a newly open window should replace the master or join the slaves.
+	NewIsMaster bool `json:"new_is_master"`
+
+	// whether a newly open window should be on the top of the stack
+	NewOnTop bool `json:"new_on_top"`
+
+	// whether to apply gaps when there is only one window on a workspace, aka. smart gaps. (default: disabled - 0) no border - 1, with border - 2 [0/1/2]
+	NoGapsWhenOnly int `json:"no_gaps_when_only"`
+
+	// default placement of the master area, can be left, right, top, bottom or center
+	Orientation string `json:"orientation"`
+
+	// inherit fullscreen status when cycling/swapping to another window (e.g. monocle layout)
+	InheritFullscreen bool `json:"inherit_fullscreen"`
+
+	// when using orientation=center, keep the master window centered, even when it is the only window in the workspace.
+	AlwaysCenterMaster bool `json:"always_center_master"`
+
+	// if enabled, resizing direction will be determined by the mouse's position on the window (nearest to which corner). Else, it is based on the window's tiling position.
+	SmartResizing bool `json:"smart_resizing"`
+
+	// when enabled, dragging and dropping windows will put them at the cursor position. Otherwise, when dropped at the stack side, they will go to the top/bottom of the stack depending on new_on_top.
+	DropAtCursor bool `json:"drop_at_cursor"`
+
+}
+
+
+type ConfigurationDwindle struct {
+	// enable pseudotiling. Pseudotiled windows retain their floating size when tiled.
+	Pseudotile bool `json:"pseudotile"`
+
+	// 0 -> split follows mouse, 1 -> always split to the left (new = left or top) 2 -> always split to the right (new = right or bottom)
+	ForceSplit int `json:"force_split"`
+
+	// if enabled, the split (side/top) will not change regardless of what happens to the container.
+	PreserveSplit bool `json:"preserve_split"`
+
+	// if enabled, allows a more precise control over the window split direction based on the cursor's position. The window is conceptually divided into four triangles, and cursor's triangle determines the split direction. This feature also turns on preserve_split.
+	SmartSplit bool `json:"smart_split"`
+
+	// if enabled, resizing direction will be determined by the mouse's position on the window (nearest to which corner). Else, it is based on the window's tiling position.
+	SmartResizing bool `json:"smart_resizing"`
+
+	// if enabled, makes the preselect direction persist until either this mode is turned off, another direction is specified, or a non-direction is specified (anything other than l,r,u/t,d/b)
+	PermanentDirectionOverride bool `json:"permanent_direction_override"`
+
+	// specifies the scale factor of windows on the special workspace [0 - 1]
+	SpecialScaleFactor float32 `json:"special_scale_factor"`
+
+	// specifies the auto-split width multiplier
+	SplitWidthMultiplier float32 `json:"split_width_multiplier"`
+
+	// whether to apply gaps when there is only one window on a workspace, aka. smart gaps. (default: disabled - 0) no border - 1, with border - 2 [0/1/2]
+	NoGapsWhenOnly int `json:"no_gaps_when_only"`
+
+	// whether to prefer the active window or the mouse position for splits
+	UseActiveForSplits bool `json:"use_active_for_splits"`
+
+	// the default split ratio on window open. 1 means even 50/50 split. [0.1 - 1.9]
+	DefaultSplitRatio float32 `json:"default_split_ratio"`
 
 }
 

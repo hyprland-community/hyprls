@@ -22,6 +22,12 @@ func debug(msg string, fmtArgs ...any) {
 //go:embed Variables.md
 var documentationSource []byte
 
+//go:embed Master-Layout.md
+var masterLayoutDocumentationSource []byte
+
+//go:embed Dwindle-Layout.md
+var dwindleLayoutDocumentationSource []byte
+
 var Sections = []SectionDefinition{}
 
 func (s SectionDefinition) VariableDefinition(name string) *VariableDefinition {
@@ -34,9 +40,22 @@ func (s SectionDefinition) VariableDefinition(name string) *VariableDefinition {
 }
 
 func init() {
-	// println("loading parser data...")
+	Sections = parseDocumentationMarkdown(documentationSource, 3)
+	Sections = append(Sections, parseDocumentationMarkdownWithRootSectionName(masterLayoutDocumentationSource, 2, "Master")...)
+	Sections = append(Sections, parseDocumentationMarkdownWithRootSectionName(dwindleLayoutDocumentationSource, 2, "Dwindle")...)
+}
+
+func parseDocumentationMarkdownWithRootSectionName(source []byte, headingRootLevel int, rootSectionName string) []SectionDefinition {
+	sections := parseDocumentationMarkdown(source, headingRootLevel)
+	for i := range sections {
+		sections[i].Path[0] = rootSectionName
+	}
+	return sections
+}
+
+func parseDocumentationMarkdown(source []byte, headingRootLevel int) (sections []SectionDefinition) {
 	var html bytes.Buffer
-	err := md.Convert(documentationSource, &html)
+	err := md.Convert(source, &html)
 	if err != nil {
 		panic(err)
 	}
@@ -49,7 +68,7 @@ func init() {
 
 		// fmt.Printf("Processing table %s\n", table.HTML())
 		section := SectionDefinition{
-			Path: tablePath(table),
+			Path: tablePath(table, headingRootLevel),
 		}
 		section.Variables = make([]VariableDefinition, 0)
 		for _, row := range table.FindAll("tr")[1:] {
@@ -64,14 +83,15 @@ func init() {
 				Type:        cells[2].FullText(),
 				Default:     cells[3].FullText()})
 		}
-		Sections = append(Sections, section)
+		sections = append(sections, section)
 	}
 
-	for i, section := range Sections {
+	for i, section := range sections {
 		if len(section.Path) == 1 {
-			Sections[i] = section.AttachSubsections(Sections)
+			sections[i] = section.AttachSubsections(sections)
 		}
 	}
+	return sections
 }
 
 func (s SectionDefinition) AttachSubsections(sections []SectionDefinition) SectionDefinition {
@@ -89,15 +109,6 @@ func (s SectionDefinition) AttachSubsections(sections []SectionDefinition) Secti
 	return s
 }
 
-func contains(arr []string, s string) bool {
-	for _, v := range arr {
-		if v == s {
-			return true
-		}
-	}
-	return false
-}
-
 func tableHeaderCells(table soup.Root) []string {
 	headerCells := table.FindAll("th")
 	cells := make([]string, 0, len(headerCells))
@@ -107,16 +118,16 @@ func tableHeaderCells(table soup.Root) []string {
 	return cells
 }
 
-func tablePath(table soup.Root) []string {
+func tablePath(table soup.Root, headingRootLevel int) []string {
 	header := backtrackToNearestHeader(table)
 	level, err := strconv.Atoi(header.NodeValue[1:])
 	if err != nil {
 		panic(err)
 	}
-	if level <= 3 {
+	if level <= headingRootLevel {
 		return []string{header.FullText()}
 	}
-	return append(tablePath(header.FindPrevElementSibling()), header.FullText())
+	return append(tablePath(header.FindPrevElementSibling(), headingRootLevel), header.FullText())
 }
 
 func backtrackToNearestHeader(element soup.Root) soup.Root {
@@ -191,7 +202,7 @@ func (v VariableDefinition) GoType() string {
 		return "int"
 	case "bool":
 		return "bool"
-	case "float":
+	case "float", "floatvalue":
 		return "float32"
 	case "color":
 		return "color.RGBA"

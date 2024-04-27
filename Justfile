@@ -6,6 +6,8 @@ run:
 
 build:
 	cp hyprland-wiki/pages/Configuring/Variables.md parser/data/
+	cp hyprland-wiki/pages/Configuring/Master-Layout.md parser/data/
+	cp hyprland-wiki/pages/Configuring/Dwindle-Layout.md parser/data/
 	go mod tidy
 	go build -ldflags "-X main.OutputServerLogs={{ serverLogsFilepath }}" -o hyprlang-lsp cmd/main.go
 
@@ -18,5 +20,5 @@ parser-data:
 	set -euxo pipefail
 	cd parser/data/generate
 	go build -o generator main.go 
-	./generator < ../../../hyprland-wiki/pages/Configuring/Variables.md > ../../highlevel.go ast.json
+	./generator > ../../highlevel.go ast.json
 	jq . < ast.json | sponge ast.json
