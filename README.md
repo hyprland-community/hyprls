@@ -37,9 +37,13 @@ vim.api.nvim_create_autocmd({'BufEnter', 'BufWinEnter'}, {
 				print(string.format("starting hyprls for %s", vim.inspect(event)))
 				vim.lsp.start {
 						name = "hyprlang",
-						cmd = {"hyprlang-lsp"},
+						cmd = {"hyprls"},
 						root_dir = vim.fn.getcwd(),
 				}
 		end
 })
 ```
+
+### VSCode
+
+Go to Extensions > Install from VSIX... and select `vscode/vscode-hyprlang-0.0.1.vsix` from this repo.

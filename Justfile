@@ -11,7 +11,7 @@ build:
 
 install:
 	just build
-	cp hyprlang-lsp ~/.local/bin
+	cp hyprlang-lsp ~/.local/bin/hyprls
 
 parser-data:
 	#!/bin/bash
