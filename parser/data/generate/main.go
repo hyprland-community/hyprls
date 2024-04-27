@@ -29,7 +29,7 @@ func main() {
 	`))
 
 	for _, section := range rootSections {
-		fmt.Printf("\t%s %s\n", section.Name(), section.TypeName())
+		fmt.Printf("\t%s %s `json:\"%s\"`\n", section.Name(), section.TypeName(), section.JSONName())
 	}
 
 	fmt.Println("}\n\n")
