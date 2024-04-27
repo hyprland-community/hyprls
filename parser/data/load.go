@@ -234,11 +234,12 @@ func htmlBetweenHeadingAndNextHeading(heading soup.Root, element soup.Root) stri
 		return ""
 	}
 
-	defer func() string {
+	defer func() {
 		if crash := recover(); crash != nil {
-			fmt.Fprintf(os.Stderr, "Panic while rendering %s\n", next.HTML())
+			if os.Getenv("DEBUG") != "" {
+				fmt.Fprintf(os.Stderr, "Panic while rendering %s\n", next.HTML())
+			}
 		}
-		return ""
 	}()
 
 	rendered := next.HTML()

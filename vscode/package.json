@@ -1,5 +1,5 @@
 {
-  "name": "vscode-hyprlang",
+  "name": "vscode-hyprls",
   "description": "VSCode extension for HyprLS",
   "author": "Ewen Le Bihan <hey@ewen.works>",
   "license": "MIT",
@@ -14,9 +14,20 @@
   "engines": {
     "vscode": "^1.75.0"
   },
-  "activationEvents": [
-    "onLanguage:plaintext"
-  ],
+  "contributes": {
+    "languages": [{
+      "id": "hyprlang",
+      "aliases": ["HyprLang"],
+      "extensions": [".hl"],
+      "filenamePatterns": ["hypr*.conf"]
+    }],
+    "commands": [{
+      "category": "HyprLS",
+      "title": "Restart language server",
+      "command": "vscode-hyprls.restart-lsp"
+    }]
+  },
+  "activationEvents": [ "onLanguage:hyprlang" ],
   "main": "./out/extension",
   "scripts": {
     "vscode:prepublish": "npm run compile",

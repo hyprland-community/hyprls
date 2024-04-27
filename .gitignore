@@ -28,3 +28,5 @@ go.work
 hyprlang-lsp
 parser/data/generate/generator
 logs
+*.vsix
+hyprls

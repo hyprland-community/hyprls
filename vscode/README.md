@@ -1,5 +1,5 @@
-# VSCode Extension for Ortfo
+# VSCode Extension for Hyprland configuraiton files
 
 ## Installation
 
-Requires [installing `ortfodb`](https://ortfo.org/db/getting-started#installation) and having in on your PATH.
+Requires [installing `hyprls`](https://github.com/ewen-lbh/hyprls) and having in on your PATH.

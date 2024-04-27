@@ -34,7 +34,7 @@
 			"label": "go:compile",
 			"type": "shell",
 			"command": "just",
-			"args": ["install"]
+			"args": ["build-debug"]
 		}
   ]
 }

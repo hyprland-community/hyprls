@@ -3,7 +3,7 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-import { ExtensionContext, workspace } from "vscode"
+import { commands, ExtensionContext, workspace } from "vscode"
 
 import {
   LanguageClient,
@@ -33,12 +33,18 @@ export function activate(context: ExtensionContext) {
   // Options to control the language client
   const clientOptions: LanguageClientOptions = {
     // Register the server for plain text documents
-    documentSelector: [{ scheme: "file", language: "plaintext" }],
-    outputChannelName: "hyprls",
+    documentSelector: [{ scheme: "file", language: "hyprlang" }],
+    outputChannelName: "HyprLS",
     synchronize: {
       fileEvents: workspace.createFileSystemWatcher("*.hl"),
     },
   }
+
+  context.subscriptions.push(
+    commands.registerCommand("vscode-hyprls.restart-lsp", () => {
+      client.restart()
+    })
+  )
 
   // Create the language client and start the client.
   client = new LanguageClient("hyprlang", "Hypr", serverOptions, clientOptions)

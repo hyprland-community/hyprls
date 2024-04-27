@@ -1,4 +1,13 @@
 serverLogsFilepath := `realpath ./logs/server.log`
+latestTag := `git describe --tags --abbrev=0 || echo commit:$(git rev-parse --short HEAD)`
+
+release tag:
+	jq '.version = "{{ tag }}"' < vscode/package.json | sponge vscode/package.json
+	git add vscode/package.json
+	git commit -m "Release {{ tag }}"
+	git tag -- {{ tag }}
+	cd vscode; bun vsce package; bun vsce publish
+	git push
 
 run:
 	just build
@@ -8,11 +17,17 @@ build:
 	mkdir -p parser/data/sources
 	cp hyprland-wiki/pages/Configuring/*.md parser/data/sources/
 	go mod tidy
-	go build -ldflags "-X main.OutputServerLogs={{ serverLogsFilepath }}" -o hyprlang-lsp cmd/main.go
+	go build -ldflags "-X main.Version={{ latestTag }}" -o hyprls cmd/hyprls/main.go
+
+build-debug:
+	mkdir -p parser/data/sources
+	cp hyprland-wiki/pages/Configuring/*.md parser/data/sources/
+	go mod tidy
+	go build -ldflags "-X main.OutputServerLogs={{ serverLogsFilepath }}" -o hyprlang-lsp cmd/hyprls/main.go
 
 install:
 	just build
-	cp hyprlang-lsp ~/.local/bin/hyprls
+	cp hyprls ~/.local/bin/hyprls
 
 parser-data:
 	#!/bin/bash

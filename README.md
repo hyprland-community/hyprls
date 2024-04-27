@@ -1,4 +1,4 @@
-# HyprLS (huge WIP rn)
+# HyprLS 
 
 <table>
 <tr>
@@ -14,16 +14,35 @@
 
 A LSP server for Hyprland configuration files.
 
+## Features
+
+Not checked means planned / work in progress.
+
+- [x] Auto-complete
+- [x] Hover
+  - [ ] TODO: Documentation on hover of categories?
+- [x] Go to definition
+- [x] Color pickers
+- [x] Document symbols
+- [ ] Diagnostics
+- [ ] Formatting
+- [ ] Semantic highlighting
+
 ## Installation
 
+### With `go install`
 
-Right now you _have_ to build from source:
+```sh
+go install github.com/ewen-lbh/hyprls/cmd/hyprls@latest
+```
+
+### From source
 
 - Required: [Just](https://just.systems) (`paru -S just` on Arch Linux (btw))
 
 ```sh
-git clone --recurse-submodules git@github.com:ewen-lbh/hyprlang-lsp.git
-cd hyprlang-lsp
+git clone --recurse-submodules https://github.com/ewen-lbh/hyprls
+cd hyprls
 # installs the binary to ~/.local/bin. 
 # Make sure that directory exists and is in your PATH
 just install 
@@ -31,7 +50,11 @@ just install
 
 ## Usage
 
-Neovim example: add this to your `init.lua`:
+### With Neovim
+
+_Combine with [The tree-sitter grammar for Hyprlang](https://github.com/tree-sitter-grammars/tree-sitter-hyprlang) for syntax highlighting._
+
+Add this to your `init.lua`:
 
 ```lua
 -- Hyprlang LSP
@@ -50,4 +73,6 @@ vim.api.nvim_create_autocmd({'BufEnter', 'BufWinEnter'}, {
 
 ### VSCode
 
-Go to Extensions > Install from VSIX... and select `vscode/vscode-hyprlang-0.0.1.vsix` from this repo.
+_Combine with [FireBlast's Hyprlang extension](https://marketplace.visualstudio.com/items?itemName=fireblast.hyprlang-vscode) for syntax highlighting._
+
+<!-- Go to Extensions > Install from VSIX... and select `vscode/vscode-hyprlang-X.X.X.vsix` from this repo. -->

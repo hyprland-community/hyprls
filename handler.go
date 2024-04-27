@@ -134,8 +134,8 @@ func (h Handler) Initialize(ctx context.Context, params *protocol.InitializePara
 			},
 		},
 		ServerInfo: &protocol.ServerInfo{
-			Name:    "hyprlsp",
-			Version: "0.0.0",
+			Name:    "hyprls",
+			Version: Version,
 		},
 	}, nil
 }

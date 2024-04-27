@@ -12,6 +12,8 @@ import (
 	"go.uber.org/zap"
 )
 
+var Version string
+
 func StartServer(logger *zap.Logger, logClientIn string) {
 	logger.Debug("starting server")
 	conn := jsonrpc2.NewConn(jsonrpc2.NewStream(&readWriteCloser{
