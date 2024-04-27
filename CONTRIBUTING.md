@@ -40,6 +40,14 @@ bun i
 
 The VSCode dev environment is set up to use the debug binary in development. The path is absolute and hardcoded, so you may need to change it to where your debug binary is (check `vscode/src/extension.ts`).
 
+## Implementing a new LSP feature
+
+1. Make the server signal that it supports said feature in the `initialize` method in `handler.go`
+2. Add a new file for the feature in the root directory (e.g. `formatting.go`)
+3. Cut the corresponding method(s) from `unimplemented.go` and paste them in the new file
+
+Read on for more details on the file structure.
+
 ## File structure
 
 - `vscode/`: source code for the VSCode client extension
