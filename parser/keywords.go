@@ -3,7 +3,7 @@ package parser
 import "strings"
 
 var knownKeywords = []string{
-	"env", "envd", "monitor", "bind", "unbind", "submap", "windowrule", "windowrulev2", "layerrule", "workspace", "animation", "bezier", "exec", "exec-once",
+	"env", "envd", "monitor", "bind", "unbind", "submap", "windowrule", "windowrulev2", "layerrule", "workspace", "animation", "bezier", "exec", "exec-once", "source",
 }
 
 var keywordsWithFlags = map[string][]string{

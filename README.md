@@ -1,6 +1,12 @@
 # HyprLS (huge WIP rn)
 
-![](./demo.png)
+<table>
+<tr>
+	<td> <img src="./demo-hover.png">
+	<td> <img src="./demo-symbols.png">
+	<td> <img src="./demo-colors.png">
+</tr>
+</table>
 
 A LSP server for Hyprland configuration files.
 

@@ -18,6 +18,7 @@ require (
 require (
 	github.com/MakeNowJust/heredoc v1.0.0
 	github.com/anaskhan96/soup v1.2.5
+	github.com/mazznoer/csscolorparser v0.1.3
 	github.com/segmentio/asm v1.2.0 // indirect
 	github.com/segmentio/encoding v0.4.0 // indirect
 	github.com/yuin/goldmark v1.7.1

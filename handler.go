@@ -75,7 +75,13 @@ func (h Handler) Initialize(ctx context.Context, params *protocol.InitializePara
 	logger = h.Logger
 	return &protocol.InitializeResult{
 		Capabilities: protocol.ServerCapabilities{
-			HoverProvider: true,
+			HoverProvider:          true,
+			DocumentSymbolProvider: true,
+			ColorProvider:          true,
+			TextDocumentSync: protocol.TextDocumentSyncOptions{
+				OpenClose: true,
+				Change:    protocol.TextDocumentSyncKindFull,
+			},
 		},
 		ServerInfo: &protocol.ServerInfo{
 			Name:    "hyprlsp",
@@ -125,7 +131,16 @@ func (h Handler) CodeLensResolve(ctx context.Context, params *protocol.CodeLens)
 }
 
 func (h Handler) ColorPresentation(ctx context.Context, params *protocol.ColorPresentationParams) ([]protocol.ColorPresentation, error) {
-	return nil, errors.New("unimplemented")
+	logger.Debug("LSP:ColorPresentation", zap.Any("color", params.Color), zap.Any("range", params.Range))
+	return []protocol.ColorPresentation{
+		{
+			Label: encodeColorLiteral(params.Color),
+			TextEdit: &protocol.TextEdit{
+				Range:   params.Range,
+				NewText: encodeColorLiteral(params.Color),
+			},
+		},
+	}, nil
 }
 
 func (h Handler) Completion(ctx context.Context, params *protocol.CompletionParams) (*protocol.CompletionList, error) {
@@ -141,6 +156,7 @@ func (h Handler) Declaration(ctx context.Context, params *protocol.DeclarationPa
 }
 
 func (h Handler) DidChange(ctx context.Context, params *protocol.DidChangeTextDocumentParams) error {
+	logger.Debug("LSP:DidChange", zap.Any("params", params))
 	openedFiles[params.TextDocument.URI] = params.ContentChanges[len(params.ContentChanges)-1].Text
 	return nil
 }
@@ -172,7 +188,32 @@ func (h Handler) DidSave(ctx context.Context, params *protocol.DidSaveTextDocume
 }
 
 func (h Handler) DocumentColor(ctx context.Context, params *protocol.DocumentColorParams) ([]protocol.ColorInformation, error) {
-	return nil, errors.New("unimplemented")
+	document, err := parse(params.TextDocument.URI)
+	if err != nil {
+		return []protocol.ColorInformation{}, fmt.Errorf("while parsing: %w", err)
+	}
+	colors := make([]protocol.ColorInformation, 0)
+	document.WalkValues(func(a *parser.Assignment, v *parser.Value) {
+		if v.Kind == parser.Gradient {
+			for _, stop := range v.Gradient.Stops {
+				colors = append(colors, protocol.ColorInformation{
+					Color: stop.LSPColor(),
+					Range: stop.LSPRange(),
+				})
+			}
+			return
+		}
+
+		if v.Kind != parser.Color {
+			return
+		}
+
+		colors = append(colors, protocol.ColorInformation{
+			Color: v.LSPColor(),
+			Range: v.LSPRange(),
+		})
+	})
+	return colors, nil
 }
 
 func (h Handler) DocumentHighlight(ctx context.Context, params *protocol.DocumentHighlightParams) ([]protocol.DocumentHighlight, error) {
@@ -188,7 +229,15 @@ func (h Handler) DocumentLinkResolve(ctx context.Context, params *protocol.Docum
 }
 
 func (h Handler) DocumentSymbol(ctx context.Context, params *protocol.DocumentSymbolParams) ([]interface{}, error) {
-	return nil, errors.New("unimplemented")
+	document, err := parse(params.TextDocument.URI)
+	if err != nil {
+		return nil, fmt.Errorf("while parsing: %w", err)
+	}
+	symbols := make([]interface{}, 0)
+	for _, symb := range gatherAllSymbols(document) {
+		symbols = append(symbols, &symb)
+	}
+	return symbols, nil
 }
 
 func (h Handler) ExecuteCommand(ctx context.Context, params *protocol.ExecuteCommandParams) (interface{}, error) {
