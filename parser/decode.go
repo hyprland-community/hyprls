@@ -19,7 +19,7 @@ func (root Section) Decode() (Configuration, error) {
 		def := parser_data.FindVariableDefinitionInSection("General", ass.Key)
 		if def == nil {
 			availableKeys := make([]string, 0)
-			for _, v := range parser_data.FindSectionDefinitionByName("General").Variables{
+			for _, v := range parser_data.FindSectionDefinitionByName("General").Variables {
 				availableKeys = append(availableKeys, v.Name)
 			}
 			return Configuration{}, fmt.Errorf("unknown variable General > %s. Available keys are %v", ass.Key, availableKeys)

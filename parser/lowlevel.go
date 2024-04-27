@@ -13,7 +13,7 @@ import (
 	"go.lsp.dev/protocol"
 )
 
-var RootSection = "____root____"
+var RootSection = "General"
 
 type Position struct {
 	Line   int `json:"line"`
@@ -170,7 +170,7 @@ func (v Value) GoValue() any {
 
 }
 
-func (k ValueKind) LSP() protocol.SymbolKind {
+func (k ValueKind) LSPSymbol() protocol.SymbolKind {
 	switch k {
 	case Integer:
 		return protocol.SymbolKindNumber
@@ -235,7 +235,7 @@ func Parse(input string) (Section, error) {
 		}
 
 		if strings.Contains(line, "=") {
-			ass, stmt, customVar, isStatement, isCustomVar := parseEqualLine(line, originalLine, Position{i, 0})
+			ass, stmt, customVar, isStatement, isCustomVar := ParseEqualLine(line, originalLine, Position{i, 0})
 			pos := Position{i, strings.IndexFunc(line, unicode.IsPrint)}
 			if isCustomVar {
 				customVar.Position = pos
@@ -265,7 +265,7 @@ func Parse(input string) (Section, error) {
 	return document, nil
 }
 
-func parseEqualLine(line string, originalLine string, start Position) (ass Assignment, stmt Statement, customVar CustomVariable, isStatement bool, isCustomVar bool) {
+func ParseEqualLine(line string, originalLine string, start Position) (ass Assignment, stmt Statement, customVar CustomVariable, isStatement bool, isCustomVar bool) {
 	parts := strings.Split(line, "=")
 	// parts[1] = strings.SplitN(parts[1], " #", 2)[0]
 	// valueRaw := strings.TrimSpace(parts[1])
@@ -410,36 +410,36 @@ func parseValue(raw string, valueStart Position) Value {
 
 }
 
+var ModKeyNames = map[string]ModKey{
+	"SHIFT":   ModShift,
+	"CAPS":    ModCaps,
+	"CONTROL": ModControl,
+	"CTRL":    ModControl,
+	"ALT":     ModAlt,
+	"MOD2":    Mod2,
+	"MOD3":    Mod3,
+	"SUPER":   ModSuper,
+	"WIN":     ModSuper,
+	"LOGO":    ModSuper,
+	"MOD4":    ModSuper,
+	"MOD5":    Mod5,
+}
+
 func parseModMask(raw string) ([]ModKey, error) {
 	potentialMods := ModMaskSeparator.Split(raw, -1)
 	mods := make([]ModKey, 0, len(potentialMods))
 	for _, mod := range potentialMods {
-		switch mod {
-		case "SHIFT":
-			mods = append(mods, ModShift)
-		case "CAPS":
-			mods = append(mods, ModCaps)
-		case "CONTROL", "CTRL":
-			mods = append(mods, ModControl)
-		case "ALT":
-			mods = append(mods, ModAlt)
-		case "MOD2":
-			mods = append(mods, Mod2)
-		case "MOD3":
-			mods = append(mods, Mod3)
-		case "SUPER", "WIN", "LOGO", "MOD4":
-			mods = append(mods, ModSuper)
-		case "MOD5":
-			mods = append(mods, Mod5)
-		default:
-			return mods, fmt.Errorf("invalid mod %s", mod)
+		if key, ok := ModKeyNames[strings.ToUpper(mod)]; ok {
+			mods = append(mods, key)
+		} else {
+			return nil, fmt.Errorf("invalid mod key: %s", mod)
 		}
 	}
 	return mods, nil
 }
 
 func parseVec2(raw string) ([2]float32, error) {
-	args := strings.Split(raw, ",")
+	args := strings.Split(raw, " ")
 	if len(args) != 2 {
 		return [2]float32{}, errors.New("invalid vec2 value")
 	}
@@ -562,4 +562,28 @@ func (s Section) WalkCustomVariables(f func(v *CustomVariable)) {
 	for _, s := range s.Subsections {
 		s.WalkCustomVariables(f)
 	}
+}
+
+func ValueKindFromString(s string) (ValueKind, error) {
+	switch strings.ToLower(s) {
+	case "int", "integer":
+		return Integer, nil
+	case "bool":
+		return Bool, nil
+	case "float":
+		return Float, nil
+	case "color":
+		return Color, nil
+	case "vec2":
+		return Vec2, nil
+	case "mod", "modmask":
+		return Modmask, nil
+	case "str", "string":
+		return String, nil
+	case "gradient":
+		return Gradient, nil
+	default:
+		return Custom, fmt.Errorf("unknown value kind: %s", s)
+	}
+
 }

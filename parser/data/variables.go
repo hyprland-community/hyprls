@@ -8,14 +8,12 @@ func FindVariableDefinitionInSection(sectionName, variableName string) *Variable
 	return sec.VariableDefinition(variableName)
 }
 
-
 type VariableDefinition struct {
 	Name        string
 	Description string
 	Type        string
 	Default     string
 }
-
 
 func (v VariableDefinition) PrettyDefault() string {
 	if v.Default == "[[Empty]]" {
@@ -48,17 +46,9 @@ func (v VariableDefinition) GoType() string {
 
 }
 
-func (v VariableDefinition) ParserType() string {
-	// Integer ValueKind = iota
-	// Bool
-	// Float
-	// Color
-	// Vec2
-	// Modmask
-	// String
-	// Gradient
-	// Custom
 
+
+func (v VariableDefinition) ParserTypeString() string {
 	switch v.Type {
 	case "int":
 		return "Integer"
