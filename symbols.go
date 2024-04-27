@@ -1,7 +1,7 @@
 package hyprls
 
 import (
-	"github.com/ewen-lbh/hyprlang-lsp/parser"
+	"github.com/ewen-lbh/hyprls/parser"
 	"go.lsp.dev/protocol"
 )
 

@@ -8,8 +8,8 @@ import (
 	"strings"
 
 	"github.com/MakeNowJust/heredoc"
-	"github.com/ewen-lbh/hyprlang-lsp/parser"
-	parser_data "github.com/ewen-lbh/hyprlang-lsp/parser/data"
+	"github.com/ewen-lbh/hyprls/parser"
+	parser_data "github.com/ewen-lbh/hyprls/parser/data"
 	"go.lsp.dev/protocol"
 	"go.uber.org/zap"
 )

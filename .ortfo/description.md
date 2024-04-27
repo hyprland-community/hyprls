@@ -6,12 +6,13 @@ tags:
     - language
     - programming
 wip: true
+aliases: [hyprlang-lsp]
 layout:
     - [p1, l1]
     - [m1, m2, m3]
 ---
 
-# Hyprlang LSP
+# HyprLS
 
 :: en
 

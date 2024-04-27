@@ -1,4 +1,4 @@
-module github.com/ewen-lbh/hyprlang-lsp
+module github.com/ewen-lbh/hyprls
 
 go 1.22.2
 

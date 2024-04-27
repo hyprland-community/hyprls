@@ -5,7 +5,7 @@ import (
 	"math"
 	"strings"
 
-	"github.com/ewen-lbh/hyprlang-lsp/parser"
+	"github.com/ewen-lbh/hyprls/parser"
 	"github.com/mazznoer/csscolorparser"
 	"go.lsp.dev/protocol"
 	"go.uber.org/zap"

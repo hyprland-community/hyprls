@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/MakeNowJust/heredoc"
-	. "github.com/ewen-lbh/hyprlang-lsp/parser/data"
+	. "github.com/ewen-lbh/hyprls/parser/data"
 )
 
 func main() {

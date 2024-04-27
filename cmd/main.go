@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	hyprls "github.com/ewen-lbh/hyprlang-lsp"
+	hyprls "github.com/ewen-lbh/hyprls"
 	"go.uber.org/zap"
 )
 
