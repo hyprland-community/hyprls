@@ -1,8 +1,8 @@
 {
   "name": "hyprland",
-  "displayName": "hyprland",
+  "displayName": "Hyprland",
   "description": "Extension pack for syntax highlighting and rich IDE support in Hyprland configuration files",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "engines": {
     "vscode": "^1.88.0"
   },
@@ -18,5 +18,6 @@
   },
   "repository": "https://github.com/ewen-lbh/hyprls/tree/main/vscode-extension-pack",
   "license": "MIT",
-  "publisher": "ewen-lbh"
+  "publisher": "ewen-lbh",
+  "icon": "icon.png"
 }
