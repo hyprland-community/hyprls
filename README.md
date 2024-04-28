@@ -75,5 +75,5 @@ vim.api.nvim_create_autocmd({'BufEnter', 'BufWinEnter'}, {
 
 Install it [from the marketplace](https://marketplace.visualstudio.com/items?itemName=ewen-lbh.vscode-hyprls).
 
-_Combine with [FireBlast's Hyprlang extension](https://marketplace.visualstudio.com/items?itemName=fireblast.hyprlang-vscode) for syntax highlighting._
-
+> [!TIP]
+> You can use [the Hyprland extension pack](https://marketplace.visualstudio.com/items?itemName=ewen-lbh.hyprland) to also get syntax highlighting.
