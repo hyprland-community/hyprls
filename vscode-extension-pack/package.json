@@ -2,7 +2,7 @@
   "name": "hyprland",
   "displayName": "hyprland",
   "description": "Extension pack for syntax highlighting and rich IDE support in Hyprland configuration files",
-  "version": "0.0.1",
+  "version": "0.1.1",
   "engines": {
     "vscode": "^1.88.0"
   },
