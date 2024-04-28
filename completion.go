@@ -15,12 +15,19 @@ import (
 
 func (h Handler) Completion(ctx context.Context, params *protocol.CompletionParams) (*protocol.CompletionList, error) {
 	line, err := currentLine(params.TextDocument.URI, params.Position)
+	if err != nil {
+		return nil, nil
+	}
+
 	file, err := parse(params.TextDocument.URI)
 	if err != nil {
 		return nil, nil
 	}
 
 	sec := currentSection(file, params.Position)
+	if sec == nil {
+		sec = &parser.Section{}
+	}
 
 	cursorIsAfterEquals := err == nil && strings.Contains(line, "=") && strings.Index(line, "=") < int(params.Position.Character)
 
