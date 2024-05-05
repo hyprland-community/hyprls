@@ -31,8 +31,7 @@ install:
 	cp hyprls ~/.local/bin/hyprls
 
 pull-wiki:
-	git submodule update --init --recursive
-	cd hyprland-wiki; git pull
+	git submodule update --init --recursive --remote
 
 parser-data:
 	#!/bin/bash
