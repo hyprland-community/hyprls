@@ -64,6 +64,7 @@ SHIFT CAPS CTRL/CONTROL ALT MOD2 MOD3 SUPER/WIN/LOGO/MOD4 MOD5
 | cursor_inactive_timeout | in seconds, after how many seconds of cursor's inactivity to hide it. Set to `0` for never. | int | 0 |
 | layout | which layout to use. [dwindle/master] | str | dwindle |
 | no_cursor_warps | if true, will not warp the cursor in many cases (focusing, keybinds, etc) | bool | false |
+| default_cursor_monitor | the name of a default monitor for the cursor to be set to on startup (see `hyprctl monitors` for names) | str | [[EMPTY]] |
 | no_focus_fallback | if true, will not fall back to the next available window when moving focus in a direction where no window was found | bool | false |
 | apply_sens_to_raw | if on, will also apply the sensitivity to raw mouse output (e.g. sensitivity in games) **NOTICE:** ***really*** not recommended. | bool | false |
 | resize_on_border | enables resizing windows by clicking and dragging on borders and gaps | bool | false |
@@ -425,6 +426,7 @@ Only for developers.
 | watchdog_timeout | sets the timeout in seconds for watchdog to abort processing of a signal of the main thread. Set to 0 to disable. | int | 5 |
 | disable_scale_checks | disables verification of the scale factors. Will result in pixel alignment and rounding errors. | bool | false |
 | error_limit | limits the number of displayed config file parsing errors. | int | 5 | 
+| colored_stdout_logs | enables colors in the stdout logs. | bool | true |
 
 ### More
 

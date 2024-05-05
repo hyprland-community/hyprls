@@ -85,6 +85,12 @@
           "Default": "false"
         },
         {
+          "Name": "default_cursor_monitor",
+          "Description": "the name of a default monitor for the cursor to be set to on startup (see hyprctl monitors for names)",
+          "Type": "str",
+          "Default": "[[EMPTY]]"
+        },
+        {
           "Name": "no_focus_fallback",
           "Description": "if true, will not fall back to the next available window when moving focus in a direction where no window was found",
           "Type": "bool",
@@ -1107,6 +1113,12 @@
           "Description": "limits the number of displayed config file parsing errors.",
           "Type": "int",
           "Default": "5"
+        },
+        {
+          "Name": "colored_stdout_logs",
+          "Description": "enables colors in the stdout logs.",
+          "Type": "bool",
+          "Default": "true"
         }
       ]
     },

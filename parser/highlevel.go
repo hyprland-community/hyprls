@@ -60,6 +60,9 @@ type ConfigurationGeneral struct {
 	// if true, will not warp the cursor in many cases (focusing, keybinds, etc)
 	NoCursorWarps bool `json:"no_cursor_warps"`
 
+	// the name of a default monitor for the cursor to be set to on startup (see hyprctl monitors for names)
+	DefaultCursorMonitor string `json:"default_cursor_monitor"`
+
 	// if true, will not fall back to the next available window when moving focus in a direction where no window was found
 	NoFocusFallback bool `json:"no_focus_fallback"`
 
@@ -549,6 +552,9 @@ type ConfigurationDebug struct {
 
 	// limits the number of displayed config file parsing errors.
 	ErrorLimit int `json:"error_limit"`
+
+	// enables colors in the stdout logs.
+	ColoredStdoutLogs bool `json:"colored_stdout_logs"`
 }
 
 type ConfigurationMaster struct {
