@@ -6,6 +6,8 @@ on:
 jobs:
   pull:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: ConorMacBride/install-package@v1
         with:
