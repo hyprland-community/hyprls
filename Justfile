@@ -1,4 +1,4 @@
-serverLogsFilepath := `realpath ./logs/server.log`
+serverLogsFilepath := `realpath ./logs/server.log || echo ./logs/server.log`
 latestTag := `git describe --tags --abbrev=0 || echo commit:$(git rev-parse --short HEAD)`
 
 release tag:
