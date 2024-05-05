@@ -7,6 +7,9 @@ jobs:
   pull:
     runs-on: ubuntu-latest
     steps:
+      - uses: ConorMacBride/install-package@v1
+        with:
+          apt: moreutils
       - uses: actions/checkout@v2
       - uses: extractions/setup-just@v2
       - run: just pull-wiki
