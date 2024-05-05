@@ -30,6 +30,10 @@ install:
 	just build
 	cp hyprls ~/.local/bin/hyprls
 
+pull-wiki:
+	git submodule update --init --recursive
+	cd hyprland-wiki; git pull
+
 parser-data:
 	#!/bin/bash
 	set -euxo pipefail
