@@ -1,0 +1,63 @@
+schema = 3
+
+[mod]
+  [mod."github.com/MakeNowJust/heredoc"]
+    version = "v1.0.0"
+    hash = "sha256-8hKERAVV1Pew84kc9GkW23dcO8uIUx/+tJQLi+oPwqE="
+  [mod."github.com/PuerkitoBio/goquery"]
+    version = "v1.5.1"
+    hash = "sha256-GqxIdhuN1L3enT8pNlWm+rmkdN5uMfF8TfpxhAHhEDQ="
+  [mod."github.com/anaskhan96/soup"]
+    version = "v1.2.5"
+    hash = "sha256-t8yCyK2y7x2qaI/3Yw16q3zVFqu+3acLcPgTr1MIKWg="
+  [mod."github.com/andybalholm/cascadia"]
+    version = "v1.1.0"
+    hash = "sha256-mL40/Q9iXBzzMHwMomqTOpp9rnI/MRsufb5cIU1MMPg="
+  [mod."github.com/davecgh/go-spew"]
+    version = "v1.1.1"
+    hash = "sha256-nhzSUrE1fCkN0+RL04N4h8jWmRFPPPWbCuDc7Ss0akI="
+  [mod."github.com/evorts/html-to-markdown"]
+    version = "v0.0.10"
+    hash = "sha256-JV/v/rbKakJuSUTcOtRabeB0EzZRL+Nw5fYW5DRMxPg="
+  [mod."github.com/mazznoer/csscolorparser"]
+    version = "v0.1.3"
+    hash = "sha256-v8WyeQKL+SkOar4nftTFrvyitVjFPZRoVeuksp8OnMk="
+  [mod."github.com/metal3d/go-slugify"]
+    version = "v0.0.0-20160607203414-7ac2014b2f23"
+    hash = "sha256-vAfoTRKnDwLi7xLmFXP88auA8ZLJ8W6sLIj569hlkTk="
+  [mod."github.com/segmentio/asm"]
+    version = "v1.2.0"
+    hash = "sha256-zbNuKxNrUDUc6IlmRQNuJQzVe5Ol/mqp7srDg9IMMqs="
+  [mod."github.com/segmentio/encoding"]
+    version = "v0.4.0"
+    hash = "sha256-4pWI9eTZRRDP9kO8rG6vbLCtBVVRLtbCJKd0Z2+8JoU="
+  [mod."github.com/yuin/goldmark"]
+    version = "v1.7.1"
+    hash = "sha256-3EUgwoZRRs2jNBWSbB0DGNmfBvx7CeAgEwyUdaRaeR4="
+  [mod."go.lsp.dev/jsonrpc2"]
+    version = "v0.10.0"
+    hash = "sha256-RbRsMYVBLR7ZDHHGMooycrkdbIauMXkQjVOGP7ggSgM="
+  [mod."go.lsp.dev/pkg"]
+    version = "v0.0.0-20210717090340-384b27a52fb2"
+    hash = "sha256-TxS0Iqe1wbIaFe7MWZJRQdgqhKE8i8CggaGSV9zU1Vg="
+  [mod."go.lsp.dev/protocol"]
+    version = "v0.12.0"
+    hash = "sha256-rZgWIQpHHeYpJL8kiHJ21m1BHXAcr+4Xv2Yh9RNw3s4="
+  [mod."go.lsp.dev/uri"]
+    version = "v0.3.0"
+    hash = "sha256-jGP0N7Gf+bql5oJraUo33sXqWg7AKOTj0D8b4paV4dc="
+  [mod."go.uber.org/multierr"]
+    version = "v1.11.0"
+    hash = "sha256-Lb6rHHfR62Ozg2j2JZy3MKOMKdsfzd1IYTR57r3Mhp0="
+  [mod."go.uber.org/zap"]
+    version = "v1.27.0"
+    hash = "sha256-8655KDrulc4Das3VRduO9MjCn8ZYD5WkULjCvruaYsU="
+  [mod."golang.org/x/net"]
+    version = "v0.0.0-20200320220750-118fecf932d8"
+    hash = "sha256-YdLYymyqwWmiBR6QJdgvOq+QbQvmAh2VAk4KnB+GZAQ="
+  [mod."golang.org/x/sys"]
+    version = "v0.19.0"
+    hash = "sha256-cmuL31TYLJmDm/fDnI2Sn0wB88cpdOHV1+urorsJWx4="
+  [mod."golang.org/x/text"]
+    version = "v0.3.0"
+    hash = "sha256-0FFbaxF1ZuAQF3sCcA85e8MO6prFeHint36inija4NY="

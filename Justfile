@@ -3,7 +3,8 @@ latestTag := `git describe --tags --abbrev=0 || echo commit:$(git rev-parse --sh
 
 release tag:
 	jq '.version = "{{ tag }}"' < vscode/package.json | sponge vscode/package.json
-	git add vscode/package.json
+	sed -i "s/$(grep 'version' default.nix)/  version = \"{{ tag }}\";/" default.nix
+	git add vscode/package.json default.nix
 	git commit -m "🏷️ Release {{ tag }}"
 	git tag -- v{{ tag }}
 	cd vscode; bun vsce package; bun vsce publish
