@@ -1,0 +1,24 @@
+name: Update nix inputs
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '51 2 * * 0'
+
+jobs:
+  update:
+    name: inputs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+
+      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: extractions/setup-just@v2
+      - name: Update inputs
+        run: just update-nix-inputs
+
+      - name: Commit
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: '⬆️ Nix: update inputs'

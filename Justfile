@@ -43,3 +43,6 @@ parser-data:
 	./generator > ../../highlevel.go ast.json
 	gofmt -s -w ../../highlevel.go
 	jq . < ast.json | sponge ast.json
+
+update-nix-inputs:
+	nix flake update
