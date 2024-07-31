@@ -29,6 +29,7 @@ build-debug:
 
 install:
 	just build
+	mkdir -p ~/.local/bin
 	cp hyprls ~/.local/bin/hyprls
 
 pull-wiki:
