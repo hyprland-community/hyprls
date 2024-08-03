@@ -17,6 +17,11 @@ buildGoApplication {
   version = "0.2.0";
   pwd = ./.;
   src = ./.;
+
+  postBuild = ''
+    rm $GOPATH/bin/generate
+  '';
+
   modules = ./gomod2nix.toml;
   checkFlags = ["-skip=TestHighLevelParse"]; # not yet implemented
 }
