@@ -73,7 +73,13 @@ vim.api.nvim_create_autocmd({'BufEnter', 'BufWinEnter'}, {
 
 ### VSCode
 
+#### Official Marketplace (VisualStudio Marketplace)
+
 Install it [from the marketplace](https://marketplace.visualstudio.com/items?itemName=ewen-lbh.vscode-hyprls).
 
 > [!TIP]
 > You can use [the Hyprland extension pack](https://marketplace.visualstudio.com/items?itemName=ewen-lbh.hyprland) to also get syntax highlighting.
+
+#### Open VSX (for VSCodium & others)
+
+Install it [on OpenVSX](https://open-vsx.org/extension/ewen-lbh/vscode-hyprls)
