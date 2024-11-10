@@ -19,7 +19,7 @@ For this case, the writer is taking the example of their laptop.
 Upon running `lspci | grep -E 'VGA|3D'`, One can list all the video devices
 available.
 
-```
+```plain
 01:00.0 VGA compatible controller: NVIDIA Corporation TU117M [GeForce GTX 1650 Mobile / Max-Q] (rev a1)
 06:00.0 VGA compatible controller: Advanced Micro Devices, Inc. [AMD/ATI] Cezanne [Radeon Vega Series / Radeon Vega Mobile Series] (rev c6)
 ```
@@ -29,7 +29,7 @@ Here it is clear that 2 GPUs are available, the dedicated NVIDIA GTX 1650 Mobile
 
 Now, run `ls -l /dev/dri/by-path`
 
-```
+```plain
  total 0
 lrwxrwxrwx 1 root root  8 Jul 14 15:45 pci-0000:01:00.0-card -> ../card0
 lrwxrwxrwx 1 root root 13 Jul 14 15:45 pci-0000:01:00.0-render -> ../renderD128
@@ -46,7 +46,7 @@ boot and is subject to frequent change, making it unsuitable as a marker for GPU
 
 After determining which "card" belongs to which GPU, we now have to tell
 Hyprland the GPU we want to use primarily.
-This is done by setting the `WLR_DRM_DEVICES` environment variable.
+This is done by setting the `AQ_DRM_DEVICES` environment variable.
 
 {{< callout type=info >}}
 
@@ -59,38 +59,17 @@ with lower and higher power rating GPUs respectively.
 {{< /callout >}}
 
 If you wish to use the integrated GPU to run Hyprland, no further action is
-required. wlroots will set `WLR_DRM_DEVICES` to the integrated GPU by default.
+required.
 
-If instead you would like to use another GPU, you must first create a symlink to
-the card from the previous section.
+If instead you would like to use another GPU, or the wrong GPU is picked by default,
+set `AQ_DRM_DEVICES` to a `:`-separated list of card paths, e.g.
 
-It is not possible to use `~/.config/hypr/card` as wlroots will not expand it correctly.  
-You must include full path e.g `$HOME/.config/hypr/card`
-```
-ln -sf /dev/dri/by-path/pci-0000:06:00.0-card $HOME/.config/hypr/card
+```plain
+env = AQ_DRM_DEVICES,/dev/dri/card0:/dev/dri/card1
 ```
 
-It is not possible to directly use the `/dev/dri/by-path/pci-0000:06:00.0-card` path,
-as wlroots interprets the colon symbols in the path as separators. Escaping
-characters will not rectify this.
-
-Afterwards, you must set the `WLR_DRM_DEVICES` environment variable in
-hyprland.conf to this linked card.
-
-
-```ini
-env = WLR_DRM_DEVICES,$HOME/.config/hypr/card
-```
-
-If you want to set a sequence of fallback cards, symlink another card and set
-the var as a colon separated list in order of priority.
-
-```ini
-env = WLR_DRM_DEVICES,$HOME/.config/hypr/card:$HOME/.config/hypr/otherCard
-```
-
-Here, we tell Hyprland to set priorities. If `card` isn't available for
-whatever reason, use `otherCard`. So if the AMD GPU isn't available, use NVIDIA.
+Here, we tell Hyprland to set priorities. If `card0` isn't available for
+whatever reason, use `card1`.
 
 You should now be able to use an integrated GPU for lighter GPU loads,
 including Hyprland, or default to your dGPU if you prefer.

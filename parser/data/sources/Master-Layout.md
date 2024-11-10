@@ -18,10 +18,10 @@ _category name `master`_
 | --- | --- | --- | --- |
 | allow_small_split | enable adding additional master windows in a horizontal split style | bool | false |
 | special_scale_factor | the scale of the special workspace windows. [0.0 - 1.0] | float | 1 |
-| mfact | master split factor, the ratio of master split, relative float delta (e.g `-0.2` or `+0.2`) or `exact` followed by a the exact float value (e.g. `exact 0.55`) [0.0 - 1.0] | floatvalue | 0.55 |
-| new_is_master | whether a newly open window should replace the master or join the slaves. | bool | true |
+| mfact | the size as a percentage of the master window, for example `mfact = 0.70` would mean 70% of the screen will be the master window, and 30% the slave [0.0 - 1.0] | floatvalue | 0.55 |
+| new_status | `master`: new window becomes master; `slave`: new windows are added to slave stack; `inherit`: inherit from focused window | string | `slave` |
 | new_on_top | whether a newly open window should be on the top of the stack | bool | false |
-| no_gaps_when_only | whether to apply gaps when there is only one window on a workspace, aka. smart gaps. (default: disabled - 0) no border - 1, with border - 2 [0/1/2] | int | 0 |
+| new_on_active | `before`, `after`: place new window relative to the focused window; `none`: place new window according to the value of `new_on_top`.  | string | `none` |
 | orientation | default placement of the master area, can be left, right, top, bottom or center | string | left |
 | inherit_fullscreen | inherit fullscreen status when cycling/swapping to another window (e.g. monocle layout) | bool | true |
 | always_center_master | when using orientation=center, keep the master window centered, even when it is the only window in the workspace. | bool | false |
@@ -61,9 +61,9 @@ Parameters for the commands are separated by a single space.
 Example usage:
 
 ```ini
-bind=MOD,KEY,layoutmsg,cyclenext
+bind = MOD, KEY, layoutmsg, cyclenext
 # behaves like xmonads promote feature (https://hackage.haskell.org/package/xmonad-contrib-0.17.1/docs/XMonad-Actions-Promote.html)
-bind=MOD,KEY,layoutmsg,swapwithmaster master
+bind = MOD, KEY, layoutmsg, swapwithmaster master
 ```
 
 {{< /callout >}}

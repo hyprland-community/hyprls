@@ -17,6 +17,8 @@ layout pages (See the sidebar).
 | resizeparams | relative pixel delta vec2 (e.g. `10 -10`), optionally a percentage of the window size (e.g. `20 25%`) or `exact` followed by an exact vec2 (e.g. `exact 1280 720`), optionally a percentage of the screen size (e.g. `exact 50% 50%`) |
 | floatvalue | a relative float delta (e.g `-0.2` or `+0.2`) or `exact` followed by a the exact float value (e.g. `exact 0.5`) |
 | zheight | `top` or `bottom` |
+| mod | `SUPER`, `SUPER_ALT`, etc. |
+| key | `g`, `code:42`, `42` or mouse clicks (`mouse:272`) |
 
 ## List of Dispatchers
 
@@ -25,6 +27,7 @@ layout pages (See the sidebar).
 | exec | executes a shell command | command (supports rules, see [below]({{< relref "#executing-with-rules" >}})) |
 | execr | executes a raw shell command (does not support rules) | command |
 | pass | passes the key (with mods) to a specified window. Can be used as a workaround to global keybinds not working on Wayland. | window |
+| sendshortcut | sends specified keys (with mods) to an optionally specified window. Can be used like pass | mod, key[, window] |
 | killactive | closes (not kills) the active window | none |
 | closewindow | closes a specified window | window |
 | workspace | changes the workspace | workspace |
@@ -33,8 +36,8 @@ layout pages (See the sidebar).
 | togglefloating | toggles the current window's floating state | left empty / `active` for current, or `window` for a specific window |
 | setfloating | sets the current window's floating state to true | left empty / `active` for current, or `window` for a specific window |
 | settiled | sets the current window's floating state to false | left empty / `active` for current, or `window` for a specific window |
-| fullscreen | toggles the focused window's fullscreen state | 0 - fullscreen (takes your entire screen), 1 - maximize (keeps gaps and bar(s)), 2 - fullscreen (same as fullscreen except doesn't alter window's internal fullscreen state) |
-| fakefullscreen | toggles the focused window's internal fullscreen state without altering the geometry | none |
+| fullscreen | toggles the focused window's fullscreen mode | 0 - fullscreen (takes your entire screen), 1 - maximize (keeps gaps and bar(s)) |
+| fullscreenstate | sets the focused window's fullscreen mode and the one sent to the client | `internal client`, where internal and client can be `-1` - current, `0` - none, `1` - maximize, `2` - fullscreen, `3` - maximize and fullscreen |
 | dpms | sets all monitors' DPMS status. Do not use with a keybind directly. | `on`, `off`, or `toggle`. For specific monitor add monitor name after a space |
 | pin | pins a window (i.e. show it on all workspaces) _note: floating only_ | left empty / `active` for current, or `window` for a specific window |
 | movefocus | moves the focus in a direction | direction |
@@ -47,10 +50,10 @@ layout pages (See the sidebar).
 | movewindowpixel | moves a selected window | `resizeparams,window` |
 | cyclenext | focuses the next window on a workspace | none (for next) or `prev` (for previous) additionally `tiled` for only tiled, `floating` for only floating. `prev tiled` is ok. |
 | swapnext | swaps the focused window with the next window on a workspace | none (for next) or `prev` (for previous) |
+| tagwindow | apply tag to current or the first window matching | `tag [window]`, e.g. `+code ^(foot)$`, `music` |
 | focuswindow | focuses the first window matching | window |
 | focusmonitor | focuses a monitor | monitor |
 | splitratio | changes the split ratio | floatvalue |
-| toggleopaque | toggles the current window to always be opaque. Will override the `opaque` window rules. | none |
 | movecursortocorner | moves the cursor to the corner of the active window | direction, 0 - 3, bottom left - 0, bottom right - 1, top right - 2, top left - 3 |
 | movecursor | moves the cursor to a specified position | `x y` |
 | renameworkspace | rename a workspace | `id name`, e.g. `2 work` |
@@ -77,14 +80,16 @@ layout pages (See the sidebar).
 | setignoregrouplock | Temporarily enable or disable binds:ignore_group_lock | `on`, `off`, or `toggle` |
 | global | Executes a Global Shortcut using the GlobalShortcuts portal. See [here](../Binds/#global-keybinds) | name |
 | submap | Change the current mapping group. See [Submaps](../Binds/#submaps) | `reset` or name |
+| event | Emits a custom event to socket2 in the form of `custom>>yourdata` | the data to send |
+| setprop | Sets a window property | `window property value` |
 
 {{< callout type=warning >}}
 
-it is NOT recommended to set DPMS with a keybind directly, as it might cause
+It is NOT recommended to set DPMS with a keybind directly, as it might cause
 undefined behavior. Instead, consider something like
 
 ```ini
-bind = MOD,KEY,exec,sleep 1 && hyprctl dispatch dpms off
+bind = MOD, KEY, exec, sleep 1 && hyprctl dispatch dpms off
 ```
 
 {{< /callout >}}
@@ -113,23 +118,28 @@ set.
 
 ## Workspaces
 
-You have eight choices:
+You have nine choices:
 
 - ID: e.g. `1`, `2`, or `3`
 
 - Relative ID: e.g. `+1`, `-3` or `+100`
 
-- workspace on monitor, relative with `+` or `-`, absolute with `~`: e.g. `m+1`, `m-2` or `m~3`
+- workspace on monitor, relative with `+` or `-`, absolute with `~`: e.g. `m+1`,
+  `m-2` or `m~3`
 
-- workspace on monitor including empty workspaces, relative with `+` or `-`, absolute with `~`: e.g. `r+1` or `r~3`
+- workspace on monitor including empty workspaces, relative with `+` or `-`,
+  absolute with `~`: e.g. `r+1` or `r~3`
 
-- open workspace, relative with `+` or `-`, absolute with `~`: e.g. `e+1`, `e-10`, or `e~2`
+- open workspace, relative with `+` or `-`, absolute with `~`: e.g. `e+1`,
+  `e-10`, or `e~2`
 
 - Name: e.g. `name:Web`, `name:Anime` or `name:Better anime`
 
-- Previous workspace: `previous`
+- Previous workspace: `previous`, or `previous_per_monitor`
 
-- First available empty workspace: `empty`
+- First available empty workspace: `empty`, suffix with `m` to only search
+  on monitor. and/or `n` to make it the _next_ available empty workspace. e.g.
+  `emptynm`
 
 - Special Workspace: `special` or `special:name` for named special workspaces.
 
@@ -164,7 +174,7 @@ limited to 97 at a time.
 For example, to move a window/application to a special workspace you can use the
 following syntax:
 
-```
+```ini
 bind = SUPER, C, movetoworkspace, special
 #The above syntax will move the window to a special workspace upon pressing 'SUPER'+'C'.
 #To see the hidden window you can use the togglespecialworkspace dispatcher mentioned above.
@@ -173,17 +183,47 @@ bind = SUPER, C, movetoworkspace, special
 ## Executing with rules
 
 The `exec` dispatcher supports adding rules. Please note some windows might work
-better, some worse. It records the PID of the spawned process and uses that. For example, if
-your process forks and then the fork opens a window, this will not work.
+better, some worse. It records the PID of the spawned process and uses that.
+For example, if your process forks and then the fork opens a window, this will
+not work.
 
 The syntax is:
 
-```
+```ini
 bind = mod, key, exec, [rules...] command
 ```
 
 For example:
 
+```ini
+bind = SUPER, E, exec, [workspace 2 silent; float; move 0 0] kitty
 ```
-bind = SUPER, E, exec, [workspace 2 silent;float;noanim] kitty
+
+### setprop
+
+Prop List:
+
+| prop | comment |
+| --- | --- |
+| alpha | float 0.0 - 1.0 |
+| alphaoverride | 0/1, makes the next setting be override instead of multiply |
+| alphainactive | float 0.0 - 1.0 |
+| alphainactiveoverride | 0/1, makes the next setting be override instead of multiply |
+| alphafullscreen | float 0.0 - 1.0 |
+| alphafullscreenoverride | 0/1, makes the next setting be override instead of multiply |
+| animationstyle | string, cannot be locked |
+| activebordercolor | gradient, -1 means not set |
+| inactivebordercolor | gradient, -1 means not set |
+| maxsize | vec2 (`x y`) |
+| minsize | vec2 (`x y`) |
+
+Additional properties can be found in the [Window Rules](../Window-Rules#dynamic-rules) section.
+
+For example:
+
+```sh
+address:0x13371337 noanim 1
+address:0x13371337 nomaxsize 0
+address:0x13371337 opaque toggle
+address:0x13371337 immediate unset
 ```

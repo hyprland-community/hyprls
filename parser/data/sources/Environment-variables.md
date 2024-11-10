@@ -35,14 +35,23 @@ environment on traditional Linux distros.
 
 ## Hyprland Environment Variables
 
-- `HYPRLAND_LOG_WLR=1` - Enables more verbose logging of wlroots.
+- `HYPRLAND_TRACE=1` - Enables more verbose logging.
 - `HYPRLAND_NO_RT=1` - Disables realtime priority setting by Hyprland.
 - `HYPRLAND_NO_SD_NOTIFY=1` - If systemd, disables the `sd_notify` calls.
+- `HYPRLAND_NO_SD_VARS=1` - Disables management of variables in systemd and dbus activation environments.
+- `HYPRLAND_CONFIG` - Specifies where you want your Hyprland configuration.
+
+## Aquamarine Environment Variables <!-- ref https://github.com/hyprwm/aquamarine/blob/main/docs/env.md -->
+
+- `AQ_TRACE=1` - Enables more verbose logging.
+- `AQ_DRM_DEVICES=` - Set an explicit list of DRM devices (GPUs) to use. It's a colon-separated list of paths, with the first being the primary.
+  E.g. `/dev/dri/card1:/dev/dri/card0`
+- `AQ_MGPU_NO_EXPLICIT=1` - Disables explicit syncing on mgpu buffers
+- `AQ_NO_MODIFIERS=1` - Disables modifiers for DRM buffers
 
 ## Toolkit Backend Variables
 
 - `env = GDK_BACKEND,wayland,x11,*` - GTK: Use wayland if available. If not: try x11, then any other GDK backend.
-  not.
 - `env = QT_QPA_PLATFORM,wayland;xcb` - Qt: Use wayland if available, fall back to
   x11 if not.
 - `env = SDL_VIDEODRIVER,wayland` - Run SDL2 applications on Wayland. Remove or set to
@@ -59,6 +68,9 @@ environment on traditional Linux distros.
 XDG specific environment variables are often detected through portals and
 applications that may set those for you, however it is not a bad idea to set
 them explicitly.
+
+If your [desktop portal](https://wiki.archlinux.org/title/XDG_Desktop_Portal) is malfunctioning for seemingly
+no reason (no errors), it's likely your XDG env isn't set correctly.
 
 ## Qt Variables
 
@@ -99,8 +111,8 @@ To force GBM as a backend, set the following environment variables:
 - `__GL_VRR_ALLOWED` - Controls if Adaptive Sync should be used. Recommended to
   set as "0" to avoid having problems on some games.
 
-- `env = WLR_DRM_NO_ATOMIC,1` - use legacy DRM interface instead of atomic mode
-  setting. Might fix flickering issues.
+- `env = AQ_NO_ATOMIC,1` - use legacy DRM interface instead of atomic mode
+  setting. **NOT** recommended.
 
 ## Theming Related Variables
 

@@ -4,14 +4,7 @@ title: Using hyprctl
 ---
 
 `hyprctl` is a utility for controlling some parts of the compositor from a CLI
-or a script. If you install with `make install`, or any package, it should
-automatically be installed.
-
-To check if `hyprctl` is installed, simply execute it by issuing `hyprctl` in
-the terminal.
-
-If it's not, go to the repo root and `/hyprctl`. Issue a `make all` and then
-`sudo cp ./hyprctl /usr/bin`.
+or a script. It should automatically be installed along with Hyprland.
 
 {{< callout type=warning >}}
 
@@ -27,12 +20,13 @@ For live event handling, see the [socket2](../../IPC/).
 
 ### dispatch
 
-Issue a `dispatch` to call a keybind dispatcher with an arg.
+Issue a `dispatch` to call a keybind dispatcher with an argument.
 
-An arg has to be present, for dispatchers without parameters it can be anything.
+An argument has to be present, for dispatchers without parameters it can be
+anything.
 
-To pass an argument starting with `-` or `--`, such as command line options to
-`exec` programs, pass `--` as an option. This will disable any subsequent
+To pass an argument starting with `-` or `--`, such as command line options
+to `exec` programs, pass `--` as an option. This will disable any subsequent
 parsing of options by _hyprctl_.
 
 Examples:
@@ -96,27 +90,47 @@ hyprctl setcursor Bibata-Modern-Classic 24
 
 Allows you to add and remove fake outputs to your preferred backend.
 
-params: `create` or `remove` and `backend` or `name` respectively.
+Usage:
 
-For _create_:
+```sh
+hyprctl output create [backend] (name)
+```
 
-pass a backend name: `wayland`, `x11`, `headless` or `auto`. On a _real_
-hyprland session, if you're looking for a VNC / RDP type thing, it's 99% going
-to be `headless`.
+or
 
-For _remove_:
+```sh
+hyprctl output remove [name]
+```
 
-pass the output's name, as found in `hyprctl monitors`. Please be aware you are
-_not_ allowed to remove real displays with this command.
+Where `[backend]` is the name of the backend and `(name)` is an optional name
+for the output. If `(name)` is not specified, the default naming scheme will be
+used (`HEADLESS-2`, `WL-1`, etc.)
 
-e.g.:
+{{< callout type=info >}}
 
-```ini
-# will create a 1920x1080 headless display, for example to use with RDP.
-hyprctl output create headless
+`create` and `remove` can also be `add` or `destroy`, respectively.
 
-# will remove the above display, provided its name was HEADLESS-1
-hyprctl output remove HEADLESS-1
+{{< /callout >}}
+
+Available backends:
+
+- `wayland`: Creates an output as a Wayland window. This will only work if
+  you're already running Hyprland with the Wayland backend.
+- `headless`: Creates a headless monitor output. If you're running a VNC/RDP/
+  Sunshine server, you should use this.
+- `auto`: Picks a backend for you. For example, if you're running Hyprland from
+  the TTY, `headless` will be chosen.
+
+For example, to create a headless output named "test":
+
+```sh
+hyprctl output create headless test
+```
+
+And to remove it:
+
+```sh
+hyprctl output remove test
 ```
 
 ### switchxkblayout
@@ -127,8 +141,8 @@ For example, if you set:
 
 ```ini
 device {
-    name=my-epic-keyboard-v1
-    kb_layout=us,pl,de
+    name = my-epic-keyboard-v1
+    kb_layout = us,pl,de
 }
 ```
 
@@ -142,6 +156,8 @@ where `CMD` is either `next` for next, `prev` for previous, or `ID` for a
 specific one (in the above case, `us`: 0, `pl`: 1, `de`: 2). You can find the
 `DEVICE` using `hyprctl devices` command.
 
+`DEVICE` can also be `current` or `all`, self-explanatory. Current is the `main` keyboard from `devices`.
+
 Example command for a typical keyboard:
 
 ```sh
@@ -150,7 +166,7 @@ hyprctl switchxkblayout at-translated-set-2-keyboard next
 
 {{< callout type=info >}}
 
-If you want a single variant ie. pl/dvorak on one layout but us/qwerty on the
+If you want a single variant i.e. pl/dvorak on one layout but us/qwerty on the
 other, xkb parameters can still be blank, however the amount of comma-separated
 parameters have to match. Alternatively, a single parameter can be specified for
 it to apply to all three.
@@ -179,47 +195,6 @@ To disable:
 hyprctl seterror disable
 ```
 
-### setprop
-
-Sets a window prop. Can be locked by adding `lock` at the end. If `lock` is not
-added, will be unlocked. Locking means a dynamic windowrule _cannot_ override
-this setting.
-
-Prop List:
-| prop | comment |
-| --- | --- |
-| animationstyle | string, cannot be locked |
-| rounding | int, -1 means not overriden |
-| bordersize | int, -1 means not overriden |
-| forcenoblur | 0/1 |
-| forceopaque | 0/1|
-| forceopaqueoverriden | 0/1 |
-| forceallowsinput | 0/1, forceinput rule |
-| forcenoanims | 0/1 |
-| forcenoborder | 0/1 |
-| forcenodim | 0/1 |
-| forcenoshadow | 0/1 |
-| nofocus | 0/1 |
-| windowdancecompat | 0/1 |
-| nomaxsize | 0/1 |
-| minsize | vec2 (`x y`) |
-| maxsize | vec2 (`x y`) |
-| dimaround | 0/1 |
-| keepaspectratio | 0/1 |
-| alphaoverride | 0/1, makes the next setting be override instead of multiply |
-| alpha | float 0.0 - 1.0 |
-| alphainactiveoverride | 0/1, makes the next setting be override instead of multiply |
-| alphainactive | float 0.0 - 1.0 |
-| alphafullscreenoverride | 0/1, makes the next setting be override instead of multiply |
-| alphafullscreen | float 0.0 - 1.0 |
-| activebordercolor | gradient, -1 means not set |
-| inactivebordercolor | gradient, -1 means not set |
-
-```sh
-hyprctl setprop address:0x13371337 forcenoanims 1 lock  # with locking
-hyprctl setprop address:0x13371337 nomaxsize 0          # without locking
-```
-
 ### notify
 
 Sends a notification using the built-in Hyprland notification system.
@@ -240,7 +215,7 @@ Color of `0` means "Default color for icon"
 
 Icon list:
 
-```
+```sh
 WARNING = 0
 INFO = 1
 HINT = 2
@@ -288,7 +263,10 @@ animations - gets the currently configured info about animations and beziers
 instances - lists all running instances of Hyprland with their info
 layouts - lists all layouts available (including from plugins)
 configerrors - lists all current config parsing errors
-rollinglog - prints tail of the log
+rollinglog - prints tail of the log. Also supports -f/--follow option
+locked - prints whether the current session is locked.
+descriptions - returns a JSON with all config options, their descriptions and types.
+submap - prints the current submap the keybinds are in
 ```
 
 For the getoption command, the option name should be written as

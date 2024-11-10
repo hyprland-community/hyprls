@@ -8,7 +8,7 @@ title: Uncommon tips & tricks
 The easiest way to accomplish this is to set this using XKB settings, for
 example:
 
-```
+```ini
 input {
     kb_layout = us,cz
     kb_variant = ,qwerty
@@ -61,15 +61,15 @@ If you want to disable all keybinds with another keybind (make a keybind toggle
 of sorts) you can just use a submap with only a keybind to exit it.
 
 ```ini
-bind=MOD,KEY,submap,clean
-submap=clean
-bind=MOD,KEY,submap,reset
-submap=reset
+bind = MOD, KEY, submap, clean
+submap = clean
+bind = MOD, KEY, submap, reset
+submap = reset
 ```
 
 ## Remap Caps-Lock to Ctrl
 
-```
+```ini
 input {
     kb_options = ctrl:nocaps
 }
@@ -77,14 +77,35 @@ input {
 
 ## Swap Caps-Lock and Escape
 
-```
+```ini
 input {
     kb_options = caps:swapescape
 }
 ```
-##  Minimize windows using special workspaces
+
+## Set F13-F24 as usual function keys
+
+By default, F13-F24 are mapped by xkb as various "XF86" keysyms. These cause binding
+issues in many programs. One example is OBS Studio, which does not detect the XF86
+keysyms as usable keybindings, making you unable to use them for binds. This option
+simply maps them back to the expected F13-F24 values, which are bindable as normal.
+
+{{< callout >}}
+This option was only added recently to `xkeyboard-config`. Please ensure you are on version
+2.43 or greater for this option to do anything.
+{{< /callout >}}
+
+```ini
+input {
+    kb_options = fkeys:basic_13-24
+}
+```
+
+## Minimize windows using special workspaces
+
 This approach uses special workspaces to mimic the "minimize window" function, by using a single keybind to toggle the minimized state.
 Note that one keybind can only handle one window.
+
 ```ini
 bind = $mod, S, togglespecialworkspace, magic
 bind = $mod, S, movetoworkspace, +0
@@ -95,7 +116,7 @@ bind = $mod, S, togglespecialworkspace, magic
 
 ## Minimize Steam instead of killing
 
-Steam will exit entirely when it's last window is closed using the `killactive`
+Steam will exit entirely when its last window is closed using the `killactive`
 dispatcher. To minimize Steam to tray, use the following script to close
 applications:
 
@@ -107,18 +128,18 @@ else
 fi
 ```
 
-### Shimeji
+## Shimeji
 
 To use Shimeji programs like
 [this](https://codeberg.org/thatonecalculator/spamton-linux-shimeji), set the
 following rules:
 
 ```ini
-windowrule=float, com-group_finity-mascot-Main
-windowrule=noblur, com-group_finity-mascot-Main
-windowrule=nofocus, com-group_finity-mascot-Main
-windowrule=noshadow, com-group_finity-mascot-Main
-windowrule=noborder, com-group_finity-mascot-Main
+windowrule = float, com-group_finity-mascot-Main
+windowrule = noblur, com-group_finity-mascot-Main
+windowrule = nofocus, com-group_finity-mascot-Main
+windowrule = noshadow, com-group_finity-mascot-Main
+windowrule = noborder, com-group_finity-mascot-Main
 ```
 
 {{< callout type=info >}}
