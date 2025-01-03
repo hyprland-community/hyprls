@@ -3,7 +3,7 @@
   "description": "VSCode extension for HyprLS",
   "author": "Ewen Le Bihan <hey@ewen.works>",
   "license": "MIT",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/hyprland-community/hyprls"
