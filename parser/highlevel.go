@@ -17,6 +17,7 @@ type Configuration struct {
 	OpenGL     ConfigurationOpenGL     `json:"opengl"`
 	Render     ConfigurationRender     `json:"render"`
 	Cursor     ConfigurationCursor     `json:"cursor"`
+	Ecosystem  ConfigurationEcosystem  `json:"ecosystem"`
 	Debug      ConfigurationDebug      `json:"debug"`
 	Master     ConfigurationMaster     `json:"master"`
 	Dwindle    ConfigurationDwindle    `json:"dwindle"`
@@ -165,6 +166,12 @@ type ConfigurationDecorationBlur struct {
 
 	// works like ignorealpha in layer rules. If pixel opacity is below set value, will not blur. [0.0 - 1.0]
 	PopupsIgnorealpha float32 `json:"popups_ignorealpha"`
+
+	// whether to blur input methods (e.g. fcitx5)
+	InputMethods bool `json:"input_methods"`
+
+	// works like ignorealpha in layer rules. If pixel opacity is below set value, will not blur. [0.0 - 1.0]
+	InputMethodsIgnorealpha float32 `json:"input_methods_ignorealpha"`
 }
 
 type ConfigurationDecorationBlurShadow struct {
@@ -508,6 +515,12 @@ type ConfigurationMisc struct {
 
 	// disable the warning if XDG environment is externally managed
 	DisableXdgEnvChecks bool `json:"disable_xdg_env_checks"`
+
+	// disable the warning if hyprland-qtutils is not installed
+	DisableHyprlandQtutilsCheck bool `json:"disable_hyprland_qtutils_check"`
+
+	// the delay in ms after the lockdead screen appears if the lock screen did not appear after a lock event occurred
+	LockdeadScreenDelay int `json:"lockdead_screen_delay"`
 }
 
 type ConfigurationBinds struct {
@@ -535,11 +548,17 @@ type ConfigurationBinds struct {
 	// If enabled, when on a fullscreen window, movefocus will cycle fullscreen, if not, it will move the focus in a direction.
 	MovefocusCyclesFullscreen bool `json:"movefocus_cycles_fullscreen"`
 
+	// If enabled, when in a grouped window, movefocus will cycle windows in the groups first, then at each ends of tabs, it'll move on to other windows/groups
+	MovefocusCyclesGroupfirst bool `json:"movefocus_cycles_groupfirst"`
+
 	// If enabled, apps that request keybinds to be disabled (e.g. VMs) will not be able to do so.
 	DisableKeybindGrabbing bool `json:"disable_keybind_grabbing"`
 
 	// If enabled, moving a window or focus over the edge of a monitor with a direction will move it to the next monitor in that direction.
 	WindowDirectionMonitorFallback bool `json:"window_direction_monitor_fallback"`
+
+	// If enabled, Allow fullscreen to pinned windows, and restore their pinned status afterwards
+	AllowPinFullscreen bool `json:"allow_pin_fullscreen"`
 }
 
 type ConfigurationXWayland struct {
@@ -573,6 +592,12 @@ type ConfigurationRender struct {
 
 	// Whether to expand undersized textures along the edge, or rather stretch the entire texture.
 	ExpandUndersizedTextures bool `json:"expand_undersized_textures"`
+
+	// Disables back buffer and bottom layer rendering.
+	XpMode bool `json:"xp_mode"`
+
+	// Whether to enable a fade animation for CTM changes (hyprsunset). 2 means "auto" which disables them on Nvidia.
+	CtmAnimation int `json:"ctm_animation"`
 }
 
 type ConfigurationCursor struct {
@@ -600,8 +625,8 @@ type ConfigurationCursor struct {
 	// When a window is refocused, the cursor returns to its last position relative to that window, rather than to the centre.
 	PersistentWarps bool `json:"persistent_warps"`
 
-	// If true, move the cursor to the last focused window after changing the workspace.
-	WarpOnChangeWorkspace bool `json:"warp_on_change_workspace"`
+	// Move the cursor to the last focused window after changing the workspace. Options: 0 (Disabled), 1 (Enabled), 2 (Force - ignores cursor:no_warps option)
+	WarpOnChangeWorkspace int `json:"warp_on_change_workspace"`
 
 	// the name of a default monitor for the cursor to be set to on startup (see hyprctl monitors for names)
 	DefaultMonitor string `json:"default_monitor"`
@@ -621,8 +646,16 @@ type ConfigurationCursor struct {
 	// Hides the cursor when the last input was a touch input until a mouse input is done.
 	HideOnTouch bool `json:"hide_on_touch"`
 
-	// Makes HW cursors work on Nvidia, at the cost of a possible hitch whenever the image changes
-	AllowDumbCopy bool `json:"allow_dumb_copy"`
+	// Makes HW cursors use a CPU buffer. Required on Nvidia to have HW cursors. Experimental.
+	UseCpuBuffer bool `json:"use_cpu_buffer"`
+
+	// Warp the cursor back to where it was after using a non-mouse input to move it, and then returning back to mouse.
+	WarpBackAfterNonMouseInput bool `json:"warp_back_after_non_mouse_input"`
+}
+
+type ConfigurationEcosystem struct {
+	// disable the popup that shows up when you update hyprland to a new version.
+	NoUpdateNews bool `json:"no_update_news"`
 }
 
 type ConfigurationDebug struct {
@@ -664,6 +697,9 @@ type ConfigurationDebug struct {
 
 	// enables colors in the stdout logs.
 	ColoredStdoutLogs bool `json:"colored_stdout_logs"`
+
+	// enables render pass debugging.
+	Pass bool `json:"pass"`
 }
 
 type ConfigurationMaster struct {
@@ -691,8 +727,8 @@ type ConfigurationMaster struct {
 	// inherit fullscreen status when cycling/swapping to another window (e.g. monocle layout)
 	InheritFullscreen bool `json:"inherit_fullscreen"`
 
-	// when using orientation=center, keep the master window centered, even when it is the only window in the workspace.
-	AlwaysCenterMaster bool `json:"always_center_master"`
+	// when using orientation=center, make the master window centered only when at least this many slave windows are open. (Set 0 to always_center_master)
+	SlaveCountForCenterMaster int `json:"slave_count_for_center_master"`
 
 	// if enabled, resizing direction will be determined by the mouse's position on the window (nearest to which corner). Else, it is based on the window's tiling position.
 	SmartResizing bool `json:"smart_resizing"`

@@ -67,7 +67,7 @@ To get the correct name for an `unmodified_key`, refer to [the section on uncomm
 # On a french layout, instead of
 # bind = $mainMod, 1, workspace,  1
 
-# Use 
+# Use
 bind = $mainMod, ampersand, workspace,  1
 ```
 
@@ -182,7 +182,7 @@ for example,
 bindd = SUPER, Q, Open my favourite terminal, exec, kitty
 ```
 
-If you want to access your description you can use `hyprctl binds`. For more information have a look at [Using Hyprctl](./Using-hyprctl.md).
+If you want to access your description you can use `hyprctl binds`. For more information have a look at [Using Hyprctl](../Using-hyprctl.md).
 
 ## Bind flags
 
@@ -203,6 +203,7 @@ Flags:
 ```plain
 l -> locked, will also work when an input inhibitor (e.g. a lockscreen) is active.
 r -> release, will trigger on release of a key.
+o -> longPress, will trigger on long press of a key.
 e -> repeat, will repeat when held.
 n -> non-consuming, key/mouse events will be passed to the active window in addition to triggering the dispatcher.
 m -> mouse, see below.
@@ -228,7 +229,9 @@ bindr = SUPER, SUPER_L, exec, pkill wofi || wofi
 # Describe a bind
 bindd = SUPER, Q, Open my favourite terminal, exec, kitty
 
-# See Mouse Binds section for bindm usage
+# Skip player on long press and only skip 5s on normal press
+bindo = SUPER, XF86AudioNext, exec, playerctl next
+bind = SUPER, XF86AudioNext, exec, playerctl position +5
 ```
 
 ## Mouse Binds
@@ -301,7 +304,7 @@ Let's take OBS as an example: the "Start/Stop Recording" keybind is set to
 add
 
 ```ini
-bind = SUPER, F10, pass, ^(com\.obsproject\.Studio)$
+bind = SUPER, F10, pass, class:^(com\.obsproject\.Studio)$
 ```
 
 to your config and you're done.
@@ -310,7 +313,7 @@ to your config and you're done.
 This also means that push-to-talk will work flawlessly with one pass, e.g.:
 
 ```ini
-bind = , mouse:276, pass, ^(TeamSpeak 3)$
+bind = , mouse:276, pass, class:^(TeamSpeak 3)$
 ```
 
 Will pass MOUSE5 to TeamSpeak3.
@@ -318,7 +321,7 @@ Will pass MOUSE5 to TeamSpeak3.
 You may also add shortcuts, where other keys are passed to the window.
 
 ```ini
-bind = SUPER, F10, sendshortcut, SUPER, F4, ^(com\.obsproject\.Studio)$
+bind = SUPER, F10, sendshortcut, SUPER, F4, class:^(com\.obsproject\.Studio)$
 ```
 
 Will send <key>SUPER</key> + <key>F4</key> to OBS if you press
@@ -376,7 +379,7 @@ binde = , up, resizeactive, 0 -10
 binde = , down, resizeactive, 0 10
 
 # use reset to go back to the global submap
-bind = , escape, submap, reset 
+bind = , escape, submap, reset
 
 # will reset the submap, which will return to the global submap
 submap = reset
@@ -413,7 +416,43 @@ submap = reset
 This works because the binds are executed in the order they appear, and
 assigning multiple actions per bind is possible.
 
-## Catch-All
+### Nesting
+
+Submaps can be nested, see the following example:
+
+```ini
+bind = $mainMod, M, submap, main_submap
+submap = main_submap
+
+# ...
+
+# nested_one
+bind = , 1, submap, nested_one
+submap = nested_one
+
+# ...
+
+bind = SHIFT, escape, submap, reset
+bind =      , escape, submap, main_submap
+submap = main_submap
+# /nested_one
+
+# nested_two
+bind = , 2, submap, nested_two
+submap = nested_two
+
+# ...
+
+bind = SHIFT, escape, submap, reset
+bind =      , escape, submap, main_submap
+submap = main_submap
+# /nested_two
+
+bind = , escape, submap, reset
+submap = reset
+```
+
+### Catch-All
 
 You can also define a keybind via the special `catchall` keyword, which
 activates no matter which key is pressed. This can be used to prevent any keys

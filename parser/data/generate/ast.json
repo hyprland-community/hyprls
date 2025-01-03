@@ -178,7 +178,7 @@
               "Name": "ignore_opacity",
               "Description": "make the blur layer ignore the opacity of the window",
               "Type": "bool",
-              "Default": "false"
+              "Default": "true"
             },
             {
               "Name": "new_optimizations",
@@ -236,6 +236,18 @@
             },
             {
               "Name": "popups_ignorealpha",
+              "Description": "works like ignorealpha in layer rules. If pixel opacity is below set value, will not blur. [0.0 - 1.0]",
+              "Type": "float",
+              "Default": "0.2"
+            },
+            {
+              "Name": "input_methods",
+              "Description": "whether to blur input methods (e.g. fcitx5)",
+              "Type": "bool",
+              "Default": "false"
+            },
+            {
+              "Name": "input_methods_ignorealpha",
               "Description": "works like ignorealpha in layer rules. If pixel opacity is below set value, will not blur. [0.0 - 1.0]",
               "Type": "float",
               "Default": "0.2"
@@ -1011,6 +1023,18 @@
           "Description": "disable the warning if XDG environment is externally managed",
           "Type": "bool",
           "Default": "false"
+        },
+        {
+          "Name": "disable_hyprland_qtutils_check",
+          "Description": "disable the warning if hyprland-qtutils is not installed",
+          "Type": "bool",
+          "Default": "false"
+        },
+        {
+          "Name": "lockdead_screen_delay",
+          "Description": "the delay in ms after the lockdead screen appears if the lock screen did not appear after a lock event occurred",
+          "Type": "int",
+          "Default": "1000"
         }
       ]
     },
@@ -1069,6 +1093,12 @@
           "Default": "true"
         },
         {
+          "Name": "movefocus_cycles_groupfirst",
+          "Description": "If enabled, when in a grouped window, movefocus will cycle windows in the groups first, then at each ends of tabs, it'll move on to other windows/groups",
+          "Type": "bool",
+          "Default": "false"
+        },
+        {
           "Name": "disable_keybind_grabbing",
           "Description": "If enabled, apps that request keybinds to be disabled (e.g. VMs) will not be able to do so.",
           "Type": "bool",
@@ -1079,6 +1109,12 @@
           "Description": "If enabled, moving a window or focus over the edge of a monitor with a direction will move it to the next monitor in that direction.",
           "Type": "bool",
           "Default": "true"
+        },
+        {
+          "Name": "allow_pin_fullscreen",
+          "Description": "If enabled, Allow fullscreen to pinned windows, and restore their pinned status afterwards",
+          "Type": "bool",
+          "Default": "false"
         }
       ]
     },
@@ -1157,6 +1193,18 @@
           "Description": "Whether to expand undersized textures along the edge, or rather stretch the entire texture.",
           "Type": "bool",
           "Default": "true"
+        },
+        {
+          "Name": "xp_mode",
+          "Description": "Disables back buffer and bottom layer rendering.",
+          "Type": "bool",
+          "Default": "false"
+        },
+        {
+          "Name": "ctm_animation",
+          "Description": "Whether to enable a fade animation for CTM changes (hyprsunset). 2 means \"auto\" which disables them on Nvidia.",
+          "Type": "int",
+          "Default": "2"
         }
       ]
     },
@@ -1216,9 +1264,9 @@
         },
         {
           "Name": "warp_on_change_workspace",
-          "Description": "If true, move the cursor to the last focused window after changing the workspace.",
-          "Type": "bool",
-          "Default": "false"
+          "Description": "Move the cursor to the last focused window after changing the workspace. Options: 0 (Disabled), 1 (Enabled), 2 (Force - ignores cursor:no_warps option)",
+          "Type": "int",
+          "Default": "0"
         },
         {
           "Name": "default_monitor",
@@ -1257,8 +1305,28 @@
           "Default": "true"
         },
         {
-          "Name": "allow_dumb_copy",
-          "Description": "Makes HW cursors work on Nvidia, at the cost of a possible hitch whenever the image changes",
+          "Name": "use_cpu_buffer",
+          "Description": "Makes HW cursors use a CPU buffer. Required on Nvidia to have HW cursors. Experimental.",
+          "Type": "bool",
+          "Default": "false"
+        },
+        {
+          "Name": "warp_back_after_non_mouse_input",
+          "Description": "Warp the cursor back to where it was after using a non-mouse input to move it, and then returning back to mouse.",
+          "Type": "bool",
+          "Default": "false"
+        }
+      ]
+    },
+    {
+      "Path": [
+        "Ecosystem"
+      ],
+      "Subsections": [],
+      "Variables": [
+        {
+          "Name": "no_update_news",
+          "Description": "disable the popup that shows up when you update hyprland to a new version.",
           "Type": "bool",
           "Default": "false"
         }
@@ -1347,6 +1415,12 @@
           "Description": "enables colors in the stdout logs.",
           "Type": "bool",
           "Default": "true"
+        },
+        {
+          "Name": "pass",
+          "Description": "enables render pass debugging.",
+          "Type": "bool",
+          "Default": "false"
         }
       ]
     },
@@ -1405,10 +1479,10 @@
           "Default": "true"
         },
         {
-          "Name": "always_center_master",
-          "Description": "when using orientation=center, keep the master window centered, even when it is the only window in the workspace.",
-          "Type": "bool",
-          "Default": "false"
+          "Name": "slave_count_for_center_master",
+          "Description": "when using orientation=center, make the master window centered only when at least this many slave windows are open. (Set 0 to always_center_master)",
+          "Type": "int",
+          "Default": "2"
         },
         {
           "Name": "smart_resizing",
@@ -1502,17 +1576,17 @@
   "keywords": [
     {
       "Name": "submap",
-      "Description": "Keybind submaps, also known as _modes_ or _groups_, allow you to activate a\nseparate set of keybinds. For example, if you want to enter a \"resize\" mode\nwhich allows you to resize windows with the arrow keys, you can do it like this:\n\n```ini\n# will switch to a submap called resize\nbind = ALT, R, submap, resize\n\n# will start a submap called \"resize\"\nsubmap = resize\n\n# sets repeatable binds for resizing the active window\nbinde = , right, resizeactive, 10 0\nbinde = , left, resizeactive, -10 0\nbinde = , up, resizeactive, 0 -10\nbinde = , down, resizeactive, 0 10\n\n# use reset to go back to the global submap\nbind = , escape, submap, reset \n\n# will reset the submap, which will return to the global submap\nsubmap = reset\n\n# keybinds further down will be global again...\n\n```\n\n{{< callout type=warning >}}\n\nDo not forget a keybind to reset the keymap while inside it! (In this case,\n`escape`)\n\n{{< /callout >}}\n\nIf you get stuck inside a keymap, you can use `hyprctl dispatch submap reset` to\ngo back. If you do not have a terminal open, tough luck buddy. You have been\nwarned.\n\nYou can also set the same keybind to perform multiple actions, such as resize\nand close the submap, like so:\n\n```ini\nbind = ALT, R, submap, resize\n\nsubmap = resize\n\nbind = , right, resizeactive, 10 0\nbind = , right, submap, reset\n# ...\n\nsubmap = reset\n\n```\n\nThis works because the binds are executed in the order they appear, and\nassigning multiple actions per bind is possible.",
+      "Description": "Keybind submaps, also known as _modes_ or _groups_, allow you to activate a\nseparate set of keybinds. For example, if you want to enter a \"resize\" mode\nwhich allows you to resize windows with the arrow keys, you can do it like this:\n\n```ini\n# will switch to a submap called resize\nbind = ALT, R, submap, resize\n\n# will start a submap called \"resize\"\nsubmap = resize\n\n# sets repeatable binds for resizing the active window\nbinde = , right, resizeactive, 10 0\nbinde = , left, resizeactive, -10 0\nbinde = , up, resizeactive, 0 -10\nbinde = , down, resizeactive, 0 10\n\n# use reset to go back to the global submap\nbind = , escape, submap, reset\n\n# will reset the submap, which will return to the global submap\nsubmap = reset\n\n# keybinds further down will be global again...\n\n```\n\n{{< callout type=warning >}}\n\nDo not forget a keybind to reset the keymap while inside it! (In this case,\n`escape`)\n\n{{< /callout >}}\n\nIf you get stuck inside a keymap, you can use `hyprctl dispatch submap reset` to\ngo back. If you do not have a terminal open, tough luck buddy. You have been\nwarned.\n\nYou can also set the same keybind to perform multiple actions, such as resize\nand close the submap, like so:\n\n```ini\nbind = ALT, R, submap, resize\n\nsubmap = resize\n\nbind = , right, resizeactive, 10 0\nbind = , right, submap, reset\n# ...\n\nsubmap = reset\n\n```\n\nThis works because the binds are executed in the order they appear, and\nassigning multiple actions per bind is possible.\n\n### Nesting\n\nSubmaps can be nested, see the following example:\n\n```ini\nbind = $mainMod, M, submap, main_submap\nsubmap = main_submap\n\n# ...\n\n# nested_one\nbind = , 1, submap, nested_one\nsubmap = nested_one\n\n# ...\n\nbind = SHIFT, escape, submap, reset\nbind =      , escape, submap, main_submap\nsubmap = main_submap\n# /nested_one\n\n# nested_two\nbind = , 2, submap, nested_two\nsubmap = nested_two\n\n# ...\n\nbind = SHIFT, escape, submap, reset\nbind =      , escape, submap, main_submap\nsubmap = main_submap\n# /nested_two\n\nbind = , escape, submap, reset\nsubmap = reset\n\n```\n\n### Catch-All\n\nYou can also define a keybind via the special `catchall` keyword, which\nactivates no matter which key is pressed. This can be used to prevent any keys\nfrom passing to your active application while in a submap or to exit it\nimmediately when any unknown key is pressed:\n\n```ini\nbind = , catchall, submap, reset\n\n```",
       "Flags": []
     },
     {
       "Name": "windowrule",
-      "Description": "You can set window rules to achieve different behaviors from the active\ncontainer.\n\n### Syntax\n\n```ini\nwindowrule=RULE,WINDOW\n\n```\n\n- `RULE` is a [rule](#rules) (and a param if applicable)\n- `WINDOW` is a [RegEx](https://en.wikipedia.org/wiki/Regular_expression),\n    either:\n    - plain RegEx (for matching a window class);\n    - `title:` followed by a regex (for matching a window's title)\n    \n\n### Examples\n\n```ini\nwindowrule = float, ^(kitty)$\nwindowrule = move 0 0, title:^(Firefox)(.*)$\n\n```",
+      "Description": "You can set window rules to achieve different behaviors from the active\ncontainer.\n\n### Syntax\n\n```ini\nwindowrule=RULE,WINDOW\n\n```\n\n- `RULE` is a [rule](#rules) (and a param if applicable)\n- `WINDOW` is a [RegEx](https://en.wikipedia.org/wiki/Regular_expression),\n    either:\n    - plain RegEx (for matching a window class);\n    - `title:` followed by a regex (for matching a window's title)\n    \n\n### Examples\n\n```ini\nwindowrule = float, kitty\nwindowrule = move 0 0, title:(Firefox)(.*)\n\n```",
       "Flags": []
     },
     {
       "Name": "windowrulev2",
-      "Description": "In order to allow more flexible rules, while retaining compatibility with the\nabove rule system, window rules V2 were implemented.\n\nIn V2, you are allowed to match multiple variables.\n\nthe `RULE` field is unchanged, but in the `WINDOW` field, you can put regexes\nfor multiple values like so:\n\n```ini\nwindowrulev2 = float, class:(kitty), title:(kitty)\n\n```\n\n{{< callout type=info >}}\n\nIn the case of dynamic window titles such as browser windows, keep in mind how\npowerful regex is.\n\nFor example, a window rule of:\n`windowrule = opacity 0.3 override 0.3 override,title:(.*)(- Youtube)$` will match\n_any_ window that contains a string of \"- Youtube\" after any other text. This\ncould be multiple browser windows or other applications that contain the string\nfor any reason.\n\nFor the `windowrulev2 = float,class:(kitty),title:(kitty)` example, the\n`class:(kitty)``WINDOW` field is what keeps the window rule specific to kitty\nterminals.\n\n{{< /callout >}}\n\nFor now, the supported fields for V2 are:\n\nFieldDescriptionclass:[regex]Windows with `class` matching `regex`.title:[regex]Windows with `title` matching `regex`.initialClass:[regex]Windows with `initialClass` matching `regex`.initialTitle:[regex]Windows with `initialTitle` matching `regex`.tag:[name]Windows with matching `tag`.xwayland:[0/1]Xwayland windows.floating:[0/1]Floating windows.fullscreen:[0/1]Fullscreen windows.pinned:[0/1]Pinned windows.focus:[0/1]Currently focused window.fullscreenstate:[internal] [client]Windows with matching `fullscreenstate`. `internal` and `client` can be `*` - any, `0` - none, `1` - maximize, `2` - fullscreen, `3` - maximize and fullscreen.workspace:[w]Windows on matching workspace. `w` can be `id` or `name:string`.onworkspace:[w]Windows on matching workspace. `w` can be `id`, `name:string` or `workspace selector`.\n\nKeep in mind that you _have_ to declare at least one field, but not all.\n\n{{< callout type=info >}}\n\nTo get more information about a window's class, title, XWayland status or its\nsize, you can use `hyprctl clients`.\n\n{{< /callout >}}",
+      "Description": "In order to allow more flexible rules, while retaining compatibility with the\nabove rule system, window rules V2 were implemented.\n\nIn V2, you are allowed to match multiple variables.\n\nthe `RULE` field is unchanged, but in the `WINDOW` field, you can put regexes\nfor multiple values like so:\n\n```ini\nwindowrulev2 = float, class:kitty, title:kitty\n\n```\n\n{{< callout type=info >}}\n\nIn the case of dynamic window titles such as browser windows, keep in mind how\npowerful regex is.\n\nFor example, a window rule of:\n`windowrule = opacity 0.3 override 0.3 override,title:(.*)(- Youtube)` will match\n_any_ window that contains a string of \"- Youtube\" after any other text. This\ncould be multiple browser windows or other applications that contain the string\nfor any reason.\n\nFor the `windowrulev2 = float,class:kitty,title:kitty` example, the\n`class:(kitty)``WINDOW` field is what keeps the window rule specific to kitty\nterminals.\n\n{{< /callout >}}\n\nFor now, the supported fields for V2 are:\n\nFieldDescriptionclass:[regex]Windows with `class` matching `regex`.title:[regex]Windows with `title` matching `regex`.initialClass:[regex]Windows with `initialClass` matching `regex`.initialTitle:[regex]Windows with `initialTitle` matching `regex`.tag:[name]Windows with matching `tag`.xwayland:[0/1]Xwayland windows.floating:[0/1]Floating windows.fullscreen:[0/1]Fullscreen windows.pinned:[0/1]Pinned windows.focus:[0/1]Currently focused window.fullscreenstate:[internal] [client]Windows with matching `fullscreenstate`. `internal` and `client` can be `*` - any, `0` - none, `1` - maximize, `2` - fullscreen, `3` - maximize and fullscreen.workspace:[w]Windows on matching workspace. `w` can be `id` or `name:string`.onworkspace:[w]Windows on matching workspace. `w` can be `id`, `name:string` or `workspace selector`.\n\nKeep in mind that you _have_ to declare at least one field, but not all.\n\n{{< callout type=info >}}\n\nTo get more information about a window's class, title, XWayland status or its\nsize, you can use `hyprctl clients`.\n\n{{< /callout >}}\n\n### RegEx writing\n\nPlease note Hyprland uses Google's RE2 for parsing Regex. This means that all operations requiring polynomial\ntime to compute will not work. See [the re2 wiki](https://github.com/google/re2/wiki/Syntax) for supported extensions.\n\nIf you want to _negate_ a regex, as in pass only when the regex _fails_, you can prefix it with `negative:`, e.g.: `negative:kitty`.",
       "Flags": []
     },
     {

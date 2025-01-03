@@ -31,9 +31,9 @@ the layout pages and not here. (See the Sidebar for Dwindle and Master layouts)
 
 You have 3 options:
 
-rgba(), e.g. `rgba(b3ff1aee)`
+rgba(), e.g. `rgba(b3ff1aee)`, or the decimal equivalent `rgba(179, 255, 26, 0.933)`
 
-rgb(), e.g. `rgb(b3ff1a)`
+rgb(), e.g. `rgb(b3ff1a)`, or the decimal equivalent  `rgb(179, 255, 26)`
 
 legacy, e.g. `0xeeb3ff1a` -> ARGB order
 
@@ -126,7 +126,7 @@ _Subcategory `decoration:blur:`_
 | enabled | enable kawase window background blur | bool | true |
 | size | blur size (distance) | int | 8 |
 | passes | the amount of passes to perform | int | 1 |
-| ignore_opacity | make the blur layer ignore the opacity of the window | bool | false |
+| ignore_opacity | make the blur layer ignore the opacity of the window | bool | true |
 | new_optimizations | whether to enable further optimizations to the blur. Recommended to leave on, as it will massively improve performance. | bool | true |
 | xray | if enabled, floating windows will ignore tiled windows in their blur. Only available if new_optimizations is true. Will reduce overhead on floating blur significantly. | bool | false |
 | noise | how much noise to apply. [0.0 - 1.0] | float | 0.0117 |
@@ -137,6 +137,8 @@ _Subcategory `decoration:blur:`_
 | special | whether to blur behind the special workspace (note: expensive) | bool | false |
 | popups | whether to blur popups (e.g. right-click menus) | bool | false |
 | popups_ignorealpha | works like ignorealpha in layer rules. If pixel opacity is below set value, will not blur. [0.0 - 1.0] | float | 0.2 |
+| input_methods | whether to blur input methods (e.g. fcitx5) | bool | false |
+| input_methods_ignorealpha | works like ignorealpha in layer rules. If pixel opacity is below set value, will not blur. [0.0 - 1.0] | float | 0.2 |
 
 {{< callout type=info >}}
 
@@ -292,8 +294,9 @@ _Subcategory `input:tablet:`_
 | name | description | type | default |
 | --- | --- | --- | --- |
 | transform | transform the input from tablets. The possible transformations are the same as [those of the monitors](../Monitors/#rotating) | int | 0 |
-| output | the monitor to bind tablets. Empty means unbound. | string | \[\[Empty\]\] |
-| region_position | position of the mapped region in monitor layout. | vec2 | [0, 0] |
+| output | the monitor to bind tablets. Can be `current` or a monitor name. Leave empty to map across all monitors. | string | \[\[Empty\]\] |
+| region_position | position of the mapped region in monitor layout relative to the top left corner of the bound monitor or all monitors. | vec2 | [0, 0] |
+| absolute_region_position | whether to treat the `region_position` as an absolute position in monitor layout. Only applies when `output` is empty. | bool | false |
 | region_size | size of the mapped region. When this variable is set, tablet input will be mapped to the region. [0, 0] or invalid size means unset. | vec2 | [0, 0] |
 | relative_input | whether the input should be relative | bool | false |
 | left_handed | if enabled, the tablet will be rotated 180 degrees | bool | false |
@@ -396,6 +399,8 @@ _Subcategory `group:groupbar:`_
 | middle_click_paste | whether to enable middle-click-paste (aka primary selection) | bool | true |
 | render_unfocused_fps | the maximum limit for renderunfocused windows' fps in the background (see also [Window-Rules](../Window-Rules/#dynamic-rules) - `renderunfocused`)| int | 15 |
 | disable_xdg_env_checks | disable the warning if XDG environment is externally managed | bool | false |
+| disable_hyprland_qtutils_check | disable the warning if hyprland-qtutils is not installed | bool | false |
+| lockdead_screen_delay | the delay in ms after the lockdead screen appears if the lock screen did not appear after a lock event occurred | int | 1000 |
 
 ### Binds
 
@@ -409,8 +414,10 @@ _Subcategory `group:groupbar:`_
 | focus_preferred_method | sets the preferred focus finding method when using `focuswindow`/`movewindow`/etc with a direction. 0 - history (recent have priority), 1 - length (longer shared edges have priority) | int | 0 |
 | ignore_group_lock | If enabled, dispatchers like `moveintogroup`, `moveoutofgroup` and `movewindoworgroup` will ignore lock per group. | bool | false |
 | movefocus_cycles_fullscreen | If enabled, when on a fullscreen window, `movefocus` will cycle fullscreen, if not, it will move the focus in a direction. | bool | true |
+| movefocus_cycles_groupfirst | If enabled, when in a grouped window, movefocus will cycle windows in the groups first, then at each ends of tabs, it'll move on to other windows/groups | bool | false |
 | disable_keybind_grabbing | If enabled, apps that request keybinds to be disabled (e.g. VMs) will not be able to do so. | bool | false |
 | window_direction_monitor_fallback | If enabled, moving a window or focus over the edge of a monitor with a direction will move it to the next monitor in that direction. | bool | true |
+| allow_pin_fullscreen | If enabled, Allow fullscreen to pinned windows, and restore their pinned status afterwards | bool | false |
 
 ### XWayland
 
@@ -435,6 +442,8 @@ _Subcategory `group:groupbar:`_
 | explicit_sync_kms | Whether to enable explicit sync support for the KMS layer. Requires explicit_sync to be enabled. 0 - no, 1 - yes, 2 - auto based on the gpu driver | int | 2 |
 | direct_scanout | Enables direct scanout. Direct scanout attempts to reduce lag when there is only one fullscreen application on a screen (e.g. game). It is also recommended to set this to false if the fullscreen application shows graphical glitches. | bool | false |
 | expand_undersized_textures | Whether to expand undersized textures along the edge, or rather stretch the entire texture. | bool | true |
+| xp_mode | Disables back buffer and bottom layer rendering. | bool | false |
+| ctm_animation | Whether to enable a fade animation for CTM changes (hyprsunset). 2 means "auto" which disables them on Nvidia. | int | 2 |
 
 ### Cursor
 
@@ -448,14 +457,21 @@ _Subcategory `group:groupbar:`_
 | inactive_timeout | in seconds, after how many seconds of cursor's inactivity to hide it. Set to `0` for never. | float | 0 |
 | no_warps | if true, will not warp the cursor in many cases (focusing, keybinds, etc) | bool | false |
 | persistent_warps | When a window is refocused, the cursor returns to its last position relative to that window, rather than to the centre. | bool | false |
-| warp_on_change_workspace | If true, move the cursor to the last focused window after changing the workspace. | bool | false |
+| warp_on_change_workspace | Move the cursor to the last focused window after changing the workspace. Options: 0 (Disabled), 1 (Enabled), 2 (Force - ignores cursor:no_warps option) | int | 0 |
 | default_monitor | the name of a default monitor for the cursor to be set to on startup (see `hyprctl monitors` for names) | str | [[EMPTY]] |
 | zoom_factor | the factor to zoom by around the cursor. Like a magnifying glass. Minimum 1.0 (meaning no zoom) | float | 1.0 |
 | zoom_rigid | whether the zoom should follow the cursor rigidly (cursor is always centered if it can be) or loosely | bool | false |
 | enable_hyprcursor | whether to enable hyprcursor support | bool | true |
 | hide_on_key_press | Hides the cursor when you press any key until the mouse is moved. | bool | false |
 | hide_on_touch | Hides the cursor when the last input was a touch input until a mouse input is done. | bool | true |
-| allow_dumb_copy | Makes HW cursors work on Nvidia, at the cost of a possible hitch whenever the image changes | bool | false |
+| use_cpu_buffer | Makes HW cursors use a CPU buffer. Required on Nvidia to have HW cursors. Experimental. | bool | false |
+| warp_back_after_non_mouse_input | Warp the cursor back to where it was after using a non-mouse input to move it, and then returning back to mouse. | bool | false |
+
+### Ecosystem
+
+| name | description | type | default |
+| --- | --- | --- | --- |
+| no_update_news | disable the popup that shows up when you update hyprland to a new version. | bool | false |
 
 ### Debug
 
@@ -480,6 +496,7 @@ Only for developers.
 | error_limit | limits the number of displayed config file parsing errors. | int | 5 |
 | error_position | sets the position of the error bar. top - 0, bottom - 1 | int | 0 |
 | colored_stdout_logs | enables colors in the stdout logs. | bool | true |
+| pass | enables render pass debugging. | bool | false |
 
 ### More
 
