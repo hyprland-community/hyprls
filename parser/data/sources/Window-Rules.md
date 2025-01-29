@@ -137,7 +137,7 @@ It is not possible to `float` (or any other of the static rules) a window based 
 | nomaxsize | removes max size limitations. Especially useful with windows that report invalid max sizes (e.g. winecfg) |
 | stayfocused | forces focus on the window as long as it's visible |
 | group \[options\] | set window group properties. See the note below. |
-| suppressevent \[types...\] | ignores specific events from the window. Events are space separated, and can be: `fullscreen` `maximize` `activate` `activatefocus` |
+| suppressevent \[types...\] | ignores specific events from the window. Events are space separated, and can be: `fullscreen` `maximize` `activate` `activatefocus` `fullscreenoutput` |
 
 ### Dynamic rules
 
@@ -159,6 +159,7 @@ The following rules can also be set with [`setprop`](../Dispatchers#setprop):
 | ---- | ----------- |
 | bordersize \[int\] | sets the border size |
 | rounding \[int\] | forces the application to have X pixels of rounding, ignoring the set default (in `decoration:rounding`). Has to be an int. |
+| roundingpower \[float\] | overrides the rounding power for the window (see `decoration:rounding_power`). |
 | allowsinput \[on\] | forces an XWayland window to receive input, even if it requests not to do so. (Might fix issues like e.g. Game Launchers not receiving focus for some reason) |
 | dimaround \[on\] | dims everything around the window . Please note this rule is meant for floating windows and using it on tiled ones may result in strange behavior. |
 | decorate \[on\] | whether to draw window decorations or not |

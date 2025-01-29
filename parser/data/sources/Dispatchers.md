@@ -10,7 +10,7 @@ layout pages (See the sidebar).
 
 | Param type | Description |
 | --- | --- |
-| window | a window. Any of the following: class regex (by default, optionally `class:`), `initialclass:` initial class regex, `title:` title regex, `initialtitle` initial title regex, `pid:` the pid, `address:` the address, `activewindow` an active window, `floating` the first floating window on the current workspace, `tiled` the first tiled window on the current workspace |
+| window | a window. Any of the following: class regex (by default, optionally `class:`), `initialclass:` initial class regex, `title:` title regex, `initialtitle` initial title regex, `tag:` window tag regex, `pid:` the pid, `address:` the address, `activewindow` an active window, `floating` the first floating window on the current workspace, `tiled` the first tiled window on the current workspace |
 | workspace | see below. |
 | direction | `l` `r` `u` `d` left right up down |
 | monitor | One of: direction, ID, name, `current`, relative (e.g. `+1` or `-1`) |
@@ -29,7 +29,11 @@ layout pages (See the sidebar).
 | pass | passes the key (with mods) to a specified window. Can be used as a workaround to global keybinds not working on Wayland. | window |
 | sendshortcut | sends specified keys (with mods) to an optionally specified window. Can be used like pass | mod, key[, window] |
 | killactive | closes (not kills) the active window | none |
+| forcekillactive | kills the active window | none |
 | closewindow | closes a specified window | window |
+| killwindow | kills a specified window | window |
+| signal | sends a signal to the active window | signal |
+| signalwindow | sends a signal to a specified window | `window,signal`, e.g.`class:Alacritty,9` |
 | workspace | changes the workspace | workspace |
 | movetoworkspace | moves the focused window to a workspace | workspace OR `workspace,window` for a specific window |
 | movetoworkspacesilent | same as above, but doesn't switch to the workspace | workspace OR `workspace,window` for a specific window |
@@ -48,7 +52,7 @@ layout pages (See the sidebar).
 | moveactive | moves the active window | resizeparams |
 | resizewindowpixel | resizes a selected window | `resizeparams,window`, e.g. `100 100,^(kitty)$` |
 | movewindowpixel | moves a selected window | `resizeparams,window` |
-| cyclenext | focuses the next window on a workspace | none (for next) or `prev` (for previous) additionally `tiled` for only tiled, `floating` for only floating. `prev tiled` is ok. |
+| cyclenext | focuses the next window (on a workspace, if `visible` is not provided) | none (for next) or `prev` (for previous) additionally `tiled` for only tiled, `floating` for only floating. `prev tiled` is ok. `visible` for all monitors cycling. `visible prev floating` is ok |
 | swapnext | swaps the focused window with the next window on a workspace | none (for next) or `prev` (for previous) |
 | tagwindow | apply tag to current or the first window matching | `tag [window]`, e.g. `+code ^(foot)$`, `music` |
 | focuswindow | focuses the first window matching | window |

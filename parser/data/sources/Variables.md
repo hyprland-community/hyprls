@@ -108,6 +108,7 @@ Doing `general:snap {` is **invalid**!
 | name | description | type | default |
 | --- | --- | --- | --- |
 | rounding | rounded corners' radius (in layout px) | int | 0 |
+| rounding_power | adjusts the curve used for rounding corners, larger is smoother, 2.0 is a circle, 4.0 is a squircle. [2.0 - 10.0] | float | 2.0 |
 | active_opacity | opacity of active windows. [0.0 - 1.0] | float | 1.0 |
 | inactive_opacity | opacity of inactive windows. [0.0 - 1.0] | float | 1.0 |
 | fullscreen_opacity | opacity of fullscreen windows. [0.0 - 1.0] | float | 1.0 |
@@ -444,13 +445,14 @@ _Subcategory `group:groupbar:`_
 | expand_undersized_textures | Whether to expand undersized textures along the edge, or rather stretch the entire texture. | bool | true |
 | xp_mode | Disables back buffer and bottom layer rendering. | bool | false |
 | ctm_animation | Whether to enable a fade animation for CTM changes (hyprsunset). 2 means "auto" which disables them on Nvidia. | int | 2 |
+| allow_early_buffer_release | Allow early buffer release event. Fixes stuttering and missing frames for some apps. May cause graphical glitches and memory leaks in others. | bool | true |
 
 ### Cursor
 
 | name | description | type | default |
 | --- | --- | --- | --- |
 | sync_gsettings_theme | sync xcursor theme with gsettings, it applies cursor-theme and cursor-size on theme load to gsettings making most CSD gtk based clients use same xcursor theme and size. | bool | true |
-| no_hardware_cursors | disables hardware cursors. Set to 2 for `auto` which disables them on Nvidia, while keeping them enabled otherwise. | int | 2 |
+| no_hardware_cursors | disables hardware cursors. | bool | false |
 | no_break_fs_vrr | disables scheduling new frames on cursor movement for fullscreen apps with VRR enabled to avoid framerate spikes (requires `no_hardware_cursors = true`) | bool | false |
 | min_refresh_rate | minimum refresh rate for cursor movement when `no_break_fs_vrr` is active. Set to minimum supported refresh rate or higher | int | 24 |
 | hotspot_padding | the padding, in logical px, between screen edges and the cursor | int | 1 |
@@ -464,7 +466,7 @@ _Subcategory `group:groupbar:`_
 | enable_hyprcursor | whether to enable hyprcursor support | bool | true |
 | hide_on_key_press | Hides the cursor when you press any key until the mouse is moved. | bool | false |
 | hide_on_touch | Hides the cursor when the last input was a touch input until a mouse input is done. | bool | true |
-| use_cpu_buffer | Makes HW cursors use a CPU buffer. Required on Nvidia to have HW cursors. Experimental. | bool | false |
+| use_cpu_buffer | Makes HW cursors use a CPU buffer. Required on Nvidia to have HW cursors. 0 - off, 1 - on, 2 - auto (nvidia only) | int | 2 |
 | warp_back_after_non_mouse_input | Warp the cursor back to where it was after using a non-mouse input to move it, and then returning back to mouse. | bool | false |
 
 ### Ecosystem
@@ -472,6 +474,32 @@ _Subcategory `group:groupbar:`_
 | name | description | type | default |
 | --- | --- | --- | --- |
 | no_update_news | disable the popup that shows up when you update hyprland to a new version. | bool | false |
+| no_donation_nag | disable the popup that shows up twice a year encouraging to donate. | bool | false |
+
+### Experimental
+
+| name | description | type | default |
+| --- | --- | --- | --- |
+| wide_color_gamut | force wide color gamut for all supported outputs | bool | false |
+| hdr | force static hdr for all supported outputs (for testing only, will result in oversaturated colors) | bool | false |
+| xx_color_management_v4 | enable color management protocol | bool | false |
+
+Requires a client with `frog-color-management-v1` or `xx-color-management-v4` support like gamescope or https://github.com/Zamundaaa/VK_hdr_layer
+
+Steam:
+
+`DXVK_HDR=1 gamescope -f --hdr-enabled -- %command%`
+
+`ENABLE_HDR_WSI=1 DXVK_HDR=1 DISPLAY= %command%` (requires wayland-enabled proton version)
+
+Non-steam:
+
+`ENABLE_HDR_WSI=1 DXVK_HDR=1 DISPLAY= wine executable.exe` 
+
+Video:
+
+`ENABLE_HDR_WSI=1 mpv --vo=gpu-next --target-colorspace-hint --gpu-api=vulkan --gpu-context=waylandvk "filename"`
+
 
 ### Debug
 

@@ -5,22 +5,23 @@ import "image/color"
 type Configuration struct {
 	CustomVariables map[string]string
 
-	General    ConfigurationGeneral    `json:"general"`
-	Decoration ConfigurationDecoration `json:"decoration"`
-	Animations ConfigurationAnimations `json:"animations"`
-	Input      ConfigurationInput      `json:"input"`
-	Gestures   ConfigurationGestures   `json:"gestures"`
-	Group      ConfigurationGroup      `json:"group"`
-	Misc       ConfigurationMisc       `json:"misc"`
-	Binds      ConfigurationBinds      `json:"binds"`
-	XWayland   ConfigurationXWayland   `json:"xwayland"`
-	OpenGL     ConfigurationOpenGL     `json:"opengl"`
-	Render     ConfigurationRender     `json:"render"`
-	Cursor     ConfigurationCursor     `json:"cursor"`
-	Ecosystem  ConfigurationEcosystem  `json:"ecosystem"`
-	Debug      ConfigurationDebug      `json:"debug"`
-	Master     ConfigurationMaster     `json:"master"`
-	Dwindle    ConfigurationDwindle    `json:"dwindle"`
+	General      ConfigurationGeneral      `json:"general"`
+	Decoration   ConfigurationDecoration   `json:"decoration"`
+	Animations   ConfigurationAnimations   `json:"animations"`
+	Input        ConfigurationInput        `json:"input"`
+	Gestures     ConfigurationGestures     `json:"gestures"`
+	Group        ConfigurationGroup        `json:"group"`
+	Misc         ConfigurationMisc         `json:"misc"`
+	Binds        ConfigurationBinds        `json:"binds"`
+	XWayland     ConfigurationXWayland     `json:"xwayland"`
+	OpenGL       ConfigurationOpenGL       `json:"opengl"`
+	Render       ConfigurationRender       `json:"render"`
+	Cursor       ConfigurationCursor       `json:"cursor"`
+	Ecosystem    ConfigurationEcosystem    `json:"ecosystem"`
+	Experimental ConfigurationExperimental `json:"experimental"`
+	Debug        ConfigurationDebug        `json:"debug"`
+	Master       ConfigurationMaster       `json:"master"`
+	Dwindle      ConfigurationDwindle      `json:"dwindle"`
 }
 
 type ConfigurationGeneral struct {
@@ -95,6 +96,9 @@ type ConfigurationGeneralSnap struct {
 type ConfigurationDecoration struct {
 	// rounded corners' radius (in layout px)
 	Rounding int `json:"rounding"`
+
+	// adjusts the curve used for rounding corners, larger is smoother, 2.0 is a circle, 4.0 is a squircle. [2.0 - 10.0]
+	RoundingPower float32 `json:"rounding_power"`
 
 	// opacity of active windows. [0.0 - 1.0]
 	ActiveOpacity float32 `json:"active_opacity"`
@@ -598,14 +602,17 @@ type ConfigurationRender struct {
 
 	// Whether to enable a fade animation for CTM changes (hyprsunset). 2 means "auto" which disables them on Nvidia.
 	CtmAnimation int `json:"ctm_animation"`
+
+	// Allow early buffer release event. Fixes stuttering and missing frames for some apps. May cause graphical glitches and memory leaks in others.
+	AllowEarlyBufferRelease bool `json:"allow_early_buffer_release"`
 }
 
 type ConfigurationCursor struct {
 	// sync xcursor theme with gsettings, it applies cursor-theme and cursor-size on theme load to gsettings making most CSD gtk based clients use same xcursor theme and size.
 	SyncGsettingsTheme bool `json:"sync_gsettings_theme"`
 
-	// disables hardware cursors. Set to 2 for auto which disables them on Nvidia, while keeping them enabled otherwise.
-	NoHardwareCursors int `json:"no_hardware_cursors"`
+	// disables hardware cursors.
+	NoHardwareCursors bool `json:"no_hardware_cursors"`
 
 	// disables scheduling new frames on cursor movement for fullscreen apps with VRR enabled to avoid framerate spikes (requires no_hardware_cursors = true)
 	NoBreakFsVrr bool `json:"no_break_fs_vrr"`
@@ -646,8 +653,8 @@ type ConfigurationCursor struct {
 	// Hides the cursor when the last input was a touch input until a mouse input is done.
 	HideOnTouch bool `json:"hide_on_touch"`
 
-	// Makes HW cursors use a CPU buffer. Required on Nvidia to have HW cursors. Experimental.
-	UseCpuBuffer bool `json:"use_cpu_buffer"`
+	// Makes HW cursors use a CPU buffer. Required on Nvidia to have HW cursors. 0 - off, 1 - on, 2 - auto (nvidia only)
+	UseCpuBuffer int `json:"use_cpu_buffer"`
 
 	// Warp the cursor back to where it was after using a non-mouse input to move it, and then returning back to mouse.
 	WarpBackAfterNonMouseInput bool `json:"warp_back_after_non_mouse_input"`
@@ -656,6 +663,20 @@ type ConfigurationCursor struct {
 type ConfigurationEcosystem struct {
 	// disable the popup that shows up when you update hyprland to a new version.
 	NoUpdateNews bool `json:"no_update_news"`
+
+	// disable the popup that shows up twice a year encouraging to donate.
+	NoDonationNag bool `json:"no_donation_nag"`
+}
+
+type ConfigurationExperimental struct {
+	// force wide color gamut for all supported outputs
+	WideColorGamut bool `json:"wide_color_gamut"`
+
+	// force static hdr for all supported outputs (for testing only, will result in oversaturated colors)
+	Hdr bool `json:"hdr"`
+
+	// enable color management protocol
+	XxColorManagementV4 bool `json:"xx_color_management_v4"`
 }
 
 type ConfigurationDebug struct {
@@ -729,6 +750,9 @@ type ConfigurationMaster struct {
 
 	// when using orientation=center, make the master window centered only when at least this many slave windows are open. (Set 0 to always_center_master)
 	SlaveCountForCenterMaster int `json:"slave_count_for_center_master"`
+
+	// set if the slaves should appear on right of master when slave_count_for_center_master > 2
+	CenterMasterSlavesOnRight bool `json:"center_master_slaves_on_right"`
 
 	// if enabled, resizing direction will be determined by the mouse's position on the window (nearest to which corner). Else, it is based on the window's tiling position.
 	SmartResizing bool `json:"smart_resizing"`

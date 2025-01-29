@@ -327,6 +327,12 @@
           "Default": "0"
         },
         {
+          "Name": "rounding_power",
+          "Description": "adjusts the curve used for rounding corners, larger is smoother, 2.0 is a circle, 4.0 is a squircle. [2.0 - 10.0]",
+          "Type": "float",
+          "Default": "2.0"
+        },
+        {
           "Name": "active_opacity",
           "Description": "opacity of active windows. [0.0 - 1.0]",
           "Type": "float",
@@ -1205,6 +1211,12 @@
           "Description": "Whether to enable a fade animation for CTM changes (hyprsunset). 2 means \"auto\" which disables them on Nvidia.",
           "Type": "int",
           "Default": "2"
+        },
+        {
+          "Name": "allow_early_buffer_release",
+          "Description": "Allow early buffer release event. Fixes stuttering and missing frames for some apps. May cause graphical glitches and memory leaks in others.",
+          "Type": "bool",
+          "Default": "true"
         }
       ]
     },
@@ -1222,9 +1234,9 @@
         },
         {
           "Name": "no_hardware_cursors",
-          "Description": "disables hardware cursors. Set to 2 for auto which disables them on Nvidia, while keeping them enabled otherwise.",
-          "Type": "int",
-          "Default": "2"
+          "Description": "disables hardware cursors.",
+          "Type": "bool",
+          "Default": "false"
         },
         {
           "Name": "no_break_fs_vrr",
@@ -1306,9 +1318,9 @@
         },
         {
           "Name": "use_cpu_buffer",
-          "Description": "Makes HW cursors use a CPU buffer. Required on Nvidia to have HW cursors. Experimental.",
-          "Type": "bool",
-          "Default": "false"
+          "Description": "Makes HW cursors use a CPU buffer. Required on Nvidia to have HW cursors. 0 - off, 1 - on, 2 - auto (nvidia only)",
+          "Type": "int",
+          "Default": "2"
         },
         {
           "Name": "warp_back_after_non_mouse_input",
@@ -1327,6 +1339,38 @@
         {
           "Name": "no_update_news",
           "Description": "disable the popup that shows up when you update hyprland to a new version.",
+          "Type": "bool",
+          "Default": "false"
+        },
+        {
+          "Name": "no_donation_nag",
+          "Description": "disable the popup that shows up twice a year encouraging to donate.",
+          "Type": "bool",
+          "Default": "false"
+        }
+      ]
+    },
+    {
+      "Path": [
+        "Experimental"
+      ],
+      "Subsections": [],
+      "Variables": [
+        {
+          "Name": "wide_color_gamut",
+          "Description": "force wide color gamut for all supported outputs",
+          "Type": "bool",
+          "Default": "false"
+        },
+        {
+          "Name": "hdr",
+          "Description": "force static hdr for all supported outputs (for testing only, will result in oversaturated colors)",
+          "Type": "bool",
+          "Default": "false"
+        },
+        {
+          "Name": "xx_color_management_v4",
+          "Description": "enable color management protocol",
           "Type": "bool",
           "Default": "false"
         }
@@ -1485,6 +1529,12 @@
           "Default": "2"
         },
         {
+          "Name": "center_master_slaves_on_right",
+          "Description": "set if the slaves should appear on right of master when slave_count_for_center_master > 2",
+          "Type": "bool",
+          "Default": "true"
+        },
+        {
           "Name": "smart_resizing",
           "Description": "if enabled, resizing direction will be determined by the mouse's position on the window (nearest to which corner). Else, it is based on the window's tiling position.",
           "Type": "bool",
@@ -1611,12 +1661,12 @@
     },
     {
       "Name": "exec",
-      "Description": "You can execute a shell script on:\n\n- startup of the compositor\n- every time the config is reloaded.\n- shutdown of the compositor\n\n`exec-once = command` will execute only on launch\n\n`exec = command` will execute on each reload\n\n`exec-shutdown = command` will execute only on shutdown",
+      "Description": "You can execute a shell script on:\n\n- startup of the compositor\n- every time the config is reloaded.\n- shutdown of the compositor\n\n`exec-once = command` will execute only on launch ([support rules](https://wiki.hyprland.org/Configuring/Dispatchers/#executing-with-rules))\n\n`execr-once = command` will execute only on launch\n\n`exec = command` will execute on each reload ([support rules](https://wiki.hyprland.org/Configuring/Dispatchers/#executing-with-rules))\n\n`execr = command` will execute on each reload\n\n`exec-shutdown = command` will execute only on shutdown",
       "Flags": []
     },
     {
       "Name": "exec-once",
-      "Description": "You can execute a shell script on:\n\n- startup of the compositor\n- every time the config is reloaded.\n- shutdown of the compositor\n\n`exec-once = command` will execute only on launch\n\n`exec = command` will execute on each reload\n\n`exec-shutdown = command` will execute only on shutdown",
+      "Description": "You can execute a shell script on:\n\n- startup of the compositor\n- every time the config is reloaded.\n- shutdown of the compositor\n\n`exec-once = command` will execute only on launch ([support rules](https://wiki.hyprland.org/Configuring/Dispatchers/#executing-with-rules))\n\n`execr-once = command` will execute only on launch\n\n`exec = command` will execute on each reload ([support rules](https://wiki.hyprland.org/Configuring/Dispatchers/#executing-with-rules))\n\n`execr = command` will execute on each reload\n\n`exec-shutdown = command` will execute only on shutdown",
       "Flags": []
     },
     {
