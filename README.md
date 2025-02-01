@@ -33,7 +33,7 @@ Not checked means planned / work in progress.
 ### With `go install`
 
 ```sh
-go install github.com/ewen-lbh/hyprls/cmd/hyprls@latest
+go install github.com/hyprland-community/hyprls/cmd/hyprls@latest
 ```
 
 ### From source
@@ -41,7 +41,7 @@ go install github.com/ewen-lbh/hyprls/cmd/hyprls@latest
 - Required: [Just](https://just.systems) (`paru -S just` on Arch Linux (btw))
 
 ```sh
-git clone --recurse-submodules https://github.com/ewen-lbh/hyprls
+git clone --recurse-submodules https://github.com/hyprland-community/hyprls
 cd hyprls
 # installs the binary to ~/.local/bin. 
 # Make sure that directory exists and is in your PATH
