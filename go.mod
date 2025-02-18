@@ -1,4 +1,4 @@
-module github.com/ewen-lbh/hyprls
+module github.com/hyprland-community/hyprls
 
 go 1.22.2
 
