@@ -1,5 +1,8 @@
 serverLogsFilepath := `realpath ./logs/server.log || echo ./logs/server.log`
 latestTag := `git describe --tags --abbrev=0 || echo commit:$(git rev-parse --short HEAD)`
+latestVersion := `git describe --tags --abbrev=0  | sed 's/v//' || echo commit:$(git rev-parse --short HEAD)`
+# Parse content of https://wiki.hyprland.org/version-selector/ to get latest documented version
+latestHyprlandVersion := `curl -s https://wiki.hyprland.org/version-selector/ | grep -oP 'v\d+\.\d+\.\d+' | head -n 1 | sed 's/v//'`
 
 release tag:
 	jq '.version = "{{ tag }}"' < vscode/package.json | sponge vscode/package.json
@@ -16,10 +19,12 @@ run:
 	./hyprlang-lsp
 
 build:
+	mkdir -p logs
+	touch logs/server.log
 	mkdir -p parser/data/sources
 	cp hyprland-wiki/pages/Configuring/*.md parser/data/sources/
 	go mod tidy
-	go build -ldflags "-X main.Version={{ latestTag }}" -o hyprls cmd/hyprls/main.go
+	go build -ldflags "-X main.HyprlandWikiVersion={{ latestHyprlandVersion }} -X main.HyprlsVersion={{ latestVersion }}" -o hyprls cmd/hyprls/main.go
 
 build-debug:
 	mkdir -p parser/data/sources
@@ -33,7 +38,12 @@ install:
 	cp hyprls ~/.local/bin/hyprls
 
 pull-wiki:
+	#!/bin/bash
 	git submodule update --init --recursive --remote
+	cd hyprland-wiki
+	hash=$(git log --all --oneline --grep="versions: add {{ latestHyprlandVersion }}" | cut -d' ' -f1)
+	echo Using wiki https://github.com/hyprwm/hyprland-wiki/commit/$hash
+	git checkout $hash
 
 parser-data:
 	#!/bin/bash
