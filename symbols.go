@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/ewen-lbh/hyprls/parser"
+	"github.com/hyprland-community/hyprls/parser"
 	"go.lsp.dev/protocol"
 )
 

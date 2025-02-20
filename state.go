@@ -5,8 +5,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/ewen-lbh/hyprls/parser"
-	parser_data "github.com/ewen-lbh/hyprls/parser/data"
+	"github.com/hyprland-community/hyprls/parser"
+	parser_data "github.com/hyprland-community/hyprls/parser/data"
 	"go.lsp.dev/protocol"
 	"go.uber.org/zap"
 )

@@ -1,7 +1,7 @@
 {
   "name": "vscode-hyprls",
   "description": "VSCode extension for HyprLS",
-  "author": "Ewen Le Bihan <hey@ewen.works>",
+  "author": "Gwenn Le Bihan <gwenn.lebihan7@gmail.com>",
   "license": "MIT",
   "version": "0.5.0",
   "repository": {
