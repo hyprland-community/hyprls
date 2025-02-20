@@ -14,7 +14,7 @@
 
 buildGoApplication {
   pname = "hyprls";
-  version = "0.5.0";
+  version = "0.5.2";
   pwd = ./.;
   src = ./.;
 
