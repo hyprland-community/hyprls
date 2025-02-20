@@ -9,7 +9,7 @@ import (
 	"strings"
 	"unicode"
 
-	parser_data "github.com/ewen-lbh/hyprls/parser/data"
+	parser_data "github.com/hyprland-community/hyprls/parser/data"
 	"go.lsp.dev/protocol"
 )
 

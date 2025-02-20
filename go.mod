@@ -5,7 +5,6 @@ go 1.22.2
 require (
 	github.com/PuerkitoBio/goquery v1.5.1
 	github.com/davecgh/go-spew v1.1.1
-	github.com/ewen-lbh/hyprls v0.5.0
 	go.lsp.dev/jsonrpc2 v0.10.0
 	go.uber.org/multierr v1.11.0
 	go.uber.org/zap v1.27.0

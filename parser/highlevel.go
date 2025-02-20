@@ -279,6 +279,9 @@ type ConfigurationInput struct {
 	// Specify if and how cursor movement should affect window focus. See the note below. [0/1/2/3]
 	FollowMouse int `json:"follow_mouse"`
 
+	// The smallest distance in logical pixels the mouse needs to travel for the window under it to get focused. Works only with follow_mouse = 1.
+	FollowMouseThreshold float32 `json:"follow_mouse_threshold"`
+
 	// Controls the window focus behavior when a window is closed. When set to 0, focus will shift to the next window candidate. When set to 1, focus will shift to the window under the cursor. [0/1]
 	FocusOnClose int `json:"focus_on_close"`
 
@@ -398,6 +401,9 @@ type ConfigurationGroupGroupbar struct {
 	// height of the groupbar
 	Height int `json:"height"`
 
+	// height of the groupbar indicator
+	IndicatorHeight int `json:"indicator_height"`
+
 	// render the groupbar as a vertical stack
 	Stacked bool `json:"stacked"`
 
@@ -409,6 +415,18 @@ type ConfigurationGroupGroupbar struct {
 
 	// whether scrolling in the groupbar changes group active window
 	Scrolling bool `json:"scrolling"`
+
+	// how much to round the indicator
+	Rounding int `json:"rounding"`
+
+	// how much to round the gradients
+	GradientRounding int `json:"gradient_rounding"`
+
+	// round only the indicator edges of the entire groupbar
+	RoundOnlyEdges bool `json:"round_only_edges"`
+
+	// round only the gradient edges of the entire groupbar
+	GradientRoundOnlyEdges bool `json:"gradient_round_only_edges"`
 
 	// controls the group bar text color
 	TextColor color.RGBA `json:"text_color"`
@@ -525,6 +543,9 @@ type ConfigurationMisc struct {
 
 	// the delay in ms after the lockdead screen appears if the lock screen did not appear after a lock event occurred
 	LockdeadScreenDelay int `json:"lockdead_screen_delay"`
+
+	// whether to enable the ANR (app not responding) dialog when your apps hang
+	EnableAnrDialog bool `json:"enable_anr_dialog"`
 }
 
 type ConfigurationBinds struct {
@@ -579,9 +600,6 @@ type ConfigurationXWayland struct {
 type ConfigurationOpenGL struct {
 	// reduces flickering on nvidia at the cost of possible frame drops on lower-end GPUs. On non-nvidia, this is ignored.
 	NvidiaAntiFlicker bool `json:"nvidia_anti_flicker"`
-
-	// forces introspection at all times. Introspection is aimed at reducing GPU usage in certain cases, but might cause graphical glitches on nvidia. 0 - nothing, 1 - force always on, 2 - force always on if nvidia
-	ForceIntrospection int `json:"force_introspection"`
 }
 
 type ConfigurationRender struct {
@@ -591,8 +609,8 @@ type ConfigurationRender struct {
 	// Whether to enable explicit sync support for the KMS layer. Requires explicit_sync to be enabled. 0 - no, 1 - yes, 2 - auto based on the gpu driver
 	ExplicitSyncKms int `json:"explicit_sync_kms"`
 
-	// Enables direct scanout. Direct scanout attempts to reduce lag when there is only one fullscreen application on a screen (e.g. game). It is also recommended to set this to false if the fullscreen application shows graphical glitches.
-	DirectScanout bool `json:"direct_scanout"`
+	// Enables direct scanout. Direct scanout attempts to reduce lag when there is only one fullscreen application on a screen (e.g. game). It is also recommended to set this to false if the fullscreen application shows graphical glitches. 0 - off, 1 - on, 2 - auto (on with content type 'game')
+	DirectScanout int `json:"direct_scanout"`
 
 	// Whether to expand undersized textures along the edge, or rather stretch the entire texture.
 	ExpandUndersizedTextures bool `json:"expand_undersized_textures"`
@@ -611,11 +629,11 @@ type ConfigurationCursor struct {
 	// sync xcursor theme with gsettings, it applies cursor-theme and cursor-size on theme load to gsettings making most CSD gtk based clients use same xcursor theme and size.
 	SyncGsettingsTheme bool `json:"sync_gsettings_theme"`
 
-	// disables hardware cursors.
-	NoHardwareCursors bool `json:"no_hardware_cursors"`
+	// disables hardware cursors. 0 - use hw cursors if possible, 1 - don't use hw cursors, 2 - auto (disable when tearing)
+	NoHardwareCursors int `json:"no_hardware_cursors"`
 
-	// disables scheduling new frames on cursor movement for fullscreen apps with VRR enabled to avoid framerate spikes (requires no_hardware_cursors = true)
-	NoBreakFsVrr bool `json:"no_break_fs_vrr"`
+	// disables scheduling new frames on cursor movement for fullscreen apps with VRR enabled to avoid framerate spikes (may require no_hardware_cursors = true) 0 - off, 1 - on, 2 - auto (on with content type 'game')
+	NoBreakFsVrr int `json:"no_break_fs_vrr"`
 
 	// minimum refresh rate for cursor movement when no_break_fs_vrr is active. Set to minimum supported refresh rate or higher
 	MinRefreshRate int `json:"min_refresh_rate"`

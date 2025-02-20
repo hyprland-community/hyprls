@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"reflect"
 
-	parser_data "github.com/ewen-lbh/hyprls/parser/data"
+	parser_data "github.com/hyprland-community/hyprls/parser/data"
 )
 
 func (root Section) Decode() (Configuration, error) {
