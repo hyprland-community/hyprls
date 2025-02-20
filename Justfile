@@ -4,6 +4,19 @@ latestVersion := `git describe --tags --abbrev=0  | sed 's/v//' || echo commit:$
 # Parse content of https://wiki.hyprland.org/version-selector/ to get latest documented version
 latestHyprlandVersion := `curl -s https://wiki.hyprland.org/version-selector/ | grep -oP 'v\d+\.\d+\.\d+' | head -n 1 | sed 's/v//'`
 
+check-for-hyprland-updates:
+	#!/bin/env bash
+	set -euxo pipefail
+	touch hyprland_version
+	if [ "$(cat hyprland_version)" != "{{ latestHyprlandVersion }}" ]; then
+		echo "{{ latestHyprlandVersion }}" > hyprland_version
+		echo New version {{ latestHyprlandVersion }} released!!! update time :3
+		just pull-wiki
+		just parser-data
+	else
+		echo Nyathing to update
+	fi
+
 release tag:
 	jq '.version = "{{ tag }}"' < vscode/package.json | sponge vscode/package.json
 	sed -i "s/$(grep 'version' default.nix)/  version = \"{{ tag }}\";/" default.nix

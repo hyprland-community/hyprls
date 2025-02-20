@@ -2,6 +2,8 @@ name: Update submodules
 
 on:
   workflow_dispatch: {}
+  schedule:
+    - cron: 0 2 * * * # every day at 2 am
 
 jobs:
   pull:
@@ -14,8 +16,7 @@ jobs:
           apt: moreutils
       - uses: actions/checkout@v2
       - uses: extractions/setup-just@v2
-      - run: just pull-wiki
-      - run: just parser-data
+      - run: just check-for-hyprland-updates
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: Update parser data from wiki
+          commit_message: 🍱 Update parser data from wiki
