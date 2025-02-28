@@ -1,4 +1,4 @@
-# HyprLS 
+# HyprLS
 
 <table>
 <tr>
@@ -43,9 +43,9 @@ go install github.com/hyprland-community/hyprls/cmd/hyprls@latest
 ```sh
 git clone --recurse-submodules https://github.com/hyprland-community/hyprls
 cd hyprls
-# installs the binary to ~/.local/bin. 
+# installs the binary to ~/.local/bin.
 # Make sure that directory exists and is in your PATH
-just install 
+just install
 ```
 
 ## Usage
@@ -83,3 +83,7 @@ Install it [from the marketplace](https://marketplace.visualstudio.com/items?ite
 #### Open VSX (for VSCodium & others)
 
 Install it [on OpenVSX](https://open-vsx.org/extension/ewen-lbh/vscode-hyprls)
+
+### Zed
+
+Language server support is provided by the [Hyprlang extension](https://zed.dev/extensions?query=hyprlang). Detailed installation and setup instructions can be found in the [extension repository](https://github.com/WhySoBad/zed-hyprlang-extension).
