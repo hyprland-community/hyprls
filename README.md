@@ -86,4 +86,5 @@ Install it [on OpenVSX](https://open-vsx.org/extension/ewen-lbh/vscode-hyprls)
 
 ### Zed
 
-Language server support is provided by the [Hyprlang extension](https://zed.dev/extensions?query=hyprlang). Detailed installation and setup instructions can be found in the [extension repository](https://github.com/WhySoBad/zed-hyprlang-extension).
+Language server support is provided by the [Hyprlang extension](https://zed.dev/extensions?query=hyprlang).
+Detailed installation and setup instructions can be found in the [extension repository](https://github.com/WhySoBad/zed-hyprlang-extension) [maintainer = [@WhySoBad](https://github.com/WhySoBad)].
