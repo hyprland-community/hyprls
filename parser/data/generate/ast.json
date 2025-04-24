@@ -535,6 +535,12 @@
           "Default": "1"
         },
         {
+          "Name": "follow_mouse_threshold",
+          "Description": "The smallest distance in logical pixels the mouse needs to travel for the window under it to get focused. Works only with follow_mouse = 1.",
+          "Type": "float",
+          "Default": "0.0"
+        },
+        {
           "Name": "focus_on_close",
           "Description": "Controls the window focus behavior when a window is closed. When set to 0, focus will shift to the next window candidate. When set to 1, focus will shift to the window under the cursor. [0/1]",
           "Type": "int",
@@ -698,13 +704,19 @@
               "Name": "gradients",
               "Description": "enables gradients",
               "Type": "bool",
-              "Default": "true"
+              "Default": "false"
             },
             {
               "Name": "height",
               "Description": "height of the groupbar",
               "Type": "int",
               "Default": "14"
+            },
+            {
+              "Name": "indicator_height",
+              "Description": "height of the groupbar indicator",
+              "Type": "int",
+              "Default": "3"
             },
             {
               "Name": "stacked",
@@ -727,6 +739,30 @@
             {
               "Name": "scrolling",
               "Description": "whether scrolling in the groupbar changes group active window",
+              "Type": "bool",
+              "Default": "true"
+            },
+            {
+              "Name": "rounding",
+              "Description": "how much to round the indicator",
+              "Type": "int",
+              "Default": "1"
+            },
+            {
+              "Name": "gradient_rounding",
+              "Description": "how much to round the gradients",
+              "Type": "int",
+              "Default": "2"
+            },
+            {
+              "Name": "round_only_edges",
+              "Description": "round only the indicator edges of the entire groupbar",
+              "Type": "bool",
+              "Default": "true"
+            },
+            {
+              "Name": "gradient_round_only_edges",
+              "Description": "round only the gradient edges of the entire groupbar",
               "Type": "bool",
               "Default": "true"
             },
@@ -759,6 +795,18 @@
               "Description": "inactive locked group bar background color",
               "Type": "gradient",
               "Default": "0x66775500"
+            },
+            {
+              "Name": "gaps_in",
+              "Description": "gap size between gradients",
+              "Type": "int",
+              "Default": "2"
+            },
+            {
+              "Name": "gaps_out",
+              "Description": "gap size between gradients and window",
+              "Type": "int",
+              "Default": "2"
             }
           ]
         }
@@ -1041,6 +1089,12 @@
           "Description": "the delay in ms after the lockdead screen appears if the lock screen did not appear after a lock event occurred",
           "Type": "int",
           "Default": "1000"
+        },
+        {
+          "Name": "enable_anr_dialog",
+          "Description": "whether to enable the ANR (app not responding) dialog when your apps hang",
+          "Type": "bool",
+          "Default": "true"
         }
       ]
     },
@@ -1096,7 +1150,7 @@
           "Name": "movefocus_cycles_fullscreen",
           "Description": "If enabled, when on a fullscreen window, movefocus will cycle fullscreen, if not, it will move the focus in a direction.",
           "Type": "bool",
-          "Default": "true"
+          "Default": "false"
         },
         {
           "Name": "movefocus_cycles_groupfirst",
@@ -1147,6 +1201,12 @@
           "Description": "forces a scale of 1 on xwayland windows on scaled displays.",
           "Type": "bool",
           "Default": "false"
+        },
+        {
+          "Name": "create_abstract_socket",
+          "Description": "Create the abstract Unix domain socket for XWayland connections. (XWayland restart is required for changes to take effect; Linux only)",
+          "Type": "bool",
+          "Default": "false"
         }
       ]
     },
@@ -1161,12 +1221,6 @@
           "Description": "reduces flickering on nvidia at the cost of possible frame drops on lower-end GPUs. On non-nvidia, this is ignored.",
           "Type": "bool",
           "Default": "true"
-        },
-        {
-          "Name": "force_introspection",
-          "Description": "forces introspection at all times. Introspection is aimed at reducing GPU usage in certain cases, but might cause graphical glitches on nvidia. 0 - nothing, 1 - force always on, 2 - force always on if nvidia",
-          "Type": "int",
-          "Default": "2"
         }
       ]
     },
@@ -1190,9 +1244,9 @@
         },
         {
           "Name": "direct_scanout",
-          "Description": "Enables direct scanout. Direct scanout attempts to reduce lag when there is only one fullscreen application on a screen (e.g. game). It is also recommended to set this to false if the fullscreen application shows graphical glitches.",
-          "Type": "bool",
-          "Default": "false"
+          "Description": "Enables direct scanout. Direct scanout attempts to reduce lag when there is only one fullscreen application on a screen (e.g. game). It is also recommended to set this to false if the fullscreen application shows graphical glitches. 0 - off, 1 - on, 2 - auto (on with content type 'game')",
+          "Type": "int",
+          "Default": "0"
         },
         {
           "Name": "expand_undersized_textures",
@@ -1213,8 +1267,14 @@
           "Default": "2"
         },
         {
-          "Name": "allow_early_buffer_release",
-          "Description": "Allow early buffer release event. Fixes stuttering and missing frames for some apps. May cause graphical glitches and memory leaks in others.",
+          "Name": "cm_fs_passthrough",
+          "Description": "Passthrough color settings for fullscreen apps when possible. 0 - off, 1 - always, 2 - hdr only",
+          "Type": "int",
+          "Default": "2"
+        },
+        {
+          "Name": "cm_enabled",
+          "Description": "Whether the color management pipeline should be enabled or not (requires a restart of Hyprland to fully take effect)",
           "Type": "bool",
           "Default": "true"
         }
@@ -1234,15 +1294,15 @@
         },
         {
           "Name": "no_hardware_cursors",
-          "Description": "disables hardware cursors.",
-          "Type": "bool",
-          "Default": "false"
+          "Description": "disables hardware cursors. 0 - use hw cursors if possible, 1 - don't use hw cursors, 2 - auto (disable when tearing)",
+          "Type": "int",
+          "Default": "2"
         },
         {
           "Name": "no_break_fs_vrr",
-          "Description": "disables scheduling new frames on cursor movement for fullscreen apps with VRR enabled to avoid framerate spikes (requires no_hardware_cursors = true)",
-          "Type": "bool",
-          "Default": "false"
+          "Description": "disables scheduling new frames on cursor movement for fullscreen apps with VRR enabled to avoid framerate spikes (may require no_hardware_cursors = true) 0 - off, 1 - on, 2 - auto (on with content type 'game')",
+          "Type": "int",
+          "Default": "2"
         },
         {
           "Name": "min_refresh_rate",
@@ -1357,18 +1417,6 @@
       "Subsections": [],
       "Variables": [
         {
-          "Name": "wide_color_gamut",
-          "Description": "force wide color gamut for all supported outputs",
-          "Type": "bool",
-          "Default": "false"
-        },
-        {
-          "Name": "hdr",
-          "Description": "force static hdr for all supported outputs (for testing only, will result in oversaturated colors)",
-          "Type": "bool",
-          "Default": "false"
-        },
-        {
           "Name": "xx_color_management_v4",
           "Description": "enable color management protocol",
           "Type": "bool",
@@ -1465,6 +1513,12 @@
           "Description": "enables render pass debugging.",
           "Type": "bool",
           "Default": "false"
+        },
+        {
+          "Name": "full_cm_proto",
+          "Description": "claims support for all cm proto features (requires restart)",
+          "Type": "bool",
+          "Default": "false"
         }
       ]
     },
@@ -1545,6 +1599,12 @@
           "Description": "when enabled, dragging and dropping windows will put them at the cursor position. Otherwise, when dropped at the stack side, they will go to the top/bottom of the stack depending on new_on_top.",
           "Type": "bool",
           "Default": "true"
+        },
+        {
+          "Name": "always_keep_position",
+          "Description": "whether to keep the master window in its configured position when there are no slave windows",
+          "Type": "bool",
+          "Default": "false"
         }
       ]
     },
@@ -1631,12 +1691,12 @@
     },
     {
       "Name": "windowrule",
-      "Description": "You can set window rules to achieve different behaviors from the active\ncontainer.\n\n### Syntax\n\n```ini\nwindowrule=RULE,WINDOW\n\n```\n\n- `RULE` is a [rule](#rules) (and a param if applicable)\n- `WINDOW` is a [RegEx](https://en.wikipedia.org/wiki/Regular_expression),\n    either:\n    - plain RegEx (for matching a window class);\n    - `title:` followed by a regex (for matching a window's title)\n    \n\n### Examples\n\n```ini\nwindowrule = float, kitty\nwindowrule = move 0 0, title:(Firefox)(.*)\n\n```",
+      "Description": "",
       "Flags": []
     },
     {
       "Name": "windowrulev2",
-      "Description": "In order to allow more flexible rules, while retaining compatibility with the\nabove rule system, window rules V2 were implemented.\n\nIn V2, you are allowed to match multiple variables.\n\nthe `RULE` field is unchanged, but in the `WINDOW` field, you can put regexes\nfor multiple values like so:\n\n```ini\nwindowrulev2 = float, class:kitty, title:kitty\n\n```\n\n{{< callout type=info >}}\n\nIn the case of dynamic window titles such as browser windows, keep in mind how\npowerful regex is.\n\nFor example, a window rule of:\n`windowrule = opacity 0.3 override 0.3 override,title:(.*)(- Youtube)` will match\n_any_ window that contains a string of \"- Youtube\" after any other text. This\ncould be multiple browser windows or other applications that contain the string\nfor any reason.\n\nFor the `windowrulev2 = float,class:kitty,title:kitty` example, the\n`class:(kitty)``WINDOW` field is what keeps the window rule specific to kitty\nterminals.\n\n{{< /callout >}}\n\nFor now, the supported fields for V2 are:\n\nFieldDescriptionclass:[regex]Windows with `class` matching `regex`.title:[regex]Windows with `title` matching `regex`.initialClass:[regex]Windows with `initialClass` matching `regex`.initialTitle:[regex]Windows with `initialTitle` matching `regex`.tag:[name]Windows with matching `tag`.xwayland:[0/1]Xwayland windows.floating:[0/1]Floating windows.fullscreen:[0/1]Fullscreen windows.pinned:[0/1]Pinned windows.focus:[0/1]Currently focused window.fullscreenstate:[internal] [client]Windows with matching `fullscreenstate`. `internal` and `client` can be `*` - any, `0` - none, `1` - maximize, `2` - fullscreen, `3` - maximize and fullscreen.workspace:[w]Windows on matching workspace. `w` can be `id` or `name:string`.onworkspace:[w]Windows on matching workspace. `w` can be `id`, `name:string` or `workspace selector`.\n\nKeep in mind that you _have_ to declare at least one field, but not all.\n\n{{< callout type=info >}}\n\nTo get more information about a window's class, title, XWayland status or its\nsize, you can use `hyprctl clients`.\n\n{{< /callout >}}\n\n### RegEx writing\n\nPlease note Hyprland uses Google's RE2 for parsing Regex. This means that all operations requiring polynomial\ntime to compute will not work. See [the re2 wiki](https://github.com/google/re2/wiki/Syntax) for supported extensions.\n\nIf you want to _negate_ a regex, as in pass only when the regex _fails_, you can prefix it with `negative:`, e.g.: `negative:kitty`.",
+      "Description": "",
       "Flags": []
     },
     {
@@ -1651,7 +1711,7 @@
     },
     {
       "Name": "animation",
-      "Description": "Animations are declared with the `animation` keyword.\n\n```ini\nanimation = NAME, ONOFF, SPEED, CURVE [,STYLE]\n\n```\n\n`ONOFF` can be either 0 or 1, 0 to disable, 1 to enable. _note:_ if it's 0, you\ncan omit further args.\n\n`SPEED` is the amount of ds (1ds = 100ms) the animation will take\n\n`CURVE` is the bezier curve name, see [curves](#curves).\n\n`STYLE` (optional) is the animation style\n\nThe animations are a tree. If an animation is unset, it will inherit its\nparent's values. See [the animation tree](#animation-tree).\n\n### Examples\n\n```ini\nanimation = workspaces, 1, 8, default\nanimation = windows, 1, 10, myepiccurve, slide\nanimation = fade, 0\n\n```\n\n### Animation tree\n\n```txt\nglobal\n  ↳ windows - styles: slide, popin\n    ↳ windowsIn - window open\n    ↳ windowsOut - window close\n    ↳ windowsMove - everything in between, moving, dragging, resizing.\n  ↳ layers - styles: slide, popin, fade\n    ↳ layersIn - layer open\n    ↳ layersOut - layer close\n  ↳ fade\n    ↳ fadeIn - fade in for window open\n    ↳ fadeOut - fade out for window close\n    ↳ fadeSwitch - fade on changing activewindow and its opacity\n    ↳ fadeShadow - fade on changing activewindow for shadows\n    ↳ fadeDim - the easing of the dimming of inactive windows\n    ↳ fadeLayers - for controlling fade on layers\n      ↳ fadeLayersIn - fade in for layer open\n      ↳ fadeLayersOut - fade out for layer close\n  ↳ border - for animating the border's color switch speed\n  ↳ borderangle - for animating the border's gradient angle - styles: once (default), loop\n  ↳ workspaces - styles: slide, slidevert, fade, slidefade, slidefadevert\n    ↳ workspacesIn - styles: same as workspaces\n    ↳ workspacesOut - styles: same as workspaces\n    ↳ specialWorkspace - styles: same as workspaces\n      ↳ specialWorkspaceIn - styles: same as workspaces\n      ↳ specialWorkspaceOut - styles: same as workspaces\n\n```\n\n{{< callout type=warning >}}\n\nUsing borderangle style: loop requires Hyprland to constantly push out new frames at [your monitor's hz] times a second which might put stress on your CPU/GPU and affect battery life. This will be applied even if animation are disabled or borders are not visible.\n\n{{</ callout >}}",
+      "Description": "Animations are declared with the `animation` keyword.\n\n```ini\nanimation = NAME, ONOFF, SPEED, CURVE [,STYLE]\n\n```\n\n`ONOFF` can be either 0 or 1, 0 to disable, 1 to enable. _note:_ if it's 0, you\ncan omit further args.\n\n`SPEED` is the amount of ds (1ds = 100ms) the animation will take\n\n`CURVE` is the bezier curve name, see [curves](#curves).\n\n`STYLE` (optional) is the animation style\n\nThe animations are a tree. If an animation is unset, it will inherit its\nparent's values. See [the animation tree](#animation-tree).\n\n### Examples\n\n```ini\nanimation = workspaces, 1, 8, default\nanimation = windows, 1, 10, myepiccurve, slide\nanimation = fade, 0\n\n```\n\n### Animation tree\n\n```txt\nglobal\n  ↳ windows - styles: slide, popin, gnomed\n    ↳ windowsIn - window open\n    ↳ windowsOut - window close\n    ↳ windowsMove - everything in between, moving, dragging, resizing.\n  ↳ layers - styles: slide, popin, fade\n    ↳ layersIn - layer open\n    ↳ layersOut - layer close\n  ↳ fade\n    ↳ fadeIn - fade in for window open\n    ↳ fadeOut - fade out for window close\n    ↳ fadeSwitch - fade on changing activewindow and its opacity\n    ↳ fadeShadow - fade on changing activewindow for shadows\n    ↳ fadeDim - the easing of the dimming of inactive windows\n    ↳ fadeLayers - for controlling fade on layers\n      ↳ fadeLayersIn - fade in for layer open\n      ↳ fadeLayersOut - fade out for layer close\n  ↳ border - for animating the border's color switch speed\n  ↳ borderangle - for animating the border's gradient angle - styles: once (default), loop\n  ↳ workspaces - styles: slide, slidevert, fade, slidefade, slidefadevert\n    ↳ workspacesIn - styles: same as workspaces\n    ↳ workspacesOut - styles: same as workspaces\n    ↳ specialWorkspace - styles: same as workspaces\n      ↳ specialWorkspaceIn - styles: same as workspaces\n      ↳ specialWorkspaceOut - styles: same as workspaces\n\n```\n\n{{< callout type=warning >}}\n\nUsing borderangle style: loop requires Hyprland to constantly push out new frames at [your monitor's hz] times a second which might put stress on your CPU/GPU and affect battery life. This will be applied even if animation are disabled or borders are not visible.\n\n{{</ callout >}}",
       "Flags": []
     },
     {
@@ -1661,12 +1721,12 @@
     },
     {
       "Name": "exec",
-      "Description": "You can execute a shell script on:\n\n- startup of the compositor\n- every time the config is reloaded.\n- shutdown of the compositor\n\n`exec-once = command` will execute only on launch ([support rules](Dispatchers/#executing-with-rules))\n\n`execr-once = command` will execute only on launch\n\n`exec = command` will execute on each reload ([support rules](Dispatchers/#executing-with-rules))\n\n`execr = command` will execute on each reload\n\n`exec-shutdown = command` will execute only on shutdown",
+      "Description": "You can execute a shell script on:\n\n- startup of the compositor\n- every time the config is reloaded.\n- shutdown of the compositor\n\n`exec-once = command` will execute only on launch ([support rules](https://wiki.hyprland.org/Configuring/Dispatchers/#executing-with-rules))\n\n`execr-once = command` will execute only on launch\n\n`exec = command` will execute on each reload ([support rules](https://wiki.hyprland.org/Configuring/Dispatchers/#executing-with-rules))\n\n`execr = command` will execute on each reload\n\n`exec-shutdown = command` will execute only on shutdown",
       "Flags": []
     },
     {
       "Name": "exec-once",
-      "Description": "You can execute a shell script on:\n\n- startup of the compositor\n- every time the config is reloaded.\n- shutdown of the compositor\n\n`exec-once = command` will execute only on launch ([support rules](Dispatchers/#executing-with-rules))\n\n`execr-once = command` will execute only on launch\n\n`exec = command` will execute on each reload ([support rules](Dispatchers/#executing-with-rules))\n\n`execr = command` will execute on each reload\n\n`exec-shutdown = command` will execute only on shutdown",
+      "Description": "You can execute a shell script on:\n\n- startup of the compositor\n- every time the config is reloaded.\n- shutdown of the compositor\n\n`exec-once = command` will execute only on launch ([support rules](https://wiki.hyprland.org/Configuring/Dispatchers/#executing-with-rules))\n\n`execr-once = command` will execute only on launch\n\n`exec = command` will execute on each reload ([support rules](https://wiki.hyprland.org/Configuring/Dispatchers/#executing-with-rules))\n\n`execr = command` will execute on each reload\n\n`exec-shutdown = command` will execute only on shutdown",
       "Flags": []
     },
     {

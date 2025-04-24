@@ -41,7 +41,7 @@ layout pages (See the sidebar).
 | setfloating | sets the current window's floating state to true | left empty / `active` for current, or `window` for a specific window |
 | settiled | sets the current window's floating state to false | left empty / `active` for current, or `window` for a specific window |
 | fullscreen | toggles the focused window's fullscreen mode | 0 - fullscreen (takes your entire screen), 1 - maximize (keeps gaps and bar(s)) |
-| fullscreenstate | sets the focused window's fullscreen mode and the one sent to the client | `internal client`, where internal and client can be `-1` - current, `0` - none, `1` - maximize, `2` - fullscreen, `3` - maximize and fullscreen |
+| fullscreenstate | sets the focused window's fullscreen mode and the one sent to the client | `internal client`, where internal (the hyprland window) and client (the application) can be `-1` - current, `0` - none, `1` - maximize, `2` - fullscreen, `3` - maximize and fullscreen. |
 | dpms | sets all monitors' DPMS status. Do not use with a keybind directly. | `on`, `off`, or `toggle`. For specific monitor add monitor name after a space |
 | pin | pins a window (i.e. show it on all workspaces) _note: floating only_ | left empty / `active` for current, or `window` for a specific window |
 | movefocus | moves the focus in a direction | direction |
@@ -52,7 +52,7 @@ layout pages (See the sidebar).
 | moveactive | moves the active window | resizeparams |
 | resizewindowpixel | resizes a selected window | `resizeparams,window`, e.g. `100 100,^(kitty)$` |
 | movewindowpixel | moves a selected window | `resizeparams,window` |
-| cyclenext | focuses the next window (on a workspace, if `visible` is not provided) | none (for next) or `prev` (for previous) additionally `tiled` for only tiled, `floating` for only floating. `prev tiled` is ok. `visible` for all monitors cycling. `visible prev floating` is ok |
+| cyclenext | focuses the next window (on a workspace, if `visible` is not provided) | none (for next) or `prev` (for previous) additionally `tiled` for only tiled, `floating` for only floating. `prev tiled` is ok. `visible` for all monitors cycling. `visible prev floating` is ok. if `hist` arg provided - focus order will depends on focus history. All other modifiers is also working for it, `visible next floating hist` is ok. |
 | swapnext | swaps the focused window with the next window on a workspace | none (for next) or `prev` (for previous) |
 | tagwindow | apply tag to current or the first window matching | `tag [window]`, e.g. `+code ^(foot)$`, `music` |
 | focuswindow | focuses the first window matching | window |
@@ -86,6 +86,7 @@ layout pages (See the sidebar).
 | submap | Change the current mapping group. See [Submaps](../Binds/#submaps) | `reset` or name |
 | event | Emits a custom event to socket2 in the form of `custom>>yourdata` | the data to send |
 | setprop | Sets a window property | `window property value` |
+| toggleswallow | If a window is swallowed by the focused window, unswallows it. Execute again to swallow it back | none |
 
 {{< callout type=warning >}}
 
@@ -239,3 +240,29 @@ address:0x13371337 nomaxsize 0
 address:0x13371337 opaque toggle
 address:0x13371337 immediate unset
 ```
+
+### Fullscreenstate
+
+`fullscreenstate internal client`
+
+The `fullscreenstate` dispatcher decouples the state that Hyprland maintains for a window from the fullscreen state that is communicated to the client.  
+
+`internal` is a reference to the state maintained by Hyprland.
+
+`client` is a reference to the state that the application receives.
+
+| Value | State | Description |
+| --- | --- | --- |
+| -1 | Current | Maintains the current fullscreen state. |
+| 0 | None | Window allocates the space defined by the current layout. |
+| 1 | Maximize | Window takes up the entire working space, keeping the margins. |
+| 2 | Fullscreen | Window takes up the entire screen. |
+| 3 | Maximize and Fullscreen | The state of a fullscreened maximized window. Works the same as fullscreen. |
+
+For example:
+
+`fullscreenstate 2 0` Fullscreens the application and keeps the client in non-fullscreen mode.  
+
+This can be used to prevent Chromium-based browsers from going into presentation mode when they detect they have been fullscreened.  
+
+`fullscreenstate 0 2` Keeps the window non-fullscreen, but the client goes into fullscreen mode within the window.
