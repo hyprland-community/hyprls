@@ -17,7 +17,8 @@ jobs:
       - uses: actions/checkout@v2
       - uses: extractions/setup-just@v2
       - run: "curl -s https://wiki.hyprland.org/version-selector/"
-      - run: "curl -s https://wiki.hyprland.org/version-selector/ | grep -oP 'v\d+\.\d+\.\d+'"
+      - run: |
+          curl -s https://wiki.hyprland.org/version-selector/ | grep -oP 'v\d+\.\d+\.\d+'
       - run: just check-for-hyprland-updates
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
