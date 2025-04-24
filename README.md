@@ -36,6 +36,10 @@ Not checked means planned / work in progress.
 go install github.com/hyprland-community/hyprls/cmd/hyprls@latest
 ```
 
+### Pre-built binaries
+
+Binaries for linux are available in [Releases](https://github.com/hyprland-community/hyprls/releases) 
+
 ### From source
 
 - Required: [Just](https://just.systems) (`paru -S just` on Arch Linux (btw))
