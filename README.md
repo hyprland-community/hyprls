@@ -30,6 +30,12 @@ Not checked means planned / work in progress.
 
 ## Installation
 
+### Linux packages
+
+hyprls has packages for various distributions, kindly maintained by other people
+
+[![Packaging status](https://repology.org/badge/vertical-allrepos/hyprls.svg)](https://repology.org/project/hyprls/versions)
+
 ### With `go install`
 
 ```sh
@@ -79,14 +85,14 @@ vim.api.nvim_create_autocmd({'BufEnter', 'BufWinEnter'}, {
 
 #### Official Marketplace (VisualStudio Marketplace)
 
-Install it [from the marketplace](https://marketplace.visualstudio.com/items?itemName=ewen-lbh.vscode-hyprls).
+Install it [from the marketplace](https://marketplace.visualstudio.com/items?itemName=gwenn°-lbh.vscode-hyprls).
 
 > [!TIP]
-> You can use [the Hyprland extension pack](https://marketplace.visualstudio.com/items?itemName=ewen-lbh.hyprland) to also get syntax highlighting.
+> You can use [the Hyprland extension pack](https://marketplace.visualstudio.com/items?itemName=gwenn°-lbh.hyprland) to also get syntax highlighting.
 
 #### Open VSX (for VSCodium & others)
 
-Install it [on OpenVSX](https://open-vsx.org/extension/ewen-lbh/vscode-hyprls)
+Install it [on OpenVSX](https://open-vsx.org/extension/gwenn°-lbh/vscode-hyprls)
 
 ### Zed
 
