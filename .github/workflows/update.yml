@@ -16,12 +16,21 @@ jobs:
           apt: moreutils
       - uses: actions/checkout@v2
       - uses: extractions/setup-just@v2
+
       - run: just check-for-hyprland-updates
-      - uses: stefanzweifel/git-auto-commit-action@v5
+
+      - name: Check if there are changes
+        id: changes
+        uses: UnicornGlobal/has-changes-action@v1.0.11
+        
+      - if: steps.changes.outputs.changed == 1
+        name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: 🍱 Update parser data from wiki
 
-      - name: Bump version and push tag
+      - if: steps.changes.outputs.changed == 1
+        name: Bump version and push tag
         id: tag_version
         uses: miguelfito/github-bump-and-tag-action@v1
         with:
