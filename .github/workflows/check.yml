@@ -1,0 +1,19 @@
+name: Build and test
+
+on:
+  pull_request: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+
+      - name: Build
+        run: go build -o hyprls cmd/hyprls/main.go
+
+      - name: Run tests
+        run: go test
