@@ -1,7 +1,10 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:recommended"
-  ],
-  "commitMessagePrefix": "⬆️"
+	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
+	"extends": ["config:recommended", "schedule:weekly"],
+	"commitMessagePrefix": "⬆️ ",
+	"rangeStrategy": "bump",
+	"lockFileMaintenance": {
+		"enabled": true,
+		"automerge": true
+	}
 }
