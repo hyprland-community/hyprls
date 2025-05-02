@@ -22,7 +22,7 @@ require (
 	github.com/MakeNowJust/heredoc v1.0.0
 	github.com/anaskhan96/soup v1.2.5
 	github.com/evorts/html-to-markdown v0.0.10
-	github.com/mazznoer/csscolorparser v0.1.3
+	github.com/mazznoer/csscolorparser v0.1.5
 	github.com/metal3d/go-slugify v0.0.0-20160607203414-7ac2014b2f23
 	github.com/segmentio/asm v1.2.0 // indirect
 	github.com/segmentio/encoding v0.4.0 // indirect
