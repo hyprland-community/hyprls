@@ -1,7 +1,8 @@
 name: Build and test
 
 on:
-  pull_request: {}
+  pull_request: 
+    types: [opened, reopened, synchronize]
 
 jobs:
   build:
