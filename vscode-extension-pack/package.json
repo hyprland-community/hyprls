@@ -14,7 +14,7 @@
     "fireblast.hyprlang-vscode"
   ],
   "devDependencies": {
-    "@vscode/vsce": "^2.26.0"
+    "@vscode/vsce": "^3.4.2"
   },
   "repository": "https://github.com/ewen-lbh/hyprls/tree/main/vscode-extension-pack",
   "license": "MIT",
