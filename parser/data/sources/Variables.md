@@ -24,6 +24,7 @@ the layout pages and not here. (See the Sidebar for Dwindle and Master layouts)
 | MOD | a string modmask (e.g. `SUPER` or `SUPERSHIFT` or `SUPER + SHIFT` or `SUPER and SHIFT` or `CTRL_SHIFT` or empty for none. You are allowed to put any separators you please except for a `,`) |
 | str | a string |
 | gradient | a gradient, in the form of `color color ... [angle]` where `color` is a color (see above) and angle is an angle in degrees, in the format of `123deg` e.g. `45deg` (e.g. `rgba(11ee11ff) rgba(1111eeff) 45deg`) Angle is optional and will default to `0deg` |
+| font_weight | an integer between 100 and 1000, or one of the following presets: `thin` `ultralight` `light` `semilight` `book` `normal` `medium` `semibold` `bold` `ultrabold` `heavy` `ultraheavy` |
 
 {{< callout type=info >}}
 
@@ -117,6 +118,7 @@ Doing `general:snap {` is **invalid**!
 | dim_special | how much to dim the rest of the screen by when a special workspace is open. [0.0 - 1.0] | float | 0.2 |
 | dim_around | how much the `dimaround` window rule should dim by. [0.0 - 1.0] | float | 0.4 |
 | screen_shader | a path to a custom shader to be applied at the end of rendering. See `examples/screenShader.frag` for an example. | str | \[\[Empty\]\] |
+| border_part_of_window | whether the window border should be a part of the window | bool | true |
 
 #### Blur
 
@@ -173,6 +175,7 @@ _Subcategory `decoration:shadow:`_
 | --- | --- | --- | --- |
 | enabled | enable animations | bool | true |
 | first_launch_animation | enable first launch animation | bool | true |
+| workspace_wraparound | enable workspace wraparound, causing directional workspace animations to animate as if the first and last workspaces were adjacent | bool | false |
 
 {{< callout type=info >}}
 
@@ -201,7 +204,7 @@ _[More about Animations](../Animations)._
 | scroll_points | Sets the scroll acceleration profile, when `accel_profile` is set to `custom`. Has to be in the form `<step> <points>`. Leave empty to have a flat scroll curve. | str | \[\[Empty\]\] |
 | scroll_method | Sets the scroll method. Can be one of `2fg` (2 fingers), `edge`, `on_button_down`, `no_scroll`. [libinput#scrolling](https://wayland.freedesktop.org/libinput/doc/latest/scrolling.html) [2fg/edge/on_button_down/no_scroll] | str | \[\[Empty\]\] |
 | scroll_button | Sets the scroll button. Has to be an int, cannot be a string. Check `wev` if you have any doubts regarding the ID. 0 means default. | int | 0 |
-| scroll_button_lock | If the scroll button lock is enabled, the button does not need to be held down. Pressing and releasing the button toggles the button lock, which logically holds the button down or releases it. While the button is logically held down, motion events are converted to scroll events. | bool | 0 |
+| scroll_button_lock | If the scroll button lock is enabled, the button does not need to be held down. Pressing and releasing the button toggles the button lock, which logically holds the button down or releases it. While the button is logically held down, motion events are converted to scroll events. | bool | false |
 | scroll_factor | Multiplier added to scroll movement for external mice. Note that there is a separate setting for [touchpad scroll_factor](#touchpad).  | float | 1.0 |
 | natural_scroll | Inverts scrolling direction. When enabled, scrolling moves content directly, rather than manipulating a scrollbar. | bool | false |
 | follow_mouse | Specify if and how cursor movement should affect window focus. See the note below. [0/1/2/3] | int | 1 |
@@ -313,6 +316,8 @@ Described [here](../Keywords#per-device-input-configs).
 
 ### Gestures
 
+_Subcategory `gestures:`_
+
 | name | description | type | default |
 | --- | --- | --- | --- |
 | workspace_swipe | enable workspace swipe gesture on touchpad | bool | false |
@@ -331,6 +336,8 @@ Described [here](../Keywords#per-device-input-configs).
 | workspace_swipe_use_r | if enabled, swiping will use the `r` prefix instead of the `m` prefix for finding workspaces. | bool | false |
 
 ### Group
+
+_Subcategory `group:`_
 
 | name | description | type | default |
 | --- | --- | --- | --- |
@@ -356,12 +363,16 @@ _Subcategory `group:groupbar:`_
 | enabled | enables groupbars | bool | true |
 | font_family | font used to display groupbar titles, use `misc:font_family` if not specified | string | [\[Empty]] |
 | font_size | font size of groupbar title | int | 8 |
+| font_weight_active | font weight of active groupbar title | font_weight | normal |
+| font_weight_inactive | font weight of inactive groupbar title | font_weight | normal |
 | gradients | enables gradients | bool | false |
 | height | height of the groupbar | int | 14 |
+| indicator_gap | height of gap between groupbar indicator and title | int | 0 |
 | indicator_height | height of the groupbar indicator | int | 3 |
 | stacked | render the groupbar as a vertical stack | bool | false |
 | priority | sets the decoration priority for groupbars | int | 3 |
 | render_titles | whether to render titles in the group bar decoration | bool | true |
+| text_offset | adjust vertical position for titles | int | 0 |
 | scrolling | whether scrolling in the groupbar changes group active window | bool | true |
 | rounding | how much to round the indicator | int | 1 |
 | gradient_rounding | how much to round the gradients | int | 2 |
@@ -374,8 +385,11 @@ _Subcategory `group:groupbar:`_
 | col.locked_inactive | inactive locked group bar background color | gradient | 0x66775500 |
 | gaps_in | gap size between gradients | int | 2 |
 | gaps_out | gap size between gradients and window | int | 2 |
+| keep_upper_gap | add or remove upper gap | bool | true |
 
 ### Misc
+
+_Subcategory `misc:`_
 
 | name | description | type | default |
 |---|---|---|---|
@@ -386,7 +400,7 @@ _Subcategory `group:groupbar:`_
 | splash_font_family | Changes the font used to render the splash text, selected from system fonts (requires a monitor reload to take effect). | string | [\[Empty]] |
 | force_default_wallpaper | Enforce any of the 3 default wallpapers. Setting this to `0` or `1` disables the anime background. `-1` means "random". [-1/0/1/2] | int | -1 |
 | vfr | controls the VFR status of Hyprland. Heavily recommended to leave enabled to conserve resources. | bool | true |
-| vrr | controls the VRR (Adaptive Sync) of your monitors. 0 - off, 1 - on, 2 - fullscreen only [0/1/2] | int | 0 |
+| vrr | controls the VRR (Adaptive Sync) of your monitors. 0 - off, 1 - on, 2 - fullscreen only, 3 - fullscreen with `video` or `game` content type [0/1/2/3] | int | 0 |
 | mouse_move_enables_dpms | If DPMS is set to off, wake up the monitors if the mouse moves. | bool | false |
 | key_press_enables_dpms | If DPMS is set to off, wake up the monitors if a key is pressed. | bool | false |
 | always_follow_on_dnd | Will make mouse focus follow the mouse when drag and dropping. Recommended to leave it enabled, especially for people using focus follows mouse at 0. | bool | true |
@@ -413,14 +427,18 @@ _Subcategory `group:groupbar:`_
 | disable_hyprland_qtutils_check | disable the warning if hyprland-qtutils is not installed | bool | false |
 | lockdead_screen_delay | the delay in ms after the lockdead screen appears if the lock screen did not appear after a lock event occurred | int | 1000 |
 | enable_anr_dialog | whether to enable the ANR (app not responding) dialog when your apps hang | bool | true |
+| anr_missed_pings | number of missed pings before showing the ANR dialog | int | 1 |
 
 ### Binds
+
+Subcategory `binds:`_
 
 | name | description | type | default |
 | --- | --- | --- | --- |
 | pass_mouse_when_bound | if disabled, will not pass the mouse events to apps / dragging windows around if a keybind has been triggered. | bool | false |
 | scroll_event_delay | in ms, how many ms to wait after a scroll event to allow passing another one for the binds. | int | 300 |
 | workspace_back_and_forth | If enabled, an attempt to switch to the currently focused workspace will instead switch to the previous workspace. Akin to i3's _auto_back_and_forth_. | bool | false |
+| hide_special_on_workspace_change | If enabled, changing the active workspace (including to itself) will hide the special workspace on the monitor where the newly active workspace resides. | bool | false |
 | allow_workspace_cycles | If enabled, workspaces don't forget their previous workspace, so cycles can be created by switching to the first workspace in a sequence, then endlessly going to the previous workspace. | bool | false |
 | workspace_center_on | Whether switching workspaces should center the cursor on the workspace (0) or on the last active window for that workspace (1) | int | 0 |
 | focus_preferred_method | sets the preferred focus finding method when using `focuswindow`/`movewindow`/etc with a direction. 0 - history (recent have priority), 1 - length (longer shared edges have priority) | int | 0 |
@@ -430,8 +448,11 @@ _Subcategory `group:groupbar:`_
 | disable_keybind_grabbing | If enabled, apps that request keybinds to be disabled (e.g. VMs) will not be able to do so. | bool | false |
 | window_direction_monitor_fallback | If enabled, moving a window or focus over the edge of a monitor with a direction will move it to the next monitor in that direction. | bool | true |
 | allow_pin_fullscreen | If enabled, Allow fullscreen to pinned windows, and restore their pinned status afterwards | bool | false |
+| drag_threshold | Movement threshold in pixels for window dragging and c/g bind flags. 0 to disable and grab on mousedown. | int | 0 |
 
 ### XWayland
+
+Subcategory `xwayland:`_ 
 
 | name | description | type | default |
 | --- | --- | --- | --- |
@@ -442,11 +463,15 @@ _Subcategory `group:groupbar:`_
 
 ### OpenGL
 
+Subcategory `opengl:`_ 
+
 | name | description | type | default |
 | --- | --- | --- | --- |
 | nvidia_anti_flicker | reduces flickering on nvidia at the cost of possible frame drops on lower-end GPUs. On non-nvidia, this is ignored. | bool | true |
 
 ### Render
+
+Subcategory `render:`_ 
 
 | name | description | type | default |
 | --- | --- | --- | --- |
@@ -458,8 +483,11 @@ _Subcategory `group:groupbar:`_
 | ctm_animation | Whether to enable a fade animation for CTM changes (hyprsunset). 2 means "auto" which disables them on Nvidia. | int | 2 |
 | cm_fs_passthrough | Passthrough color settings for fullscreen apps when possible. 0 - off, 1 - always, 2 - hdr only | int | 2 |
 | cm_enabled | Whether the color management pipeline should be enabled or not (requires a restart of Hyprland to fully take effect) | bool | true |
+| send_content_type | Report content type to allow monitor profile autoswitch (may result in a black screen during the switch) | bool | true |
 
 ### Cursor
+
+Subcategory `cursor:`_ 
 
 | name | description | type | default |
 | --- | --- | --- | --- |
@@ -472,6 +500,7 @@ _Subcategory `group:groupbar:`_
 | no_warps | if true, will not warp the cursor in many cases (focusing, keybinds, etc) | bool | false |
 | persistent_warps | When a window is refocused, the cursor returns to its last position relative to that window, rather than to the centre. | bool | false |
 | warp_on_change_workspace | Move the cursor to the last focused window after changing the workspace. Options: 0 (Disabled), 1 (Enabled), 2 (Force - ignores cursor:no_warps option) | int | 0 |
+| warp_on_toggle_special | Move the cursor to the last focused window when toggling a special workspace. Options: 0 (Disabled), 1 (Enabled), 2 (Force - ignores cursor:no_warps option) | int | 0 |
 | default_monitor | the name of a default monitor for the cursor to be set to on startup (see `hyprctl monitors` for names) | str | [[EMPTY]] |
 | zoom_factor | the factor to zoom by around the cursor. Like a magnifying glass. Minimum 1.0 (meaning no zoom) | float | 1.0 |
 | zoom_rigid | whether the zoom should follow the cursor rigidly (cursor is always centered if it can be) or loosely | bool | false |
@@ -483,12 +512,17 @@ _Subcategory `group:groupbar:`_
 
 ### Ecosystem
 
+_Subcategory `ecosystem:`_
+
 | name | description | type | default |
 | --- | --- | --- | --- |
 | no_update_news | disable the popup that shows up when you update hyprland to a new version. | bool | false |
 | no_donation_nag | disable the popup that shows up twice a year encouraging to donate. | bool | false |
+| enforce_permissions | whether to enable [permission control](../Permissions). | bool | false |
 
 ### Experimental
+
+_Subcategory `experimental:`_
 
 | name | description | type | default |
 | --- | --- | --- | --- |
@@ -504,7 +538,7 @@ Steam:
 
 Non-steam:
 
-`ENABLE_HDR_WSI=1 DXVK_HDR=1 DISPLAY= wine executable.exe` 
+`ENABLE_HDR_WSI=1 DXVK_HDR=1 DISPLAY= wine executable.exe`
 
 Video:
 
@@ -512,6 +546,8 @@ Video:
 
 
 ### Debug
+
+_Subcategory `debug:`_
 
 {{< callout type=warning >}}
 

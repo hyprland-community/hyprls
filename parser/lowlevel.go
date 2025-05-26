@@ -76,6 +76,7 @@ const (
 	Modmask
 	String
 	Gradient
+	KindFontWeight
 	// Value contains a custom variable, its type can't be determined at compile time
 	Custom
 )
@@ -91,6 +92,23 @@ const (
 	Mod3
 	ModSuper
 	Mod5
+)
+// FontWeight is an integer between 100 and 1000, or one of the following presets: thin ultralight light semilight book normal medium semibold bold ultrabold heavy ultraheavy
+type FontWeight uint8
+
+const (
+	FontWeightThin FontWeight = iota
+	FontWeightUltralight
+	FontWeightLight
+	FontWeightSemilight
+	FontWeightBook
+	FontWeightNormal
+	FontWeightMedium
+	FontWeightSemibold
+	FontWeightBold
+	FontWeightUltrabold
+	FontWeightHeavy
+	FontWeightUltraheavy
 )
 
 // var ColorValuePattern = regexp.MustCompile(`
@@ -130,18 +148,19 @@ type GradientValue struct {
 }
 
 type Value struct {
-	Kind     ValueKind     `json:"kind"`
-	Bool     bool          `json:"bool"`
-	Integer  int           `json:"int"`
-	Float    float32       `json:"float,omitempty"`
-	Color    color.RGBA    `json:"color,omitempty"`
-	Vec2     [2]float32    `json:"vec2,omitempty"`
-	Modmask  []ModKey      `json:"MOD,omitempty"`
-	String   string        `json:"str,omitempty"`
-	Gradient GradientValue `json:"gradient,omitempty"`
-	Custom   string        `json:"custom,omitempty"`
-	Start    Position      `json:"start"`
-	End      Position      `json:"end"`
+	Kind       ValueKind     `json:"kind"`
+	Bool       bool          `json:"bool"`
+	Integer    int           `json:"int"`
+	Float      float32       `json:"float,omitempty"`
+	Color      color.RGBA    `json:"color,omitempty"`
+	Vec2       [2]float32    `json:"vec2,omitempty"`
+	Modmask    []ModKey      `json:"MOD,omitempty"`
+	String     string        `json:"str,omitempty"`
+	Gradient   GradientValue `json:"gradient,omitempty"`
+	FontWeight FontWeight    `json:"fontweight,omitempty"`
+	Custom     string        `json:"custom,omitempty"`
+	Start      Position      `json:"start"`
+	End        Position      `json:"end"`
 }
 
 func (v Value) GoValue() any {
@@ -382,6 +401,13 @@ func parseValue(raw string, valueStart Position) Value {
 		}
 	}
 
+	if fontWeight, err := parseFontWeight(raw); err == nil {
+		return Value{
+			Kind:       KindFontWeight,
+			FontWeight: fontWeight,
+		}
+	}
+
 	if integer, err := strconv.Atoi(raw); err == nil {
 		return Value{
 			Kind:    Integer,
@@ -423,6 +449,58 @@ var ModKeyNames = map[string]ModKey{
 	"LOGO":    ModSuper,
 	"MOD4":    ModSuper,
 	"MOD5":    Mod5,
+}
+
+func parseFontWeight(raw string) (FontWeight, error) {
+	switch strings.ToLower(strings.TrimSpace(raw)) {
+	case "thin":
+		return FontWeightThin, nil
+
+	case "ultralight":
+		return FontWeightUltralight, nil
+
+	case "light":
+		return FontWeightLight, nil
+
+	case "semilight":
+		return FontWeightSemilight, nil
+
+	case "book":
+		return FontWeightBook, nil
+
+	case "normal":
+		return FontWeightNormal, nil
+
+	case "medium":
+		return FontWeightMedium, nil
+
+	case "semibold":
+		return FontWeightSemibold, nil
+
+	case "bold":
+		return FontWeightBold, nil
+
+	case "ultrabold":
+		return FontWeightUltrabold, nil
+
+	case "heavy":
+		return FontWeightHeavy, nil
+
+	case "ultraheavy":
+		return FontWeightUltraheavy, nil
+
+	default:
+		parsed, err := strconv.ParseUint(raw, 10, 8)
+		if err != nil {
+			return 0, err
+		}
+
+		if parsed < 100 || parsed > 1000 {
+			return 0, fmt.Errorf("font weight %q must be between 100 and 1000, or one of the predefined keywords", parsed)
+		}
+
+		return FontWeight(parsed), nil
+	}
 }
 
 func parseModMask(raw string) ([]ModKey, error) {

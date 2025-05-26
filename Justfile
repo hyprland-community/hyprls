@@ -35,7 +35,7 @@ build:
 	mkdir -p logs
 	touch logs/server.log
 	mkdir -p parser/data/sources
-	cp hyprland-wiki/pages/Configuring/*.md parser/data/sources/
+	# cp hyprland-wiki/pages/Configuring/*.md parser/data/sources/
 	go mod tidy
 	go build -ldflags "-X main.HyprlandWikiVersion=$(cat hyprland_version) -X main.HyprlsVersion={{ latestVersion }}" -o hyprls cmd/hyprls/main.go
 
@@ -57,6 +57,8 @@ pull-wiki:
 	hash=$(git log --all --oneline --grep="versions: add $(cat ../hyprland_version)" | cut -d' ' -f1)
 	echo Using wiki https://github.com/hyprwm/hyprland-wiki/commit/$hash
 	git checkout $hash
+	cd ..
+	cp hyprland-wiki/pages/Configuring/*.md parser/data/sources/
 
 parser-data:
 	#!/bin/bash

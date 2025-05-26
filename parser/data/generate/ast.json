@@ -379,6 +379,12 @@
           "Description": "a path to a custom shader to be applied at the end of rendering. See examples/screenShader.frag for an example.",
           "Type": "str",
           "Default": "[[Empty]]"
+        },
+        {
+          "Name": "border_part_of_window",
+          "Description": "whether the window border should be a part of the window",
+          "Type": "bool",
+          "Default": "true"
         }
       ]
     },
@@ -399,6 +405,12 @@
           "Description": "enable first launch animation",
           "Type": "bool",
           "Default": "true"
+        },
+        {
+          "Name": "workspace_wraparound",
+          "Description": "enable workspace wraparound, causing directional workspace animations to animate as if the first and last workspaces were adjacent",
+          "Type": "bool",
+          "Default": "false"
         }
       ]
     },
@@ -514,7 +526,7 @@
           "Name": "scroll_button_lock",
           "Description": "If the scroll button lock is enabled, the button does not need to be held down. Pressing and releasing the button toggles the button lock, which logically holds the button down or releases it. While the button is logically held down, motion events are converted to scroll events.",
           "Type": "bool",
-          "Default": "0"
+          "Default": "false"
         },
         {
           "Name": "scroll_factor",
@@ -701,6 +713,18 @@
               "Default": "8"
             },
             {
+              "Name": "font_weight_active",
+              "Description": "font weight of active groupbar title",
+              "Type": "font_weight",
+              "Default": "normal"
+            },
+            {
+              "Name": "font_weight_inactive",
+              "Description": "font weight of inactive groupbar title",
+              "Type": "font_weight",
+              "Default": "normal"
+            },
+            {
               "Name": "gradients",
               "Description": "enables gradients",
               "Type": "bool",
@@ -711,6 +735,12 @@
               "Description": "height of the groupbar",
               "Type": "int",
               "Default": "14"
+            },
+            {
+              "Name": "indicator_gap",
+              "Description": "height of gap between groupbar indicator and title",
+              "Type": "int",
+              "Default": "0"
             },
             {
               "Name": "indicator_height",
@@ -735,6 +765,12 @@
               "Description": "whether to render titles in the group bar decoration",
               "Type": "bool",
               "Default": "true"
+            },
+            {
+              "Name": "text_offset",
+              "Description": "adjust vertical position for titles",
+              "Type": "int",
+              "Default": "0"
             },
             {
               "Name": "scrolling",
@@ -807,6 +843,12 @@
               "Description": "gap size between gradients and window",
               "Type": "int",
               "Default": "2"
+            },
+            {
+              "Name": "keep_upper_gap",
+              "Description": "add or remove upper gap",
+              "Type": "bool",
+              "Default": "true"
             }
           ]
         }
@@ -936,7 +978,7 @@
         },
         {
           "Name": "vrr",
-          "Description": "controls the VRR (Adaptive Sync) of your monitors. 0 - off, 1 - on, 2 - fullscreen only [0/1/2]",
+          "Description": "controls the VRR (Adaptive Sync) of your monitors. 0 - off, 1 - on, 2 - fullscreen only, 3 - fullscreen with video or game content type [0/1/2/3]",
           "Type": "int",
           "Default": "0"
         },
@@ -1095,6 +1137,12 @@
           "Description": "whether to enable the ANR (app not responding) dialog when your apps hang",
           "Type": "bool",
           "Default": "true"
+        },
+        {
+          "Name": "anr_missed_pings",
+          "Description": "number of missed pings before showing the ANR dialog",
+          "Type": "int",
+          "Default": "1"
         }
       ]
     },
@@ -1119,6 +1167,12 @@
         {
           "Name": "workspace_back_and_forth",
           "Description": "If enabled, an attempt to switch to the currently focused workspace will instead switch to the previous workspace. Akin to i3's auto_back_and_forth.",
+          "Type": "bool",
+          "Default": "false"
+        },
+        {
+          "Name": "hide_special_on_workspace_change",
+          "Description": "If enabled, changing the active workspace (including to itself) will hide the special workspace on the monitor where the newly active workspace resides.",
           "Type": "bool",
           "Default": "false"
         },
@@ -1175,6 +1229,12 @@
           "Description": "If enabled, Allow fullscreen to pinned windows, and restore their pinned status afterwards",
           "Type": "bool",
           "Default": "false"
+        },
+        {
+          "Name": "drag_threshold",
+          "Description": "Movement threshold in pixels for window dragging and c/g bind flags. 0 to disable and grab on mousedown.",
+          "Type": "int",
+          "Default": "0"
         }
       ]
     },
@@ -1277,6 +1337,12 @@
           "Description": "Whether the color management pipeline should be enabled or not (requires a restart of Hyprland to fully take effect)",
           "Type": "bool",
           "Default": "true"
+        },
+        {
+          "Name": "send_content_type",
+          "Description": "Report content type to allow monitor profile autoswitch (may result in a black screen during the switch)",
+          "Type": "bool",
+          "Default": "true"
         }
       ]
     },
@@ -1337,6 +1403,12 @@
         {
           "Name": "warp_on_change_workspace",
           "Description": "Move the cursor to the last focused window after changing the workspace. Options: 0 (Disabled), 1 (Enabled), 2 (Force - ignores cursor:no_warps option)",
+          "Type": "int",
+          "Default": "0"
+        },
+        {
+          "Name": "warp_on_toggle_special",
+          "Description": "Move the cursor to the last focused window when toggling a special workspace. Options: 0 (Disabled), 1 (Enabled), 2 (Force - ignores cursor:no_warps option)",
           "Type": "int",
           "Default": "0"
         },
@@ -1405,6 +1477,12 @@
         {
           "Name": "no_donation_nag",
           "Description": "disable the popup that shows up twice a year encouraging to donate.",
+          "Type": "bool",
+          "Default": "false"
+        },
+        {
+          "Name": "enforce_permissions",
+          "Description": "whether to enable permission control.",
           "Type": "bool",
           "Default": "false"
         }
@@ -1583,10 +1661,10 @@
           "Default": "2"
         },
         {
-          "Name": "center_master_slaves_on_right",
-          "Description": "set if the slaves should appear on right of master when slave_count_for_center_master > 2",
-          "Type": "bool",
-          "Default": "true"
+          "Name": "center_master_fallback",
+          "Description": "Set fallback for center master when slaves are less than slave_count_for_center_master, can be left ,right ,top ,bottom",
+          "Type": "string",
+          "Default": "left"
         },
         {
           "Name": "smart_resizing",
@@ -1701,7 +1779,7 @@
     },
     {
       "Name": "layerrule",
-      "Description": "Some things in Wayland are not windows, but layers. That includes, for example:\napp launchers, status bars, or wallpapers.\n\nThose have specific rules separate from windows:\n\n```ini\nlayerrule = rule, namespace\n# or\nlayerrule = rule, address\n\n```\n\nwhere `rule` is the rule and `namespace` is the namespace regex (find\nnamespaces in `hyprctl layers`) or `address` is an address in the form of\n`address:0x[hex]`.\n\n### Rules\n\nruledescriptionunsetremoves all layerRules previously set for a select namespace regex. Please note it has to match _exactly_.noanimdisables animationsblurenables blur for the layerblurpopupsenables blur for the popupsignorealpha [a]makes blur ignore pixels with opacity of `a` or lower. `a` is float value from 0 to 1. `a = 0` if unspecified.ignorezeromakes blur ignore fully transparent pixels. Same as `ignorealpha 0`.dimarounddims everything behind the layerxray [on]sets the blur xray mode for a layer. 0 for off, 1 for on, unset for default.animation [style]allows you to set a specific animation style for this layerorder [n]sets the order relative to other layers. Higher means closer to the edge of the monitor. Can be negative. `n = 0` if unspecified.",
+      "Description": "Some things in Wayland are not windows, but layers. That includes, for example:\napp launchers, status bars, or wallpapers.\n\nThose have specific rules separate from windows:\n\n```ini\nlayerrule = rule, namespace\n# or\nlayerrule = rule, address\n\n```\n\nwhere `rule` is the rule and `namespace` is the namespace regex (find\nnamespaces in `hyprctl layers`) or `address` is an address in the form of\n`address:0x[hex]`.\n\n### Rules\n\nruledescriptionunsetremoves all layerRules previously set for a select namespace regex. Please note it has to match _exactly_.noanimdisables animationsblurenables blur for the layerblurpopupsenables blur for the popupsignorealpha [a]makes blur ignore pixels with opacity of `a` or lower. `a` is float value from 0 to 1. `a = 0` if unspecified.ignorezeromakes blur ignore fully transparent pixels. Same as `ignorealpha 0`.dimarounddims everything behind the layerxray [on]sets the blur xray mode for a layer. 0 for off, 1 for on, unset for default.animation [style]allows you to set a specific animation style for this layerorder [n]sets the order relative to other layers. Higher means closer to the edge of the monitor. Can be negative. `n = 0` if unspecified.abovelock [interactable]renders the layer above the lockscreen when the session is locked. If set to `true`, you can interact with the layer on the lockscreen, otherwise it will only be rendered above it.",
       "Flags": []
     },
     {
@@ -1711,7 +1789,7 @@
     },
     {
       "Name": "animation",
-      "Description": "Animations are declared with the `animation` keyword.\n\n```ini\nanimation = NAME, ONOFF, SPEED, CURVE [,STYLE]\n\n```\n\n`ONOFF` can be either 0 or 1, 0 to disable, 1 to enable. _note:_ if it's 0, you\ncan omit further args.\n\n`SPEED` is the amount of ds (1ds = 100ms) the animation will take\n\n`CURVE` is the bezier curve name, see [curves](#curves).\n\n`STYLE` (optional) is the animation style\n\nThe animations are a tree. If an animation is unset, it will inherit its\nparent's values. See [the animation tree](#animation-tree).\n\n### Examples\n\n```ini\nanimation = workspaces, 1, 8, default\nanimation = windows, 1, 10, myepiccurve, slide\nanimation = fade, 0\n\n```\n\n### Animation tree\n\n```txt\nglobal\n  ↳ windows - styles: slide, popin, gnomed\n    ↳ windowsIn - window open\n    ↳ windowsOut - window close\n    ↳ windowsMove - everything in between, moving, dragging, resizing.\n  ↳ layers - styles: slide, popin, fade\n    ↳ layersIn - layer open\n    ↳ layersOut - layer close\n  ↳ fade\n    ↳ fadeIn - fade in for window open\n    ↳ fadeOut - fade out for window close\n    ↳ fadeSwitch - fade on changing activewindow and its opacity\n    ↳ fadeShadow - fade on changing activewindow for shadows\n    ↳ fadeDim - the easing of the dimming of inactive windows\n    ↳ fadeLayers - for controlling fade on layers\n      ↳ fadeLayersIn - fade in for layer open\n      ↳ fadeLayersOut - fade out for layer close\n  ↳ border - for animating the border's color switch speed\n  ↳ borderangle - for animating the border's gradient angle - styles: once (default), loop\n  ↳ workspaces - styles: slide, slidevert, fade, slidefade, slidefadevert\n    ↳ workspacesIn - styles: same as workspaces\n    ↳ workspacesOut - styles: same as workspaces\n    ↳ specialWorkspace - styles: same as workspaces\n      ↳ specialWorkspaceIn - styles: same as workspaces\n      ↳ specialWorkspaceOut - styles: same as workspaces\n\n```\n\n{{< callout type=warning >}}\n\nUsing borderangle style: loop requires Hyprland to constantly push out new frames at [your monitor's hz] times a second which might put stress on your CPU/GPU and affect battery life. This will be applied even if animation are disabled or borders are not visible.\n\n{{</ callout >}}",
+      "Description": "Animations are declared with the `animation` keyword.\n\n```ini\nanimation = NAME, ONOFF, SPEED, CURVE [,STYLE]\n\n```\n\n`ONOFF` can be either 0 or 1, 0 to disable, 1 to enable. _note:_ if it's 0, you\ncan omit further args.\n\n`SPEED` is the amount of ds (1ds = 100ms) the animation will take\n\n`CURVE` is the bezier curve name, see [curves](#curves).\n\n`STYLE` (optional) is the animation style\n\nThe animations are a tree. If an animation is unset, it will inherit its\nparent's values. See [the animation tree](#animation-tree).\n\n### Examples\n\n```ini\nanimation = workspaces, 1, 8, default\nanimation = windows, 1, 10, myepiccurve, slide\nanimation = fade, 0\n\n```\n\n### Animation tree\n\n```txt\nglobal\n  ↳ windows - styles: slide, popin, gnomed\n    ↳ windowsIn - window open - styles: same as windows\n    ↳ windowsOut - window close - styles: same as windows\n    ↳ windowsMove - everything in between, moving, dragging, resizing.\n  ↳ layers - styles: slide, popin, fade\n    ↳ layersIn - layer open\n    ↳ layersOut - layer close\n  ↳ fade\n    ↳ fadeIn - fade in for window open\n    ↳ fadeOut - fade out for window close\n    ↳ fadeSwitch - fade on changing activewindow and its opacity\n    ↳ fadeShadow - fade on changing activewindow for shadows\n    ↳ fadeDim - the easing of the dimming of inactive windows\n    ↳ fadeLayers - for controlling fade on layers\n      ↳ fadeLayersIn - fade in for layer open\n      ↳ fadeLayersOut - fade out for layer close\n  ↳ border - for animating the border's color switch speed\n  ↳ borderangle - for animating the border's gradient angle - styles: once (default), loop\n  ↳ workspaces - styles: slide, slidevert, fade, slidefade, slidefadevert\n    ↳ workspacesIn - styles: same as workspaces\n    ↳ workspacesOut - styles: same as workspaces\n    ↳ specialWorkspace - styles: same as workspaces\n      ↳ specialWorkspaceIn - styles: same as workspaces\n      ↳ specialWorkspaceOut - styles: same as workspaces\n\n```\n\n{{< callout type=warning >}}\n\nUsing borderangle style: loop requires Hyprland to constantly push out new frames at [your monitor's hz] times a second which might put stress on your CPU/GPU and affect battery life. This will be applied even if animation are disabled or borders are not visible.\n\n{{</ callout >}}",
       "Flags": []
     },
     {

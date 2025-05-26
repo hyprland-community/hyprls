@@ -40,6 +40,8 @@ func (v VariableDefinition) GoType() string {
 		return "string"
 	case "gradient":
 		return "GradientValue"
+	case "font_weight":
+		return "uint8"
 	default:
 		panic("unknown type: " + v.Type)
 	}

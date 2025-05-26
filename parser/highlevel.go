@@ -124,6 +124,9 @@ type ConfigurationDecoration struct {
 	// a path to a custom shader to be applied at the end of rendering. See examples/screenShader.frag for an example.
 	ScreenShader string `json:"screen_shader"`
 
+	// whether the window border should be a part of the window
+	BorderPartOfWindow bool `json:"border_part_of_window"`
+
 	Blur   ConfigurationDecorationBlur       `json:"blur"`
 	Shadow ConfigurationDecorationBlurShadow `json:"shadow"`
 }
@@ -213,6 +216,9 @@ type ConfigurationAnimations struct {
 
 	// enable first launch animation
 	FirstLaunchAnimation bool `json:"first_launch_animation"`
+
+	// enable workspace wraparound, causing directional workspace animations to animate as if the first and last workspaces were adjacent
+	WorkspaceWraparound bool `json:"workspace_wraparound"`
 }
 
 type ConfigurationInput struct {
@@ -395,11 +401,20 @@ type ConfigurationGroupGroupbar struct {
 	// font size of groupbar title
 	FontSize int `json:"font_size"`
 
+	// font weight of active groupbar title
+	FontWeightActive uint8 `json:"font_weight_active"`
+
+	// font weight of inactive groupbar title
+	FontWeightInactive uint8 `json:"font_weight_inactive"`
+
 	// enables gradients
 	Gradients bool `json:"gradients"`
 
 	// height of the groupbar
 	Height int `json:"height"`
+
+	// height of gap between groupbar indicator and title
+	IndicatorGap int `json:"indicator_gap"`
 
 	// height of the groupbar indicator
 	IndicatorHeight int `json:"indicator_height"`
@@ -412,6 +427,9 @@ type ConfigurationGroupGroupbar struct {
 
 	// whether to render titles in the group bar decoration
 	RenderTitles bool `json:"render_titles"`
+
+	// adjust vertical position for titles
+	TextOffset int `json:"text_offset"`
 
 	// whether scrolling in the groupbar changes group active window
 	Scrolling bool `json:"scrolling"`
@@ -448,6 +466,9 @@ type ConfigurationGroupGroupbar struct {
 
 	// gap size between gradients and window
 	GapsOut int `json:"gaps_out"`
+
+	// add or remove upper gap
+	KeepUpperGap bool `json:"keep_upper_gap"`
 }
 
 type ConfigurationMisc struct {
@@ -472,7 +493,7 @@ type ConfigurationMisc struct {
 	// controls the VFR status of Hyprland. Heavily recommended to leave enabled to conserve resources.
 	Vfr bool `json:"vfr"`
 
-	// controls the VRR (Adaptive Sync) of your monitors. 0 - off, 1 - on, 2 - fullscreen only [0/1/2]
+	// controls the VRR (Adaptive Sync) of your monitors. 0 - off, 1 - on, 2 - fullscreen only, 3 - fullscreen with video or game content type [0/1/2/3]
 	Vrr int `json:"vrr"`
 
 	// If DPMS is set to off, wake up the monitors if the mouse moves.
@@ -552,6 +573,9 @@ type ConfigurationMisc struct {
 
 	// whether to enable the ANR (app not responding) dialog when your apps hang
 	EnableAnrDialog bool `json:"enable_anr_dialog"`
+
+	// number of missed pings before showing the ANR dialog
+	AnrMissedPings int `json:"anr_missed_pings"`
 }
 
 type ConfigurationBinds struct {
@@ -563,6 +587,9 @@ type ConfigurationBinds struct {
 
 	// If enabled, an attempt to switch to the currently focused workspace will instead switch to the previous workspace. Akin to i3's auto_back_and_forth.
 	WorkspaceBackAndForth bool `json:"workspace_back_and_forth"`
+
+	// If enabled, changing the active workspace (including to itself) will hide the special workspace on the monitor where the newly active workspace resides.
+	HideSpecialOnWorkspaceChange bool `json:"hide_special_on_workspace_change"`
 
 	// If enabled, workspaces don't forget their previous workspace, so cycles can be created by switching to the first workspace in a sequence, then endlessly going to the previous workspace.
 	AllowWorkspaceCycles bool `json:"allow_workspace_cycles"`
@@ -590,6 +617,9 @@ type ConfigurationBinds struct {
 
 	// If enabled, Allow fullscreen to pinned windows, and restore their pinned status afterwards
 	AllowPinFullscreen bool `json:"allow_pin_fullscreen"`
+
+	// Movement threshold in pixels for window dragging and c/g bind flags. 0 to disable and grab on mousedown.
+	DragThreshold int `json:"drag_threshold"`
 }
 
 type ConfigurationXWayland struct {
@@ -635,6 +665,9 @@ type ConfigurationRender struct {
 
 	// Whether the color management pipeline should be enabled or not (requires a restart of Hyprland to fully take effect)
 	CmEnabled bool `json:"cm_enabled"`
+
+	// Report content type to allow monitor profile autoswitch (may result in a black screen during the switch)
+	SendContentType bool `json:"send_content_type"`
 }
 
 type ConfigurationCursor struct {
@@ -664,6 +697,9 @@ type ConfigurationCursor struct {
 
 	// Move the cursor to the last focused window after changing the workspace. Options: 0 (Disabled), 1 (Enabled), 2 (Force - ignores cursor:no_warps option)
 	WarpOnChangeWorkspace int `json:"warp_on_change_workspace"`
+
+	// Move the cursor to the last focused window when toggling a special workspace. Options: 0 (Disabled), 1 (Enabled), 2 (Force - ignores cursor:no_warps option)
+	WarpOnToggleSpecial int `json:"warp_on_toggle_special"`
 
 	// the name of a default monitor for the cursor to be set to on startup (see hyprctl monitors for names)
 	DefaultMonitor string `json:"default_monitor"`
@@ -696,6 +732,9 @@ type ConfigurationEcosystem struct {
 
 	// disable the popup that shows up twice a year encouraging to donate.
 	NoDonationNag bool `json:"no_donation_nag"`
+
+	// whether to enable permission control.
+	EnforcePermissions bool `json:"enforce_permissions"`
 }
 
 type ConfigurationExperimental struct {
@@ -778,8 +817,8 @@ type ConfigurationMaster struct {
 	// when using orientation=center, make the master window centered only when at least this many slave windows are open. (Set 0 to always_center_master)
 	SlaveCountForCenterMaster int `json:"slave_count_for_center_master"`
 
-	// set if the slaves should appear on right of master when slave_count_for_center_master > 2
-	CenterMasterSlavesOnRight bool `json:"center_master_slaves_on_right"`
+	// Set fallback for center master when slaves are less than slave_count_for_center_master, can be left ,right ,top ,bottom
+	CenterMasterFallback string `json:"center_master_fallback"`
 
 	// if enabled, resizing direction will be determined by the mouse's position on the window (nearest to which corner). Else, it is based on the window's tiling position.
 	SmartResizing bool `json:"smart_resizing"`
