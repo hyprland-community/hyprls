@@ -1,6 +1,6 @@
 module github.com/hyprland-community/hyprls
 
-go 1.22.2
+go 1.24.3
 
 require (
 	github.com/PuerkitoBio/goquery v1.5.1
