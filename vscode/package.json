@@ -59,7 +59,7 @@
     "@vscode/vsce": "^3.4.2",
     "eslint": "^9.27.0",
     "mocha": "^11.5.0",
-    "typescript": "^5.3.3"
+    "typescript": "^5.8.3"
   },
   "dependencies": {
     "vscode-languageclient": "^9.0.1"
