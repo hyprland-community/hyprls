@@ -3,6 +3,7 @@ module github.com/hyprland-community/hyprls
 go 1.24.3
 
 require (
+	github.com/MakeNowJust/heredoc v1.0.0
 	github.com/PuerkitoBio/goquery v1.10.3
 	github.com/davecgh/go-spew v1.1.1
 	go.lsp.dev/jsonrpc2 v0.10.0
@@ -19,7 +20,7 @@ require (
 )
 
 require (
-	github.com/MakeNowJust/heredoc v1.0.0
+	github.com/MakeNowJust/heredoc/v2 v2.0.1
 	github.com/anaskhan96/soup v1.2.5
 	github.com/evorts/html-to-markdown v0.0.10
 	github.com/mazznoer/csscolorparser v0.1.6
