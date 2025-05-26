@@ -1,5 +1,5 @@
 ---
-weight: 17
+weight: 18
 title: Uncommon tips & tricks
 ---
 
@@ -114,6 +114,60 @@ bind = $mod, S, movetoworkspace, special:magic
 bind = $mod, S, togglespecialworkspace, magic
 ```
 
+## Show desktop
+
+This approach uses same principle as the [Minimize windows using special workspaces](#minimize-windows-using-special-workspaces) section.
+It moves all windows from current workspace to a special workspace named `desktop`.
+Showing desktop state is remembered per workspace.
+
+Create a script:
+
+```sh
+#!/bin/env sh
+
+TMP_FILE="$XDG_RUNTIME_DIR/hyprland-show-desktop"
+
+CURRENT_WORKSPACE=$(hyprctl monitors -j | jq '.[] | .activeWorkspace | .name' | sed 's/"//g')
+
+if [ -s "$TMP_FILE-$CURRENT_WORKSPACE" ]; then
+  readarray -d $'\n' -t ADDRESS_ARRAY <<< $(< "$TMP_FILE-$CURRENT_WORKSPACE")
+
+  for address in "${ADDRESS_ARRAY[@]}"
+  do
+    CMDS+="dispatch movetoworkspacesilent name:$CURRENT_WORKSPACE,address:$address;"
+  done
+
+  hyprctl --batch "$CMDS"
+
+  rm "$TMP_FILE-$CURRENT_WORKSPACE"
+else
+  HIDDEN_WINDOWS=$(hyprctl clients -j | jq --arg CW "$CURRENT_WORKSPACE" '.[] | select (.workspace .name == $CW) | .address')
+
+  readarray -d $'\n' -t ADDRESS_ARRAY <<< $HIDDEN_WINDOWS
+
+  for address in "${ADDRESS_ARRAY[@]}"
+  do
+    address=$(sed 's/"//g' <<< $address )
+
+    if [[ -n address ]]; then
+      TMP_ADDRESS+="$address\n"
+    fi
+
+    CMDS+="dispatch movetoworkspacesilent special:desktop,address:$address;"
+  done
+
+  hyprctl --batch "$CMDS"
+
+  echo -e "$TMP_ADDRESS" | sed -e '/^$/d' > "$TMP_FILE-$CURRENT_WORKSPACE"
+fi
+```
+
+then bind it:
+
+```ini
+  bind = $mainMod , D, exec, <PATH TO SCRIPT>
+```
+
 ## Minimize Steam instead of killing
 
 Steam will exit entirely when its last window is closed using the `killactive`
@@ -185,3 +239,109 @@ bind = WIN, F1, exec, ~/.config/hypr/gamemode.sh
 ```
 
 The hotkey toggle will be WIN+F1, but you can change this to whatever you want.
+
+## Zoom
+
+To zoom using Hyprland's built-in zoom utility
+{{< callout >}}
+If mouse wheel bindings work only for the first time, you should probably reduce reset time with `binds:scroll_event_delay`
+{{< /callout >}}
+
+```ini
+bind = $mod, mouse_down, exec, hyprctl -q keyword cursor:zoom_factor $(hyprctl getoption cursor:zoom_factor | awk '/^float.*/ {print $2 * 1.1}')
+bind = $mod, mouse_up, exec, hyprctl -q keyword cursor:zoom_factor $(hyprctl getoption cursor:zoom_factor | awk '/^float.*/ {print $2 * 0.9}')
+
+binde = $mod, equal, exec, hyprctl -q keyword cursor:zoom_factor $(hyprctl getoption cursor:zoom_factor | awk '/^float.*/ {print $2 * 1.1}')
+binde = $mod, minus, exec, hyprctl -q keyword cursor:zoom_factor $(hyprctl getoption cursor:zoom_factor | awk '/^float.*/ {print $2 * 0.9}')
+binde = $mod, KP_ADD, exec, hyprctl -q keyword cursor:zoom_factor $(hyprctl getoption cursor:zoom_factor | awk '/^float.*/ {print $2 * 1.1}')
+binde = $mod, KP_SUBTRACT, exec, hyprctl -q keyword cursor:zoom_factor $(hyprctl getoption cursor:zoom_factor | awk '/^float.*/ {print $2 * 0.9}')
+
+bind = $mod SHIFT, mouse_up, exec, hyprctl -q keyword cursor:zoom_factor 1
+bind = $mod SHIFT, mouse_down, exec, hyprctl -q keyword cursor:zoom_factor 1
+bind = $mod SHIFT, minus, exec, hyprctl -q keyword cursor:zoom_factor 1
+bind = $mod SHIFT, KP_SUBTRACT, exec, hyprctl -q keyword cursor:zoom_factor 1
+bind = $mod SHIFT, 0, exec, hyprctl -q keyword cursor:zoom_factor 1
+```
+
+## Alt tab behaviour
+To mimic DE's alt-tab behaviour. Here is an example that uses foot, fzf, [grim-hyprland](https://github.com/eriedaberrie/grim-hyprland) and chafa to the screenshot in the terminal.
+
+![alttab](https://github.com/user-attachments/assets/2a260809-b1b0-4f72-8644-46cc9d8b8971)
+
+Dependencies :
+- foot
+- fzf
+- [grim-hyprland](https://github.com/eriedaberrie/grim-hyprland)
+- chafa
+- jq
+
+1. add this to your config
+
+```ini
+exec-once = foot --server
+
+bind = ALT, tab, exec, hyprctl -q keyword animations:enabled false ; hyprctl -q dispatch exec "footclient -a alttab $XDG_CONFIG_HOME/hypr/scripts/alttab/alttab.sh" ; hyprctl -q keyword unbind "ALT, TAB" ; hyprctl -q dispatch submap alttab
+
+submap=alttab
+bind = ALT, tab, sendshortcut, , tab, class:alttab
+bind = ALT SHIFT, tab, sendshortcut, shift, tab, class:alttab
+
+bindrt = ALT, ALT_L, exec, $XDG_CONFIG_HOME/hypr/scripts/alttab/disable.sh ; hyprctl -q dispatch sendshortcut ,return,class:alttab
+bind = ALT, escape, exec, $XDG_CONFIG_HOME/hypr/scripts/alttab/disable.sh ; hyprctl -q dispatch sendshortcut ,escape,class:alttab
+submap = reset
+
+workspace = special:alttab, gapsout:0, gapsin:0, bordersize:0
+windowrule = noanim, class:alttab
+windowrule = stayfocused, class:alttab
+windowrule = workspace special:alttab, class:alttab
+windowrule = bordersize 0, class:alttab
+```
+
+2. create file `touch $XDG_CONFIG_HOME/hypr/scripts/alttab/alttab.sh && chmod +x $XDG_CONFIG_HOME/hypr/scripts/alttab/alttab.sh` and add:
+
+```bash {filename="alttab.sh"}
+#!/usr/bin/env bash
+address=$(hyprctl -j clients | jq -r 'sort_by(.focusHistoryID) | .[] | select(.workspace.id >= 0) | "\(.address)\t\(.title)"' |
+	      fzf --color prompt:green,pointer:green,current-bg:-1,current-fg:green,gutter:-1,border:bright-black,current-hl:red,hl:red \
+		  --cycle \
+		  --sync \
+		  --bind tab:down,shift-tab:up,start:down,double-click:ignore \
+		  --wrap \
+		  --delimiter=$'\t' \
+		  --with-nth=2 \
+		  --preview "$XDG_CONFIG_HOME/hypr/scripts/alttab/preview.sh {}" \
+		  --preview-window=down:80% \
+		  --layout=reverse |
+	      awk -F"\t" '{print $1}')
+
+if [ -n "$address" ] ; then
+    hyprctl --batch -q "dispatch focuswindow address:$address;dispatch alterzorder top"
+fi
+
+hyprctl -q dispatch submap reset
+```
+
+I chose to exclude windows that are in special workspaces but it can be modified by removing `select(.workspace.id >= 0)`
+
+3. create file `touch $XDG_CONFIG_HOME/hypr/scripts/alttab/preview.sh && chmod +x $XDG_CONFIG_HOME/hypr/scripts/alttab/preview.sh` and add:
+
+```bash {filename="preview.sh"}
+#!/usr/bin/env bash
+line="$1"
+
+IFS=$'\t' read -r addr _ <<< "$line"
+dim=${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES}
+
+grim -t png -l 0 -w "$addr" ~.config/hypr/scripts/alttab/preview.png
+chafa --animate false -s "$dim" "$XDG_CONFIG_HOME/hypr/scripts/alttab/preview.png"
+```
+
+4. create file `touch $XDG_CONFIG_HOME/hypr/scripts/alttab/disable.sh && chmod +x $XDG_CONFIG_HOME/hypr/scripts/alttab/disable.sh` and add:
+
+```bash {filename="disable.sh"}
+#!/usr/bin/env bash
+hyprctl -q keyword animations:enabled true
+
+hyprctl -q keyword unbind "ALT, tab"
+hyprctl -q keyword bind ALT, tab, exec, "hyprctl -q keyword animations:enabled false ; hyprctl -q dispatch exec 'footclient -a alttab $XDG_CONFIG_HOME/hypr/scripts/alttab/alttab.sh' ; hyprctl -q keyword unbind 'ALT, tab' ; hyprctl -q dispatch submap alttab"
+```

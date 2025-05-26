@@ -20,7 +20,7 @@ example, in the case of `kitty`:
 ## Window Rules
 
 You can set window rules to achieve different window behaviors based
-on their properties. 
+on their properties.
 
 ### Syntax
 
@@ -71,6 +71,7 @@ The supported fields for parameters are:
 | workspace:\[w\] | Windows on matching workspace. `w` can be `id` or `name:string`. |
 | onworkspace:\[w\] | Windows on matching workspace. `w` can be `id`, `name:string` or `workspace selector`. |
 | content:\[none\|photo\|video\|game\] | Windows with specified content type |
+| xdgtag:\[string\] | Match a window by its xdgTag (see `hyprctl clients` to check if it has one) | 
 
 Keep in mind that you _have_ to declare at least one field, but not all.
 
@@ -78,6 +79,15 @@ Keep in mind that you _have_ to declare at least one field, but not all.
 
 To get more information about a window's class, title, XWayland status or its
 size, you can use `hyprctl clients`.
+
+{{< /callout >}}
+
+
+{{< callout type=info >}}
+
+In the output of the `hyprctl clients` command:
+`fullscreen` refers to `fullscreenstate.internal` and
+`fullscreenClient` refers to `fullscreenstate.client`
 
 {{< /callout >}}
 
@@ -122,6 +132,7 @@ It is not possible to `float` (or any other of the static rules) a window based 
 | group \[options\] | set window group properties. See the note below. |
 | suppressevent \[types...\] | ignores specific events from the window. Events are space separated, and can be: `fullscreen` `maximize` `activate` `activatefocus` `fullscreenoutput` |
 | content \[none\|photo\|video\|game\] | sets content type |
+| noclosefor \[ms\] | makes the window uncloseable with the `killactive` dispatcher for a given amount of ms on open |
 
 ### Dynamic rules
 
@@ -155,6 +166,7 @@ The following rules can also be set with [`setprop`](../Dispatchers#setprop):
 | noborder \[on\] | disables borders for the window |
 | nodim \[on\] | disables window dimming for the window |
 | nofocus \[on\] | disables focus to the window |
+| nofollowmouse \[on\] | prevents the window from being focused when the mouse moves over it when `input:follow_mouse=1` is set |
 | nomaxsize \[on\] | disables max size for the window |
 | norounding \[on\] | disables rounding for the window |
 | noshadow \[on\] | disables shadows for the window |
@@ -246,15 +258,15 @@ be cleared).
 ### Example Rules
 
 ```ini
-windowrule = move 100 100, kitty # moves kitty to 100 100
-windowrule = animation popin, kitty # sets the animation style for kitty
-windowrule = noblur, firefox # disables blur for firefox
-windowrule = move cursor -50% -50%, kitty # moves kitty to the center of the cursor
+windowrule = move 100 100, class:kitty # moves kitty to 100 100
+windowrule = animation popin, class:kitty # sets the animation style for kitty
+windowrule = noblur, class:firefox # disables blur for firefox
+windowrule = move cursor -50% -50%, class:kitty # moves kitty to the center of the cursor
 windowrule = bordercolor rgb(FF0000) rgb(880808), fullscreen:1 # set bordercolor to red if window is fullscreen
 windowrule = bordercolor rgb(00FF00), fullscreenstate:* 1 # set bordercolor to green if window's client fullscreen state is 1(maximize) (internal state can be anything)
 windowrule = bordercolor rgb(FFFF00), title:.*Hyprland.* # set bordercolor to yellow when title contains Hyprland
-windowrule = opacity 1.0 override 0.5 override 0.8 override, kitty # set opacity to 1.0 active, 0.5 inactive and 0.8 fullscreen for kitty
-windowrule = rounding 10, kitty # set rounding to 10 for kitty
+windowrule = opacity 1.0 override 0.5 override 0.8 override, class:kitty # set opacity to 1.0 active, 0.5 inactive and 0.8 fullscreen for kitty
+windowrule = rounding 10, class:kitty # set rounding to 10 for kitty
 windowrule = stayfocused,  class:(pinentry-)(.*) # fix pinentry losing focus
 ```
 
@@ -298,7 +310,7 @@ example, to set active and inactive opacity to 0.8, and make fullscreen windows
 fully opaque regardless of other opacity rules:
 
 ```ini
-windowrule = opacity 0.8 override 0.8 override 1.0 override, kitty
+windowrule = opacity 0.8 override 0.8 override 1.0 override, class:kitty
 ```
 
 {{< /callout >}}
@@ -334,3 +346,4 @@ namespaces in `hyprctl layers`) or `address` is an address in the form of
 | xray \[on\] | sets the blur xray mode for a layer. 0 for off, 1 for on, unset for default. |
 | animation \[style\] | allows you to set a specific animation style for this layer |
 | order \[n\] | sets the order relative to other layers. Higher means closer to the edge of the monitor. Can be negative. `n = 0` if unspecified. |
+| abovelock \[interactable\] | renders the layer above the lockscreen when the session is locked. If set to `true`, you can interact with the layer on the lockscreen, otherwise it will only be rendered above it. |
