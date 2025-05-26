@@ -26,7 +26,7 @@ require (
 	github.com/metal3d/go-slugify v0.0.0-20160607203414-7ac2014b2f23
 	github.com/segmentio/asm v1.2.0 // indirect
 	github.com/segmentio/encoding v0.4.0 // indirect
-	github.com/yuin/goldmark v1.7.11
+	github.com/yuin/goldmark v1.7.12
 	go.lsp.dev/protocol v0.12.0
 	golang.org/x/sys v0.19.0 // indirect
 )
