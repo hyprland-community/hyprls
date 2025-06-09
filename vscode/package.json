@@ -12,7 +12,7 @@
   "categories": [],
   "keywords": [],
   "engines": {
-    "vscode": "^1.100.2"
+    "vscode": "^1.100.3"
   },
   "contributes": {
     "languages": [
