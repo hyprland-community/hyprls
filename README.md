@@ -81,6 +81,11 @@ vim.api.nvim_create_autocmd({'BufEnter', 'BufWinEnter'}, {
 })
 ```
 
+### With Emacs
+Install [hyprlang-ts-mode](https://github.com/Nathan-Melaku/hyprlang-ts-mode) and [lsp-bridge](https://github.com/manateelazycat/lsp-bridge).
+
+lsp-bridge supports hyprls out of the box, no need to do any configuration.
+
 ### VSCode
 
 #### Official Marketplace (VisualStudio Marketplace)
