@@ -81,6 +81,11 @@ vim.api.nvim_create_autocmd({'BufEnter', 'BufWinEnter'}, {
 })
 ```
 
+### With Emacs
+Language server support is provided by the [lsp-bridge](https://github.com/manateelazycat/lsp-bridge).
+
+Just install [lsp-bridge](https://github.com/manateelazycat/lsp-bridge) in Emacs, that's all, no need to do any configuration.
+
 ### VSCode
 
 #### Official Marketplace (VisualStudio Marketplace)
