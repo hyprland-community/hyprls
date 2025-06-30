@@ -6,5 +6,11 @@
 	"lockFileMaintenance": {
 		"enabled": true,
 		"automerge": true
-	}
+	},
+	"packageRules": [
+		{
+			"matchPackageNames": ["@types/node", "mocha"],
+			"automerge": true
+		}
+	]
 }
