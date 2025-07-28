@@ -37,6 +37,9 @@ type ConfigurationGeneral struct {
 	// gaps between windows and monitor edges, also supports css style gaps (top, right, bottom, left -> 5,10,15,20)
 	GapsOut int `json:"gaps_out"`
 
+	// gaps between windows and monitor edges for floating windows, also supports css style gaps (top, right, bottom, left -> 5 10 15 20). -1 means default
+	FloatGaps int `json:"float_gaps"`
+
 	// gaps between workspaces. Stacks with gaps_out.
 	GapsWorkspaces int `json:"gaps_workspaces"`
 
@@ -91,6 +94,9 @@ type ConfigurationGeneralSnap struct {
 
 	// if true, windows snap such that only one border's worth of space is between them
 	BorderOverlap bool `json:"border_overlap"`
+
+	// if true, snapping will respect gaps between windows(set in general:gaps_in)
+	RespectGaps bool `json:"respect_gaps"`
 }
 
 type ConfigurationDecoration struct {
@@ -446,8 +452,17 @@ type ConfigurationGroupGroupbar struct {
 	// round only the gradient edges of the entire groupbar
 	GradientRoundOnlyEdges bool `json:"gradient_round_only_edges"`
 
-	// controls the group bar text color
+	// color for window titles in the groupbar
 	TextColor color.RGBA `json:"text_color"`
+
+	// color for inactive windows' titles in the groupbar (if unset, defaults to text_color)
+	TextColorInactive color.RGBA `json:"text_color_inactive"`
+
+	// color for the active window's title in a locked group (if unset, defaults to text_color)
+	TextColorLockedActive color.RGBA `json:"text_color_locked_active"`
+
+	// color for inactive windows' titles in locked groups (if unset, defaults to text_color_inactive)
+	TextColorLockedInactive color.RGBA `json:"text_color_locked_inactive"`
 
 	// active group bar background color
 	ColActive GradientValue `json:"col.active"`
@@ -532,14 +547,11 @@ type ConfigurationMisc struct {
 	// Whether mouse moving into a different monitor should focus it
 	MouseMoveFocusesMonitor bool `json:"mouse_move_focuses_monitor"`
 
-	// [Warning: buggy] starts rendering before your monitor displays a frame in order to lower latency
-	RenderAheadOfTime bool `json:"render_ahead_of_time"`
-
-	// how many ms of safezone to add to rendering ahead of time. Recommended 1-2.
-	RenderAheadSafezone int `json:"render_ahead_safezone"`
-
-	// if true, will allow you to restart a lockscreen app in case it crashes (red screen of death)
+	// if true, will allow you to restart a lockscreen app in case it crashes
 	AllowSessionLockRestore bool `json:"allow_session_lock_restore"`
+
+	// if true, keep rendering workspaces below your lockscreen
+	SessionLockXray bool `json:"session_lock_xray"`
 
 	// change the background color. (requires enabled disable_hyprland_logo)
 	BackgroundColor color.RGBA `json:"background_color"`
@@ -568,7 +580,7 @@ type ConfigurationMisc struct {
 	// disable the warning if hyprland-qtutils is not installed
 	DisableHyprlandQtutilsCheck bool `json:"disable_hyprland_qtutils_check"`
 
-	// the delay in ms after the lockdead screen appears if the lock screen did not appear after a lock event occurred
+	// delay after which the "lockdead" screen will apear in case a lockscreen app fails to cover all the outputs (5 seconds max)
 	LockdeadScreenDelay int `json:"lockdead_screen_delay"`
 
 	// whether to enable the ANR (app not responding) dialog when your apps hang
@@ -642,12 +654,6 @@ type ConfigurationOpenGL struct {
 }
 
 type ConfigurationRender struct {
-	// Whether to enable explicit sync support. Requires a hyprland restart. 0 - no, 1 - yes, 2 - auto based on the gpu driver
-	ExplicitSync int `json:"explicit_sync"`
-
-	// Whether to enable explicit sync support for the KMS layer. Requires explicit_sync to be enabled. 0 - no, 1 - yes, 2 - auto based on the gpu driver
-	ExplicitSyncKms int `json:"explicit_sync_kms"`
-
 	// Enables direct scanout. Direct scanout attempts to reduce lag when there is only one fullscreen application on a screen (e.g. game). It is also recommended to set this to false if the fullscreen application shows graphical glitches. 0 - off, 1 - on, 2 - auto (on with content type 'game')
 	DirectScanout int `json:"direct_scanout"`
 
@@ -668,9 +674,18 @@ type ConfigurationRender struct {
 
 	// Report content type to allow monitor profile autoswitch (may result in a black screen during the switch)
 	SendContentType bool `json:"send_content_type"`
+
+	// Auto-switch to HDR in fullscreen when needed. 0 - off, 1 - switch to cm, hdr, 2 - switch to cm, hdredid
+	CmAutoHdr int `json:"cm_auto_hdr"`
+
+	// Automatically uses triple buffering when needed, improves FPS on underpowered devices.
+	NewRenderScheduling bool `json:"new_render_scheduling"`
 }
 
 type ConfigurationCursor struct {
+	// don't render cursors
+	Invisible bool `json:"invisible"`
+
 	// sync xcursor theme with gsettings, it applies cursor-theme and cursor-size on theme load to gsettings making most CSD gtk based clients use same xcursor theme and size.
 	SyncGsettingsTheme bool `json:"sync_gsettings_theme"`
 
@@ -852,7 +867,7 @@ type ConfigurationDwindle struct {
 	// specifies the scale factor of windows on the special workspace [0 - 1]
 	SpecialScaleFactor float32 `json:"special_scale_factor"`
 
-	// specifies the auto-split width multiplier
+	// specifies the auto-split width multiplier. Multiplying window size is useful on widescreen monitors where window W > H even after several splits.
 	SplitWidthMultiplier float32 `json:"split_width_multiplier"`
 
 	// whether to prefer the active window or the mouse position for splits
@@ -863,4 +878,13 @@ type ConfigurationDwindle struct {
 
 	// specifies which window will receive the larger half of a split. positional - 0, current window - 1, opening window - 2 [0/1/2]
 	SplitBias int `json:"split_bias"`
+
+	// bindm movewindow will drop the window more precisely depending on where your mouse is.
+	PreciseMouseMove bool `json:"precise_mouse_move"`
+
+	// whenever only a single window is shown on a screen, add padding so that it conforms to the specified aspect ratio. A value like 4 3 on a 16:9 screen will make it a 4:3 window in the middle with padding to the sides.
+	SingleWindowAspectRatio [2]float32 `json:"single_window_aspect_ratio"`
+
+	// sets a tolerance for single_window_aspect_ratio, so that if the padding that would have been added is smaller than the specified fraction of the height or width of the screen, it will not attempt to adjust the window size [0 - 1]
+	SingleWindowAspectRatioTolerance int `json:"single_window_aspect_ratio_tolerance"`
 }

@@ -89,14 +89,19 @@ There are a few special values for the resolutions:
 - `preferred` - use the display's preferred size and refresh rate.
 - `highres` - use the highest supported resolution.
 - `highrr` - use the highest supported refresh rate.
+- `maxwidth` - use the widest supported resolution.
 
 Position also has a few special values:
 
-- `auto` - let Hyprland decide on a position. By default, it places each new monitor to the right of existing ones.
-- `auto-right/left/up/down` - place the monitor to the right/left, above or below other monitors.
+- `auto` - let Hyprland decide on a position. By default, it places each new monitor to the right of existing ones,
+  using the monitor's top left corner as the root point.
+- `auto-right/left/up/down` - place the monitor to the right/left, above or below other monitors,
+  also based on each monitor's top left corner as the root.
+- `auto-center-right/left/up/down` - place the monitor to the right/left, above or below other monitors,
+  but calculate placement from each monitor's center rather than its top left corner.
 
 _**Please Note:**_ While specifying a monitor direction for your first monitor is allowed, this does nothing and it will
-be positioned at (0,0). Also the direction is always from the center out, so you can specify `auto-up` then `auto-left`,
+be positioned at (0,0). Also, the direction is always from the center out, so you can specify `auto-up` then `auto-left`,
 but the left monitors will just be left of the origin and above the origin. You can also specify duplicate directions and
 monitors will continue to go in that direction.
 
@@ -268,6 +273,36 @@ Transform list:
 6 -> flipped + 180 degrees
 7 -> flipped + 270 degrees
 ```
+
+## Monitor v2
+
+Alternative syntax. `monitor = DP-1,1920x1080@144,0x0,1,transform,2` is the same as
+
+```ini
+monitorv2 {
+  output = DP-1
+  mode = 1920x1080@144
+  position = 0x0
+  scale = 1
+  transform = 2
+}
+```
+
+Other named settings keep their names: `name, value` &rarr; `name = value` (e.g. `bitdepth,10` &rarr; `bitdepth = 10`)
+
+EDID overrides and SDR &rarr; HDR settings:
+
+| name | description | type |
+|---|---|---|
+| supports_wide_color | Force wide color gamut support (1 - force on, 0 - does nothing) | bool |
+| supports_hdr | Force HDR support. Requires wide color gamut (1 - force on, 0 - does nothing) | bool |
+| sdr_min_luminance | SDR minimum lumninace used for SDR &rarr; HDR mapping. Set to 0.005 for true black matching HDR black | float |
+| sdr_max_luminance | SDR maximum luminance. Can be used to adjust overall SDR &rarr; HDR brightness. 80 - 400 is a reasonable range. The desired value is likely between 200 and 250 | int |
+| min_luminance | Monitor's minimum luminance | float |
+| max_luminance | Monitor's maximum possible luminance | int |
+| max_avg_luminance | Monitor's maximum luminance on average for a typical frame | int |
+
+Note: those values might get passed to the monitor itself and cause increased burn-in or other damage if it's firmware lacks some safety checks. 
 
 ## Default workspace
 

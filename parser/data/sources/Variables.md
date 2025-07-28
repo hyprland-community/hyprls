@@ -32,9 +32,11 @@ the layout pages and not here. (See the Sidebar for Dwindle and Master layouts)
 
 You have 3 options:
 
-rgba(), e.g. `rgba(b3ff1aee)`, or the decimal equivalent `rgba(179, 255, 26, 0.933)`
+rgba(), e.g. `rgba(b3ff1aee)`, or the decimal equivalent `rgba(179,255,26,0.933)`
 
-rgb(), e.g. `rgb(b3ff1a)`, or the decimal equivalent  `rgb(179, 255, 26)`
+(decimal rgba/rgb values should have no spaces between numbers)
+
+rgb(), e.g. `rgb(b3ff1a)`, or the decimal equivalent  `rgb(179,255,26)`
 
 legacy, e.g. `0xeeb3ff1a` -> ARGB order
 
@@ -60,6 +62,7 @@ SHIFT CAPS CTRL/CONTROL ALT MOD2 MOD3 SUPER/WIN/LOGO/MOD4 MOD5
 | no_border_on_floating | disable borders for floating windows | bool | false |
 | gaps_in | gaps between windows, also supports css style gaps (top, right, bottom, left -> 5,10,15,20) | int | 5 |
 | gaps_out | gaps between windows and monitor edges, also supports css style gaps (top, right, bottom, left -> 5,10,15,20) | int | 20 |
+| float_gaps | gaps between windows and monitor edges for floating windows, also supports css style gaps (top, right, bottom, left -> 5 10 15 20). -1 means default | int | 0 |
 | gaps_workspaces | gaps between workspaces. Stacks with gaps_out. | int | 0 |
 | col.inactive_border | border color for inactive windows | gradient | 0xff444444 |
 | col.active_border | border color for the active window | gradient | 0xffffffff |
@@ -83,6 +86,7 @@ _Subcategory `general:snap:`_
 | window_gap | minimum gap in pixels between windows before snapping | int | 10 |
 | monitor_gap | minimum gap in pixels between window and monitor edges before snapping | int | 10 |
 | border_overlap | if true, windows snap such that only one border's worth of space is between them | bool | false |
+| respect_gaps | if true, snapping will respect gaps between windows(set in general:gaps_in) | bool | false |
 
 {{< callout type=important >}}
 
@@ -279,10 +283,11 @@ _Subcategory `input:touchpad:`_
 | tap_button_map | Sets the tap button mapping for touchpad button emulation. Can be one of `lrm` (default) or `lmr` (Left, Middle, Right Buttons). [lrm/lmr] | str | \[\[Empty\]\] |
 | clickfinger_behavior | Button presses with 1, 2, or 3 fingers will be mapped to LMB, RMB, and MMB respectively. This disables interpretation of clicks based on location on the touchpad. [libinput#clickfinger-behavior](https://wayland.freedesktop.org/libinput/doc/latest/clickpad-softbuttons.html#clickfinger-behavior) | bool | false |
 | tap-to-click | Tapping on the touchpad with 1, 2, or 3 fingers will send LMB, RMB, and MMB respectively. | bool | true |
-| drag_lock | When enabled, lifting the finger off for a short time while dragging will not drop the dragged item. [libinput#tap-and-drag](https://wayland.freedesktop.org/libinput/doc/latest/tapping.html#tap-and-drag) | bool | false |
+| drag_lock | When enabled, lifting the finger off while dragging will not drop the dragged item. 0 -> disabled, 1 -> enabled with timeout, 2 -> enabled sticky. [libinput#tap-and-drag](https://wayland.freedesktop.org/libinput/doc/latest/tapping.html#tap-and-drag) | int | 0 |
 | tap-and-drag | Sets the tap and drag mode for the touchpad | bool | true |
 | flip_x | inverts the horizontal movement of the touchpad | bool | false |
 | flip_y | inverts the vertical movement of the touchpad | bool | false |
+| drag_3fg | enables three finger drag, 0 -> disabled, 1 -> 3 fingers, 2 -> 4 fingers [libinput#drag-3fg](https://wayland.freedesktop.org/libinput/doc/latest/drag-3fg.html) | int | 0 |
 
 #### Touchdevice
 
@@ -378,7 +383,10 @@ _Subcategory `group:groupbar:`_
 | gradient_rounding | how much to round the gradients | int | 2 |
 | round_only_edges | round only the indicator edges of the entire groupbar | bool | true |
 | gradient_round_only_edges | round only the gradient edges of the entire groupbar | bool | true |
-| text_color | controls the group bar text color | color | 0xffffffff |
+| text_color | color for window titles in the groupbar | color | 0xffffffff |
+| text_color_inactive | color for inactive windows' titles in the groupbar (if unset, defaults to text_color) | color | unset |
+| text_color_locked_active | color for the active window's title in a locked group (if unset, defaults to text_color) | color | unset |
+| text_color_locked_inactive | color for inactive windows' titles in locked groups (if unset, defaults to text_color_inactive) | color | unset |
 | col.active | active group bar background color | gradient | 0x66ffff00 |
 | col.inactive | inactive (out of focus) group bar background color | gradient | 0x66777700 |
 | col.locked_active | active locked group bar background color | gradient | 0x66ff5500 |
@@ -413,9 +421,8 @@ _Subcategory `misc:`_
 | swallow_exception_regex | The _title_ regex to be used for windows that should _not_ be swallowed by the windows specified in swallow_regex  (e.g. wev). The regex is matched against the parent (e.g. Kitty) window's title on the assumption that it changes to whatever process it's running. | str | \[\[Empty\]\] |
 | focus_on_activate | Whether Hyprland should focus an app that requests to be focused (an `activate` request) | bool | false |
 | mouse_move_focuses_monitor | Whether mouse moving into a different monitor should focus it | bool | true |
-| render_ahead_of_time | [Warning: buggy] starts rendering _before_ your monitor displays a frame in order to lower latency | bool | false |
-| render_ahead_safezone | how many ms of safezone to add to rendering ahead of time. Recommended 1-2. | int | 1 |
-| allow_session_lock_restore | if true, will allow you to restart a lockscreen app in case it crashes (red screen of death) | bool | false |
+| allow_session_lock_restore | if true, will allow you to restart a lockscreen app in case it crashes | bool | false |
+| session_lock_xray | if true, keep rendering workspaces below your lockscreen | bool | false |
 | background_color | change the background color. (requires enabled `disable_hyprland_logo`) | color | 0x111111 |
 | close_special_on_empty | close the special workspace if the last window is removed | bool | true |
 | new_window_takes_over_fullscreen | if there is a fullscreen or maximized window, decide whether a new tiled window opened should replace it, stay behind or disable the fullscreen/maximized state. 0 - behind, 1 - takes over, 2 - unfullscreen/unmaxize [0/1/2] | int | 0 |
@@ -425,13 +432,13 @@ _Subcategory `misc:`_
 | render_unfocused_fps | the maximum limit for renderunfocused windows' fps in the background (see also [Window-Rules](../Window-Rules/#dynamic-rules) - `renderunfocused`)| int | 15 |
 | disable_xdg_env_checks | disable the warning if XDG environment is externally managed | bool | false |
 | disable_hyprland_qtutils_check | disable the warning if hyprland-qtutils is not installed | bool | false |
-| lockdead_screen_delay | the delay in ms after the lockdead screen appears if the lock screen did not appear after a lock event occurred | int | 1000 |
+| lockdead_screen_delay | delay after which the "lockdead" screen will apear in case a lockscreen app fails to cover all the outputs (5 seconds max) | int | 1000 |
 | enable_anr_dialog | whether to enable the ANR (app not responding) dialog when your apps hang | bool | true |
 | anr_missed_pings | number of missed pings before showing the ANR dialog | int | 1 |
 
 ### Binds
 
-Subcategory `binds:`_
+_Subcategory `binds:`_
 
 | name | description | type | default |
 | --- | --- | --- | --- |
@@ -452,7 +459,7 @@ Subcategory `binds:`_
 
 ### XWayland
 
-Subcategory `xwayland:`_ 
+_Subcategory `xwayland:`_ 
 
 | name | description | type | default |
 | --- | --- | --- | --- |
@@ -463,7 +470,7 @@ Subcategory `xwayland:`_
 
 ### OpenGL
 
-Subcategory `opengl:`_ 
+_Subcategory `opengl:`_ 
 
 | name | description | type | default |
 | --- | --- | --- | --- |
@@ -471,12 +478,10 @@ Subcategory `opengl:`_
 
 ### Render
 
-Subcategory `render:`_ 
+_Subcategory `render:`_ 
 
 | name | description | type | default |
 | --- | --- | --- | --- |
-| explicit_sync | Whether to enable explicit sync support. Requires a hyprland restart. 0 - no, 1 - yes, 2 - auto based on the gpu driver | int | 2 |
-| explicit_sync_kms | Whether to enable explicit sync support for the KMS layer. Requires explicit_sync to be enabled. 0 - no, 1 - yes, 2 - auto based on the gpu driver | int | 2 |
 | direct_scanout | Enables direct scanout. Direct scanout attempts to reduce lag when there is only one fullscreen application on a screen (e.g. game). It is also recommended to set this to false if the fullscreen application shows graphical glitches. 0 - off, 1 - on, 2 - auto (on with content type 'game') | int | 0 |
 | expand_undersized_textures | Whether to expand undersized textures along the edge, or rather stretch the entire texture. | bool | true |
 | xp_mode | Disables back buffer and bottom layer rendering. | bool | false |
@@ -484,13 +489,18 @@ Subcategory `render:`_
 | cm_fs_passthrough | Passthrough color settings for fullscreen apps when possible. 0 - off, 1 - always, 2 - hdr only | int | 2 |
 | cm_enabled | Whether the color management pipeline should be enabled or not (requires a restart of Hyprland to fully take effect) | bool | true |
 | send_content_type | Report content type to allow monitor profile autoswitch (may result in a black screen during the switch) | bool | true |
+| cm_auto_hdr | Auto-switch to HDR in fullscreen when needed. 0 - off, 1 - switch to `cm, hdr`, 2 - switch to `cm, hdredid` | int | 1 |
+| new_render_scheduling | Automatically uses triple buffering when needed, improves FPS on underpowered devices. | bool | false |
+
+`cm_auto_hdr` requires `--target-colorspace-hint-mode=source` mpv option to work with mpv versions greater than v0.40.0
 
 ### Cursor
 
-Subcategory `cursor:`_ 
+_Subcategory `cursor:`_ 
 
 | name | description | type | default |
 | --- | --- | --- | --- |
+| invisible | don't render cursors | bool | false |
 | sync_gsettings_theme | sync xcursor theme with gsettings, it applies cursor-theme and cursor-size on theme load to gsettings making most CSD gtk based clients use same xcursor theme and size. | bool | true |
 | no_hardware_cursors | disables hardware cursors. 0 - use hw cursors if possible, 1 - don't use hw cursors, 2 - auto (disable when tearing) | int | 2 |
 | no_break_fs_vrr | disables scheduling new frames on cursor movement for fullscreen apps with VRR enabled to avoid framerate spikes (may require no_hardware_cursors = true) 0 - off, 1 - on, 2 - auto (on with content type 'game') | int | 2 |
@@ -527,6 +537,8 @@ _Subcategory `experimental:`_
 | name | description | type | default |
 | --- | --- | --- | --- |
 | xx_color_management_v4 | enable color management protocol | bool | false |
+
+Since The release of `Mesa 25.1.1` settings below are no longer required, so just skip.
 
 Requires a client with `frog-color-management-v1` or `xx-color-management-v4` support like gamescope or https://github.com/Zamundaaa/VK_hdr_layer
 

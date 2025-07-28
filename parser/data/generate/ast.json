@@ -35,6 +35,12 @@
               "Description": "if true, windows snap such that only one border's worth of space is between them",
               "Type": "bool",
               "Default": "false"
+            },
+            {
+              "Name": "respect_gaps",
+              "Description": "if true, snapping will respect gaps between windows(set in general:gaps_in)",
+              "Type": "bool",
+              "Default": "false"
             }
           ]
         }
@@ -63,6 +69,12 @@
           "Description": "gaps between windows and monitor edges, also supports css style gaps (top, right, bottom, left -> 5,10,15,20)",
           "Type": "int",
           "Default": "20"
+        },
+        {
+          "Name": "float_gaps",
+          "Description": "gaps between windows and monitor edges for floating windows, also supports css style gaps (top, right, bottom, left -> 5 10 15 20). -1 means default",
+          "Type": "int",
+          "Default": "0"
         },
         {
           "Name": "gaps_workspaces",
@@ -804,9 +816,27 @@
             },
             {
               "Name": "text_color",
-              "Description": "controls the group bar text color",
+              "Description": "color for window titles in the groupbar",
               "Type": "color",
               "Default": "0xffffffff"
+            },
+            {
+              "Name": "text_color_inactive",
+              "Description": "color for inactive windows' titles in the groupbar (if unset, defaults to text_color)",
+              "Type": "color",
+              "Default": "unset"
+            },
+            {
+              "Name": "text_color_locked_active",
+              "Description": "color for the active window's title in a locked group (if unset, defaults to text_color)",
+              "Type": "color",
+              "Default": "unset"
+            },
+            {
+              "Name": "text_color_locked_inactive",
+              "Description": "color for inactive windows' titles in locked groups (if unset, defaults to text_color_inactive)",
+              "Type": "color",
+              "Default": "unset"
             },
             {
               "Name": "col.active",
@@ -1055,20 +1085,14 @@
           "Default": "true"
         },
         {
-          "Name": "render_ahead_of_time",
-          "Description": "[Warning: buggy] starts rendering before your monitor displays a frame in order to lower latency",
+          "Name": "allow_session_lock_restore",
+          "Description": "if true, will allow you to restart a lockscreen app in case it crashes",
           "Type": "bool",
           "Default": "false"
         },
         {
-          "Name": "render_ahead_safezone",
-          "Description": "how many ms of safezone to add to rendering ahead of time. Recommended 1-2.",
-          "Type": "int",
-          "Default": "1"
-        },
-        {
-          "Name": "allow_session_lock_restore",
-          "Description": "if true, will allow you to restart a lockscreen app in case it crashes (red screen of death)",
+          "Name": "session_lock_xray",
+          "Description": "if true, keep rendering workspaces below your lockscreen",
           "Type": "bool",
           "Default": "false"
         },
@@ -1128,7 +1152,7 @@
         },
         {
           "Name": "lockdead_screen_delay",
-          "Description": "the delay in ms after the lockdead screen appears if the lock screen did not appear after a lock event occurred",
+          "Description": "delay after which the \"lockdead\" screen will apear in case a lockscreen app fails to cover all the outputs (5 seconds max)",
           "Type": "int",
           "Default": "1000"
         },
@@ -1291,18 +1315,6 @@
       "Subsections": [],
       "Variables": [
         {
-          "Name": "explicit_sync",
-          "Description": "Whether to enable explicit sync support. Requires a hyprland restart. 0 - no, 1 - yes, 2 - auto based on the gpu driver",
-          "Type": "int",
-          "Default": "2"
-        },
-        {
-          "Name": "explicit_sync_kms",
-          "Description": "Whether to enable explicit sync support for the KMS layer. Requires explicit_sync to be enabled. 0 - no, 1 - yes, 2 - auto based on the gpu driver",
-          "Type": "int",
-          "Default": "2"
-        },
-        {
           "Name": "direct_scanout",
           "Description": "Enables direct scanout. Direct scanout attempts to reduce lag when there is only one fullscreen application on a screen (e.g. game). It is also recommended to set this to false if the fullscreen application shows graphical glitches. 0 - off, 1 - on, 2 - auto (on with content type 'game')",
           "Type": "int",
@@ -1343,6 +1355,18 @@
           "Description": "Report content type to allow monitor profile autoswitch (may result in a black screen during the switch)",
           "Type": "bool",
           "Default": "true"
+        },
+        {
+          "Name": "cm_auto_hdr",
+          "Description": "Auto-switch to HDR in fullscreen when needed. 0 - off, 1 - switch to cm, hdr, 2 - switch to cm, hdredid",
+          "Type": "int",
+          "Default": "1"
+        },
+        {
+          "Name": "new_render_scheduling",
+          "Description": "Automatically uses triple buffering when needed, improves FPS on underpowered devices.",
+          "Type": "bool",
+          "Default": "false"
         }
       ]
     },
@@ -1352,6 +1376,12 @@
       ],
       "Subsections": [],
       "Variables": [
+        {
+          "Name": "invisible",
+          "Description": "don't render cursors",
+          "Type": "bool",
+          "Default": "false"
+        },
         {
           "Name": "sync_gsettings_theme",
           "Description": "sync xcursor theme with gsettings, it applies cursor-theme and cursor-size on theme load to gsettings making most CSD gtk based clients use same xcursor theme and size.",
@@ -1736,7 +1766,7 @@
         },
         {
           "Name": "split_width_multiplier",
-          "Description": "specifies the auto-split width multiplier",
+          "Description": "specifies the auto-split width multiplier. Multiplying window size is useful on widescreen monitors where window W > H even after several splits.",
           "Type": "float",
           "Default": "1.0"
         },
@@ -1757,6 +1787,24 @@
           "Description": "specifies which window will receive the larger half of a split. positional - 0, current window - 1, opening window - 2 [0/1/2]",
           "Type": "int",
           "Default": "0"
+        },
+        {
+          "Name": "precise_mouse_move",
+          "Description": "bindm movewindow will drop the window more precisely depending on where your mouse is.",
+          "Type": "bool",
+          "Default": "false"
+        },
+        {
+          "Name": "single_window_aspect_ratio",
+          "Description": "whenever only a single window is shown on a screen, add padding so that it conforms to the specified aspect ratio. A value like 4 3 on a 16:9 screen will make it a 4:3 window in the middle with padding to the sides.",
+          "Type": "Vec2D",
+          "Default": "0 0"
+        },
+        {
+          "Name": "single_window_aspect_ratio_tolerance",
+          "Description": "sets a tolerance for single_window_aspect_ratio, so that if the padding that would have been added is smaller than the specified fraction of the height or width of the screen, it will not attempt to adjust the window size [0 - 1]",
+          "Type": "int",
+          "Default": "0.1"
         }
       ]
     }
@@ -1779,7 +1827,7 @@
     },
     {
       "Name": "layerrule",
-      "Description": "Some things in Wayland are not windows, but layers. That includes, for example:\napp launchers, status bars, or wallpapers.\n\nThose have specific rules separate from windows:\n\n```ini\nlayerrule = rule, namespace\n# or\nlayerrule = rule, address\n\n```\n\nwhere `rule` is the rule and `namespace` is the namespace regex (find\nnamespaces in `hyprctl layers`) or `address` is an address in the form of\n`address:0x[hex]`.\n\n### Rules\n\nruledescriptionunsetremoves all layerRules previously set for a select namespace regex. Please note it has to match _exactly_.noanimdisables animationsblurenables blur for the layerblurpopupsenables blur for the popupsignorealpha [a]makes blur ignore pixels with opacity of `a` or lower. `a` is float value from 0 to 1. `a = 0` if unspecified.ignorezeromakes blur ignore fully transparent pixels. Same as `ignorealpha 0`.dimarounddims everything behind the layerxray [on]sets the blur xray mode for a layer. 0 for off, 1 for on, unset for default.animation [style]allows you to set a specific animation style for this layerorder [n]sets the order relative to other layers. Higher means closer to the edge of the monitor. Can be negative. `n = 0` if unspecified.abovelock [interactable]renders the layer above the lockscreen when the session is locked. If set to `true`, you can interact with the layer on the lockscreen, otherwise it will only be rendered above it.",
+      "Description": "Some things in Wayland are not windows, but layers. That includes, for example:\napp launchers, status bars, or wallpapers.\n\nThose have specific rules, separate from windows:\n\n```ini\nlayerrule = rule, namespace\n# or\nlayerrule = rule, address\n\n```\n\nwhere `rule` is the rule and `namespace` is the namespace RegEx (find\nnamespaces in `hyprctl layers`) or `address` is an address in the form of\n`address:0x[hex]`.\n\n### Rules\n\nruledescriptionunsetRemoves all layerRules previously set for a select namespace RegEx. Please note it has to match _exactly_.noanimDisables animations.blurEnables blur for the layer.blurpopupsEnables blur for the popups.ignorealpha [a]Makes blur ignore pixels with opacity of `a` or lower. `a` is float value from `0` to `1`. `a = 0` if unspecified.ignorezeroMakes blur ignore fully transparent pixels. Same as `ignorealpha 0`.dimaroundDims everything behind the layer.xray [on]Sets the blur xray mode for a layer. `0` for off, `1` for on, `unset` for default.animation [style]Allows you to set a specific animation style for this layer.order [n]Sets the order relative to other layers. A higher `n` means closer to the edge of the monitor. Can be negative. `n = 0` if unspecified.abovelock [interactable]Renders the layer above the lockscreen when the session is locked. If set to `true`, you can interact with the layer on the lockscreen, otherwise it will only be rendered above it.",
       "Flags": []
     },
     {
@@ -1789,12 +1837,12 @@
     },
     {
       "Name": "animation",
-      "Description": "Animations are declared with the `animation` keyword.\n\n```ini\nanimation = NAME, ONOFF, SPEED, CURVE [,STYLE]\n\n```\n\n`ONOFF` can be either 0 or 1, 0 to disable, 1 to enable. _note:_ if it's 0, you\ncan omit further args.\n\n`SPEED` is the amount of ds (1ds = 100ms) the animation will take\n\n`CURVE` is the bezier curve name, see [curves](#curves).\n\n`STYLE` (optional) is the animation style\n\nThe animations are a tree. If an animation is unset, it will inherit its\nparent's values. See [the animation tree](#animation-tree).\n\n### Examples\n\n```ini\nanimation = workspaces, 1, 8, default\nanimation = windows, 1, 10, myepiccurve, slide\nanimation = fade, 0\n\n```\n\n### Animation tree\n\n```txt\nglobal\n  ↳ windows - styles: slide, popin, gnomed\n    ↳ windowsIn - window open - styles: same as windows\n    ↳ windowsOut - window close - styles: same as windows\n    ↳ windowsMove - everything in between, moving, dragging, resizing.\n  ↳ layers - styles: slide, popin, fade\n    ↳ layersIn - layer open\n    ↳ layersOut - layer close\n  ↳ fade\n    ↳ fadeIn - fade in for window open\n    ↳ fadeOut - fade out for window close\n    ↳ fadeSwitch - fade on changing activewindow and its opacity\n    ↳ fadeShadow - fade on changing activewindow for shadows\n    ↳ fadeDim - the easing of the dimming of inactive windows\n    ↳ fadeLayers - for controlling fade on layers\n      ↳ fadeLayersIn - fade in for layer open\n      ↳ fadeLayersOut - fade out for layer close\n  ↳ border - for animating the border's color switch speed\n  ↳ borderangle - for animating the border's gradient angle - styles: once (default), loop\n  ↳ workspaces - styles: slide, slidevert, fade, slidefade, slidefadevert\n    ↳ workspacesIn - styles: same as workspaces\n    ↳ workspacesOut - styles: same as workspaces\n    ↳ specialWorkspace - styles: same as workspaces\n      ↳ specialWorkspaceIn - styles: same as workspaces\n      ↳ specialWorkspaceOut - styles: same as workspaces\n\n```\n\n{{< callout type=warning >}}\n\nUsing borderangle style: loop requires Hyprland to constantly push out new frames at [your monitor's hz] times a second which might put stress on your CPU/GPU and affect battery life. This will be applied even if animation are disabled or borders are not visible.\n\n{{</ callout >}}",
+      "Description": "Animations are declared with the `animation` keyword.\n\n```ini\nanimation = NAME, ONOFF, SPEED, CURVE [,STYLE]\n\n```\n\n`ONOFF` use `0` to disable, `1` to enable. _Note:_ if it's `0`, you\ncan omit further args.\n\n`SPEED` is the amount of ds (1ds = 100ms) the animation will take.\n\n`CURVE` is the bezier curve name, see [curves](#curves).\n\n`STYLE` (optional) is the animation style.\n\nThe animations are a tree. If an animation is unset, it will inherit its\nparent's values. See [the animation tree](#animation-tree).\n\n### Examples\n\n```ini\nanimation = workspaces, 1, 8, default\nanimation = windows, 1, 10, myepiccurve, slide\nanimation = fade, 0\n\n```\n\n### Animation tree\n\n```txt\nglobal\n  ↳ windows - styles: slide, popin, gnomed\n    ↳ windowsIn - window open - styles: same as windows\n    ↳ windowsOut - window close - styles: same as windows\n    ↳ windowsMove - everything in between, moving, dragging, resizing.\n  ↳ layers - styles: slide, popin, fade\n    ↳ layersIn - layer open\n    ↳ layersOut - layer close\n  ↳ fade\n    ↳ fadeIn - fade in for window open\n    ↳ fadeOut - fade out for window close\n    ↳ fadeSwitch - fade on changing activewindow and its opacity\n    ↳ fadeShadow - fade on changing activewindow for shadows\n    ↳ fadeDim - the easing of the dimming of inactive windows\n    ↳ fadeLayers - for controlling fade on layers\n      ↳ fadeLayersIn - fade in for layer open\n      ↳ fadeLayersOut - fade out for layer close\n  ↳ border - for animating the border's color switch speed\n  ↳ borderangle - for animating the border's gradient angle - styles: once (default), loop\n  ↳ workspaces - styles: slide, slidevert, fade, slidefade, slidefadevert\n    ↳ workspacesIn - styles: same as workspaces\n    ↳ workspacesOut - styles: same as workspaces\n    ↳ specialWorkspace - styles: same as workspaces\n      ↳ specialWorkspaceIn - styles: same as workspaces\n      ↳ specialWorkspaceOut - styles: same as workspaces\n  ↳ zoomFactor - animates the screen zoom\n\n```\n\n{{< callout type=warning >}}\n\nUsing the `loop` style for `borderangle` requires Hyprland to _constantly_ render new frames at a frequency equal to your screen's refresh rate (e.g. 60 times per second for a 60hz monitor), which might stress your CPU/GPU and will impact battery life. \nThis will apply even if animations are disabled or borders are not visible.\n\n{{</ callout >}}",
       "Flags": []
     },
     {
       "Name": "bezier",
-      "Description": "Defining your own Bezier curve can be done with the `bezier` keyword:\n\n```ini\nbezier = NAME, X0, Y0, X1, Y1\n\n```\n\nwhere `NAME` is the name, and the rest are two points for the Cubic Bezier. A\ngood website to design your bezier can be found\n[here, on cssportal.com](https://www.cssportal.com/css-cubic-bezier-generator/),\nbut if you want to instead choose from a list of beziers, you can check out\n[easings.net](https://easings.net).\n\n### Example\n\n```ini\nbezier = overshot, 0.05, 0.9, 0.1, 1.1\n\n```\n\n### Extras\n\nFor animation style `popin` in `windows`, you can specify a minimum percentage\nto start from. For example, the following will make the animation 80% -> 100% of\nthe size:\n\n```ini\nanimation = windows, 1, 8, default, popin 80%\n\n```\n\nFor animation styles `slidefade` and `slidefadevert` in `workspaces`, you can\nspecify a movement percentage. For example, the following will make windows move\n20% of the screen width:\n\n```ini\nanimation = workspaces, 1, 8, default, slidefade 20%\n\n```\n\nFor animation style `slide` in windows and layers you can specify a forced side,\ne.g.:\n\n```ini\nanimation = windows, 1, 8, default, slide left\n\n```\n\nYou can use `top`, `bottom`, `left` or `right`.",
+      "Description": "Defining your own [Bézier curve](https://en.wikipedia.org/wiki/B%C3%A9zier_curve) can be done with the `bezier` keyword:\n\n```ini\nbezier = NAME, X0, Y0, X1, Y1\n\n```\n\nwhere `NAME` is a name of your choice and `X0, Y0, X1, Y1` are the the two control points for a Cubic Bézier curve. \nA good website to design your own Bézier can be [cssportal.com](https://www.cssportal.com/css-cubic-bezier-generator/). \nIf you want to instead choose from a list of pre-made Béziers, you can check out [easings.net](https://easings.net).\n\n### Example\n\n```ini\nbezier = overshoot, 0.05, 0.9, 0.1, 1.1\n\n```\n\n### Extras\n\nFor animation style `popin` in `windows`, you can specify a minimum percentage\nto start from. For example, the following will make the animation 80% -> 100% of\nthe size:\n\n```ini\nanimation = windows, 1, 8, default, popin 80%\n\n```\n\nFor animation styles `slidefade` and `slidefadevert` in `workspaces`, you can\nspecify a movement percentage. For example, the following will make windows move\n20% of the screen width:\n\n```ini\nanimation = workspaces, 1, 8, default, slidefade 20%\n\n```\n\nFor animation style `slide` in `windows` and `layers` you can specify a forced side. \nYou can choose between `top`, `bottom`, `left` or `right`.\n\n```ini\nanimation = windows, 1, 8, default, slide left\n\n```",
       "Flags": []
     },
     {
@@ -1821,7 +1869,7 @@
     },
     {
       "Name": "monitor",
-      "Description": "The general config of a monitor looks like this:\n\n```ini\nmonitor = name, resolution, position, scale\n\n```\n\nA common example:\n\n```ini\nmonitor = DP-1, 1920x1080@144, 0x0, 1\n\n```\n\nThis will make the monitor on `DP-1` a `1920x1080` display, at\n144Hz, `0x0` off from the top left corner, with a scale of 1 (unscaled).\n\nTo list all available monitors (active and inactive):\n\n```bash\nhyprctl monitors all\n\n```\n\nMonitors are positioned on a virtual \"layout\". The `position` is the position,\nin pixels, of said display in the layout. (calculated from the top-left corner)\n\nFor example:\n\n```ini\nmonitor = DP-1, 1920x1080, 0x0, 1\nmonitor = DP-2, 1920x1080, 1920x0, 1\n\n```\n\nwill tell Hyprland to put DP-1 on the _left_ of DP-2, while\n\n```ini\nmonitor = DP-1, 1920x1080, 1920x0, 1\nmonitor = DP-2, 1920x1080, 0x0, 1\n\n```\n\nwill tell Hyprland to put DP-1 on the _right_.\n\nThe `position` may contain _negative_ values, so the above example could also be\nwritten as\n\n```ini\nmonitor = DP-1, 1920x1080, 0x0, 1\nmonitor = DP-2, 1920x1080, -1920x0, 1\n\n```\n\nHyprland uses an inverse Y cartesian system. Thus, a negative y coordinate\nplaces a monitor higher, and a positive y coordinate will place it lower.\n\nFor example:\n\n```ini\nmonitor = DP-1, 1920x1080, 0x0, 1\nmonitor = DP-2, 1920x1080, 0x-1080, 1\n\n```\n\nwill tell Hyprland to put DP-2 _above_ DP-1, while\n\n```ini\nmonitor = DP-1, 1920x1080, 0x0, 1\nmonitor = DP-2, 1920x1080, 0x1080, 1\n\n```\n\nwill tell Hyprland to put DP-2 _below_.\n\n{{< callout type=info >}}\n\nThe position is calculated with the scaled (and transformed) resolution, meaning\nif you want your 4K monitor with scale 2 to the left of your 1080p one, you'd\nuse the position `1920x0` for the second screen (3840 / 2). If the monitor is\nalso rotated 90 degrees (vertical), you'd use `1080x0`.\n\n{{</ callout >}}\n\nLeaving the name empty will define a fallback rule to use when no other rules\nmatch.\n\nThere are a few special values for the resolutions:\n\n- `preferred` - use the display's preferred size and refresh rate.\n- `highres` - use the highest supported resolution.\n- `highrr` - use the highest supported refresh rate.\n\nPosition also has a few special values:\n\n- `auto` - let Hyprland decide on a position. By default, it places each new monitor to the right of existing ones.\n- `auto-right/left/up/down` - place the monitor to the right/left, above or below other monitors.\n\n_**Please Note:**_ While specifying a monitor direction for your first monitor is allowed, this does nothing and it will\nbe positioned at (0,0). Also the direction is always from the center out, so you can specify `auto-up` then `auto-left`,\nbut the left monitors will just be left of the origin and above the origin. You can also specify duplicate directions and\nmonitors will continue to go in that direction.\n\nYou can also use `auto` as a scale to let Hyprland decide on a scale for you.\nThese depend on the PPI of the monitor.\n\nRecommended rule for quickly plugging in random monitors:\n\n```ini\nmonitor = , preferred, auto, 1\n\n```\n\nThis will make any monitor that was not specified with an explicit rule\nautomatically placed on the right of the other(s), with its preferred\nresolution.\n\nFor more specific rules, you can also use the output's description (see\n`hyprctl monitors` for more details). If the output of `hyprctl monitors` looks\nlike the following:\n\n```yaml\nMonitor eDP-1 (ID 0):\n        1920x1080@60.00100 at 0x0\n        description: Chimei Innolux Corporation 0x150C (eDP-1)\n        make: Chimei Innolux Corporation\n        model: 0x150C\n        [...]\n\n```\n\nthen the `description` value up to, but not including the portname `(eDP-1)` can\nbe used to specify the monitor:\n\n```ini\nmonitor = desc:Chimei Innolux Corporation 0x150C, preferred, auto, 1.5\n\n```\n\nRemember to remove the `(portname)`!\n\n### Custom modelines\n\nYou can set up a custom modeline by changing the resolution field to a modeline,\nfor example:\n\n```ini\nmonitor = DP-1, modeline 1071.101 3840 3848 3880 3920 2160 2263 2271 2277 +hsync -vsync, 0x0, 1\n\n```\n\n### Disabling a monitor\n\nTo disable a monitor, use\n\n```ini\nmonitor = name, disable\n\n```\n\n{{< callout >}}\n\nDisabling a monitor will literally remove it from the layout, moving all windows\nand workspaces to any remaining ones. If you want to disable your monitor in a\nscreensaver style (just turn off the monitor) use the `dpms`[dispatcher](https://wiki.hyprland.org/Configuring/Dispatchers).\n\n{{</ callout >}}",
+      "Description": "The general config of a monitor looks like this:\n\n```ini\nmonitor = name, resolution, position, scale\n\n```\n\nA common example:\n\n```ini\nmonitor = DP-1, 1920x1080@144, 0x0, 1\n\n```\n\nThis will make the monitor on `DP-1` a `1920x1080` display, at\n144Hz, `0x0` off from the top left corner, with a scale of 1 (unscaled).\n\nTo list all available monitors (active and inactive):\n\n```bash\nhyprctl monitors all\n\n```\n\nMonitors are positioned on a virtual \"layout\". The `position` is the position,\nin pixels, of said display in the layout. (calculated from the top-left corner)\n\nFor example:\n\n```ini\nmonitor = DP-1, 1920x1080, 0x0, 1\nmonitor = DP-2, 1920x1080, 1920x0, 1\n\n```\n\nwill tell Hyprland to put DP-1 on the _left_ of DP-2, while\n\n```ini\nmonitor = DP-1, 1920x1080, 1920x0, 1\nmonitor = DP-2, 1920x1080, 0x0, 1\n\n```\n\nwill tell Hyprland to put DP-1 on the _right_.\n\nThe `position` may contain _negative_ values, so the above example could also be\nwritten as\n\n```ini\nmonitor = DP-1, 1920x1080, 0x0, 1\nmonitor = DP-2, 1920x1080, -1920x0, 1\n\n```\n\nHyprland uses an inverse Y cartesian system. Thus, a negative y coordinate\nplaces a monitor higher, and a positive y coordinate will place it lower.\n\nFor example:\n\n```ini\nmonitor = DP-1, 1920x1080, 0x0, 1\nmonitor = DP-2, 1920x1080, 0x-1080, 1\n\n```\n\nwill tell Hyprland to put DP-2 _above_ DP-1, while\n\n```ini\nmonitor = DP-1, 1920x1080, 0x0, 1\nmonitor = DP-2, 1920x1080, 0x1080, 1\n\n```\n\nwill tell Hyprland to put DP-2 _below_.\n\n{{< callout type=info >}}\n\nThe position is calculated with the scaled (and transformed) resolution, meaning\nif you want your 4K monitor with scale 2 to the left of your 1080p one, you'd\nuse the position `1920x0` for the second screen (3840 / 2). If the monitor is\nalso rotated 90 degrees (vertical), you'd use `1080x0`.\n\n{{</ callout >}}\n\nLeaving the name empty will define a fallback rule to use when no other rules\nmatch.\n\nThere are a few special values for the resolutions:\n\n- `preferred` - use the display's preferred size and refresh rate.\n- `highres` - use the highest supported resolution.\n- `highrr` - use the highest supported refresh rate.\n- `maxwidth` - use the widest supported resolution.\n\nPosition also has a few special values:\n\n- `auto` - let Hyprland decide on a position. By default, it places each new monitor to the right of existing ones,\n    using the monitor's top left corner as the root point.\n- `auto-right/left/up/down` - place the monitor to the right/left, above or below other monitors,\n    also based on each monitor's top left corner as the root.\n- `auto-center-right/left/up/down` - place the monitor to the right/left, above or below other monitors,\n    but calculate placement from each monitor's center rather than its top left corner.\n\n_**Please Note:**_ While specifying a monitor direction for your first monitor is allowed, this does nothing and it will\nbe positioned at (0,0). Also, the direction is always from the center out, so you can specify `auto-up` then `auto-left`,\nbut the left monitors will just be left of the origin and above the origin. You can also specify duplicate directions and\nmonitors will continue to go in that direction.\n\nYou can also use `auto` as a scale to let Hyprland decide on a scale for you.\nThese depend on the PPI of the monitor.\n\nRecommended rule for quickly plugging in random monitors:\n\n```ini\nmonitor = , preferred, auto, 1\n\n```\n\nThis will make any monitor that was not specified with an explicit rule\nautomatically placed on the right of the other(s), with its preferred\nresolution.\n\nFor more specific rules, you can also use the output's description (see\n`hyprctl monitors` for more details). If the output of `hyprctl monitors` looks\nlike the following:\n\n```yaml\nMonitor eDP-1 (ID 0):\n        1920x1080@60.00100 at 0x0\n        description: Chimei Innolux Corporation 0x150C (eDP-1)\n        make: Chimei Innolux Corporation\n        model: 0x150C\n        [...]\n\n```\n\nthen the `description` value up to, but not including the portname `(eDP-1)` can\nbe used to specify the monitor:\n\n```ini\nmonitor = desc:Chimei Innolux Corporation 0x150C, preferred, auto, 1.5\n\n```\n\nRemember to remove the `(portname)`!\n\n### Custom modelines\n\nYou can set up a custom modeline by changing the resolution field to a modeline,\nfor example:\n\n```ini\nmonitor = DP-1, modeline 1071.101 3840 3848 3880 3920 2160 2263 2271 2277 +hsync -vsync, 0x0, 1\n\n```\n\n### Disabling a monitor\n\nTo disable a monitor, use\n\n```ini\nmonitor = name, disable\n\n```\n\n{{< callout >}}\n\nDisabling a monitor will literally remove it from the layout, moving all windows\nand workspaces to any remaining ones. If you want to disable your monitor in a\nscreensaver style (just turn off the monitor) use the `dpms`[dispatcher](https://wiki.hyprland.org/Configuring/Dispatchers).\n\n{{</ callout >}}",
       "Flags": []
     },
     {
