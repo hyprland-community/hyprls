@@ -32,7 +32,7 @@ func (v VariableDefinition) GoType() string {
 		return "float32"
 	case "color":
 		return "color.RGBA"
-	case "vec2":
+	case "vec2", "Vec2D":
 		return "[2]float32"
 	case "MOD":
 		return "[]ModKey"
@@ -60,7 +60,7 @@ func (v VariableDefinition) ParserTypeString() string {
 		return "Float"
 	case "color":
 		return "Color"
-	case "vec2":
+	case "vec2", "Vec2D":
 		return "Vec2"
 	case "MOD":
 		return "Modmask"
