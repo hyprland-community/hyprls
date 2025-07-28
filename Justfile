@@ -1,12 +1,12 @@
 serverLogsFilepath := `realpath ./logs/server.log || echo ./logs/server.log`
 latestTag := `git describe --tags --abbrev=0 || echo commit:$(git rev-parse --short HEAD)`
 latestVersion := `git describe --tags --abbrev=0  | sed 's/v//' || echo commit:$(git rev-parse --short HEAD)`
-# Parse content of https://raw.githubusercontent.com/hyprwm/hyprland-wiki/main/pages/version-selector.md to get latest documented version
+# Parse content of https://raw.githubusercontent.com/hyprwm/hyprland-wiki/main/content/version-selector.md to get latest documented version
 
 check-for-hyprland-updates:
 	#!/bin/env bash
 	set -euxo pipefail
-	latestHyprlandVersion=`curl -s https://raw.githubusercontent.com/hyprwm/hyprland-wiki/main/pages/version-selector.md | grep -oP 'v\d+\.\d+\.\d+' | head -n 1 | sed 's/v//'`
+	latestHyprlandVersion=`curl -s https://raw.githubusercontent.com/hyprwm/hyprland-wiki/main/content/version-selector.md | grep -oP 'v\d+\.\d+\.\d+' | head -n 1 | sed 's/v//'`
 	touch hyprland_version
 	if [ "$(cat hyprland_version)" != "$latestHyprlandVersion" ]; then
 		echo New version $latestHyprlandVersion released!!! update time :3
@@ -35,13 +35,13 @@ build:
 	mkdir -p logs
 	touch logs/server.log
 	mkdir -p parser/data/sources
-	# cp hyprland-wiki/pages/Configuring/*.md parser/data/sources/
+	# cp hyprland-wiki/content/Configuring/*.md parser/data/sources/
 	go mod tidy
 	go build -ldflags "-X main.HyprlandWikiVersion=$(cat hyprland_version) -X main.HyprlsVersion={{ latestVersion }}" -o hyprls cmd/hyprls/main.go
 
 build-debug:
 	mkdir -p parser/data/sources
-	cp hyprland-wiki/pages/Configuring/*.md parser/data/sources/
+	cp hyprland-wiki/content/Configuring/*.md parser/data/sources/
 	go mod tidy
 	go build -ldflags "-X main.OutputServerLogs={{ serverLogsFilepath }}" -o hyprlang-lsp cmd/hyprls/main.go
 
@@ -58,7 +58,7 @@ pull-wiki:
 	echo Using wiki https://github.com/hyprwm/hyprland-wiki/commit/$hash
 	git checkout $hash
 	cd ..
-	cp hyprland-wiki/pages/Configuring/*.md parser/data/sources/
+	cp hyprland-wiki/content/Configuring/*.md parser/data/sources/
 
 parser-data:
 	#!/bin/bash
