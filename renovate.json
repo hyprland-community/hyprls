@@ -8,9 +8,10 @@
 		"automerge": true
 	},
 	"packageRules": [
-		{
-			"matchPackageNames": ["@types/node", "mocha"],
-			"automerge": true
-		}
+		 {
+		      "matchManagers": ["npm"],
+		      "groupName": "all npm dependencies",
+		      "automerge": true
+		 },
 	]
 }
