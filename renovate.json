@@ -9,7 +9,7 @@
 	},
 	"packageRules": [
 		 {
-		      "matchManagers": ["npm"],
+		      "matchManagers": ["npm", "bun"],
 		      "groupName": "all npm dependencies",
 		      "automerge": true
 		 },
