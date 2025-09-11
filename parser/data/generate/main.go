@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/MakeNowJust/heredoc"
+	"github.com/MakeNowJust/heredoc/v2"
 	. "github.com/hyprland-community/hyprls/parser/data"
 )
 
