@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/MakeNowJust/heredoc"
+	"github.com/MakeNowJust/heredoc/v2"
 	parser_data "github.com/hyprland-community/hyprls/parser/data"
 	"go.lsp.dev/protocol"
 )
