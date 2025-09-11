@@ -16,7 +16,8 @@ jobs:
         uses: actions/checkout@v5
 
       - name: go-setup
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
+        with: { go-version: 1.25.1 }
 
       - name: go-build
         run: go build -o hyprls cmd/hyprls/main.go
