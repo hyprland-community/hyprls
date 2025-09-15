@@ -12,7 +12,7 @@
   "categories": [],
   "keywords": [],
   "engines": {
-    "vscode": "^1.103.2"
+    "vscode": "^1.104.0"
   },
   "contributes": {
     "languages": [
@@ -51,8 +51,8 @@
   "devDependencies": {
     "@ortfo/db": "^1.6.1",
     "@types/mocha": "^10.0.10",
-    "@types/node": "^24.3.1",
-    "@types/vscode": "^1.103.0",
+    "@types/node": "^24.4.0",
+    "@types/vscode": "^1.104.0",
     "@typescript-eslint/eslint-plugin": "^8.43.0",
     "@typescript-eslint/parser": "^8.43.0",
     "@vscode/test-electron": "^2.5.2",
