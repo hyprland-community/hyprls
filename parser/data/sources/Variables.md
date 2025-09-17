@@ -113,10 +113,11 @@ Doing `general:snap {` is **invalid**!
 | name | description | type | default |
 | --- | --- | --- | --- |
 | rounding | rounded corners' radius (in layout px) | int | 0 |
-| rounding_power | adjusts the curve used for rounding corners, larger is smoother, 2.0 is a circle, 4.0 is a squircle. [2.0 - 10.0] | float | 2.0 |
+| rounding_power | adjusts the curve used for rounding corners, larger is smoother, 2.0 is a circle, 4.0 is a squircle, 1.0 is a triangular corner. [1.0 - 10.0] | float | 2.0 |
 | active_opacity | opacity of active windows. [0.0 - 1.0] | float | 1.0 |
 | inactive_opacity | opacity of inactive windows. [0.0 - 1.0] | float | 1.0 |
 | fullscreen_opacity | opacity of fullscreen windows. [0.0 - 1.0] | float | 1.0 |
+| dim_modal | enables dimming of parents of modal windows | bool | true |
 | dim_inactive | enables dimming of inactive windows | bool | false |
 | dim_strength | how much inactive windows should be dimmed [0.0 - 1.0] | float | 0.5 |
 | dim_special | how much to dim the rest of the screen by when a special workspace is open. [0.0 - 1.0] | float | 0.2 |
@@ -178,7 +179,6 @@ _Subcategory `decoration:shadow:`_
 | name | description | type | default |
 | --- | --- | --- | --- |
 | enabled | enable animations | bool | true |
-| first_launch_animation | enable first launch animation | bool | true |
 | workspace_wraparound | enable workspace wraparound, causing directional workspace animations to animate as if the first and last workspaces were adjacent | bool | false |
 
 {{< callout type=info >}}
@@ -299,6 +299,15 @@ _Subcategory `input:touchdevice:`_
 | output | The monitor to bind touch devices. The default is auto-detection. To stop auto-detection, use an empty string or the "\[\[Empty\]\]" value. | string | \[\[Auto\]\] |
 | enabled | Whether input is enabled for touch devices. | bool | true |
 
+#### Virtualkeyboard
+
+_Subcategory `input:virtualkeyboard:`_
+
+| name | description | type | default |
+| --- | --- | --- | --- |
+| share_states | Unify key down states and modifier states with other keyboards. | bool | false |
+| release_pressed_on_close | Release all pressed keys by virtual keyboard on close. | bool | false |
+
 #### Tablet
 
 _Subcategory `input:tablet:`_
@@ -325,9 +334,6 @@ _Subcategory `gestures:`_
 
 | name | description | type | default |
 | --- | --- | --- | --- |
-| workspace_swipe | enable workspace swipe gesture on touchpad | bool | false |
-| workspace_swipe_fingers | how many fingers for the touchpad gesture | int | 3 |
-| workspace_swipe_min_fingers | if enabled, workspace_swipe_fingers is considered the minimum number of fingers to swipe | bool | false |
 | workspace_swipe_distance | in px, the distance of the touchpad gesture | int | 300 |
 | workspace_swipe_touch | enable workspace swiping from the edge of a touchscreen | bool | false |
 | workspace_swipe_invert | invert the direction (touchpad only) | bool | true |
@@ -339,6 +345,19 @@ _Subcategory `gestures:`_
 | workspace_swipe_direction_lock_threshold | in px, the distance to swipe before direction lock activates (touchpad only). | int | 10 |
 | workspace_swipe_forever | if enabled, swiping will not clamp at the neighboring workspaces but continue to the further ones. | bool | false |
 | workspace_swipe_use_r | if enabled, swiping will use the `r` prefix instead of the `m` prefix for finding workspaces. | bool | false |
+| close_max_timeout | the timeout for a window to close when using a 1:1 gesture, in ms | int | 1000 |
+
+{{< callout type=info >}}
+
+`workspace_swipe`, `workspace_swipe_fingers` and `workspace_swipe_min_fingers` were removed in favor of the new gestures system.
+
+You can add this gesture config to replicate the swiping functionality with 3 fingers. See the [gestures](../Gestures) page for more info.
+
+```ini
+gesture = 3, horizontal, workspace
+```
+
+{{< /callout >}}
 
 ### Group
 
@@ -380,7 +399,9 @@ _Subcategory `group:groupbar:`_
 | text_offset | adjust vertical position for titles | int | 0 |
 | scrolling | whether scrolling in the groupbar changes group active window | bool | true |
 | rounding | how much to round the indicator | int | 1 |
+| rounding_power |  adjusts the curve used for rounding broupbar corners, larger is smoother, 2.0 is a circle, 4.0 is a squircle, 1.0 is a triangular corner. [1.0 - 10.0] | float |  2.0 |
 | gradient_rounding | how much to round the gradients | int | 2 |
+| gradient_rounding_power | adjusts the curve used for rounding gradient corners, larger is smoother, 2.0 is a circle, 4.0 is a squircle, 1.0 is a triangular corner. [1.0 - 10.0] | float | 2.0 |
 | round_only_edges | round only the indicator edges of the entire groupbar | bool | true |
 | gradient_round_only_edges | round only the gradient edges of the entire groupbar | bool | true |
 | text_color | color for window titles in the groupbar | color | 0xffffffff |
@@ -411,6 +432,7 @@ _Subcategory `misc:`_
 | vrr | controls the VRR (Adaptive Sync) of your monitors. 0 - off, 1 - on, 2 - fullscreen only, 3 - fullscreen with `video` or `game` content type [0/1/2/3] | int | 0 |
 | mouse_move_enables_dpms | If DPMS is set to off, wake up the monitors if the mouse moves. | bool | false |
 | key_press_enables_dpms | If DPMS is set to off, wake up the monitors if a key is pressed. | bool | false |
+| name_vk_after_proc | Name virtual keyboards after the processes that create them. E.g. /usr/bin/fcitx5 will have hl-virtual-keyboard-fcitx5. | bool | true |
 | always_follow_on_dnd | Will make mouse focus follow the mouse when drag and dropping. Recommended to leave it enabled, especially for people using focus follows mouse at 0. | bool | true |
 | layers_hog_keyboard_focus | If true, will make keyboard-interactive layers keep their focus on mouse move (e.g. wofi, bemenu) | bool | true |
 | animate_manual_resizes | If true, will animate manual window resizes/moves | bool | false |
@@ -432,7 +454,7 @@ _Subcategory `misc:`_
 | render_unfocused_fps | the maximum limit for renderunfocused windows' fps in the background (see also [Window-Rules](../Window-Rules/#dynamic-rules) - `renderunfocused`)| int | 15 |
 | disable_xdg_env_checks | disable the warning if XDG environment is externally managed | bool | false |
 | disable_hyprland_qtutils_check | disable the warning if hyprland-qtutils is not installed | bool | false |
-| lockdead_screen_delay | delay after which the "lockdead" screen will apear in case a lockscreen app fails to cover all the outputs (5 seconds max) | int | 1000 |
+| lockdead_screen_delay | delay after which the "lockdead" screen will appear in case a lockscreen app fails to cover all the outputs (5 seconds max) | int | 1000 |
 | enable_anr_dialog | whether to enable the ANR (app not responding) dialog when your apps hang | bool | true |
 | anr_missed_pings | number of missed pings before showing the ANR dialog | int | 1 |
 

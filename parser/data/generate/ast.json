@@ -340,7 +340,7 @@
         },
         {
           "Name": "rounding_power",
-          "Description": "adjusts the curve used for rounding corners, larger is smoother, 2.0 is a circle, 4.0 is a squircle. [2.0 - 10.0]",
+          "Description": "adjusts the curve used for rounding corners, larger is smoother, 2.0 is a circle, 4.0 is a squircle, 1.0 is a triangular corner. [1.0 - 10.0]",
           "Type": "float",
           "Default": "2.0"
         },
@@ -361,6 +361,12 @@
           "Description": "opacity of fullscreen windows. [0.0 - 1.0]",
           "Type": "float",
           "Default": "1.0"
+        },
+        {
+          "Name": "dim_modal",
+          "Description": "enables dimming of parents of modal windows",
+          "Type": "bool",
+          "Default": "true"
         },
         {
           "Name": "dim_inactive",
@@ -409,12 +415,6 @@
         {
           "Name": "enabled",
           "Description": "enable animations",
-          "Type": "bool",
-          "Default": "true"
-        },
-        {
-          "Name": "first_launch_animation",
-          "Description": "enable first launch animation",
           "Type": "bool",
           "Default": "true"
         },
@@ -609,24 +609,6 @@
       "Subsections": [],
       "Variables": [
         {
-          "Name": "workspace_swipe",
-          "Description": "enable workspace swipe gesture on touchpad",
-          "Type": "bool",
-          "Default": "false"
-        },
-        {
-          "Name": "workspace_swipe_fingers",
-          "Description": "how many fingers for the touchpad gesture",
-          "Type": "int",
-          "Default": "3"
-        },
-        {
-          "Name": "workspace_swipe_min_fingers",
-          "Description": "if enabled, workspace_swipe_fingers is considered the minimum number of fingers to swipe",
-          "Type": "bool",
-          "Default": "false"
-        },
-        {
           "Name": "workspace_swipe_distance",
           "Description": "in px, the distance of the touchpad gesture",
           "Type": "int",
@@ -691,6 +673,12 @@
           "Description": "if enabled, swiping will use the r prefix instead of the m prefix for finding workspaces.",
           "Type": "bool",
           "Default": "false"
+        },
+        {
+          "Name": "close_max_timeout",
+          "Description": "the timeout for a window to close when using a 1:1 gesture, in ms",
+          "Type": "int",
+          "Default": "1000"
         }
       ]
     },
@@ -797,10 +785,22 @@
               "Default": "1"
             },
             {
+              "Name": "rounding_power",
+              "Description": "adjusts the curve used for rounding broupbar corners, larger is smoother, 2.0 is a circle, 4.0 is a squircle, 1.0 is a triangular corner. [1.0 - 10.0]",
+              "Type": "float",
+              "Default": "2.0"
+            },
+            {
               "Name": "gradient_rounding",
               "Description": "how much to round the gradients",
               "Type": "int",
               "Default": "2"
+            },
+            {
+              "Name": "gradient_rounding_power",
+              "Description": "adjusts the curve used for rounding gradient corners, larger is smoother, 2.0 is a circle, 4.0 is a squircle, 1.0 is a triangular corner. [1.0 - 10.0]",
+              "Type": "float",
+              "Default": "2.0"
             },
             {
               "Name": "round_only_edges",
@@ -1025,6 +1025,12 @@
           "Default": "false"
         },
         {
+          "Name": "name_vk_after_proc",
+          "Description": "Name virtual keyboards after the processes that create them. E.g. /usr/bin/fcitx5 will have hl-virtual-keyboard-fcitx5.",
+          "Type": "bool",
+          "Default": "true"
+        },
+        {
           "Name": "always_follow_on_dnd",
           "Description": "Will make mouse focus follow the mouse when drag and dropping. Recommended to leave it enabled, especially for people using focus follows mouse at 0.",
           "Type": "bool",
@@ -1152,7 +1158,7 @@
         },
         {
           "Name": "lockdead_screen_delay",
-          "Description": "delay after which the \"lockdead\" screen will apear in case a lockscreen app fails to cover all the outputs (5 seconds max)",
+          "Description": "delay after which the \"lockdead\" screen will appear in case a lockscreen app fails to cover all the outputs (5 seconds max)",
           "Type": "int",
           "Default": "1000"
         },
@@ -1784,7 +1790,7 @@
         },
         {
           "Name": "split_bias",
-          "Description": "specifies which window will receive the larger half of a split. positional - 0, current window - 1, opening window - 2 [0/1/2]",
+          "Description": "specifies which window will receive the split ratio. 0 -> directional (the top or left window), 1 -> the current window",
           "Type": "int",
           "Default": "0"
         },
@@ -1812,7 +1818,7 @@
   "keywords": [
     {
       "Name": "submap",
-      "Description": "Keybind submaps, also known as _modes_ or _groups_, allow you to activate a\nseparate set of keybinds. For example, if you want to enter a \"resize\" mode\nwhich allows you to resize windows with the arrow keys, you can do it like this:\n\n```ini\n# will switch to a submap called resize\nbind = ALT, R, submap, resize\n\n# will start a submap called \"resize\"\nsubmap = resize\n\n# sets repeatable binds for resizing the active window\nbinde = , right, resizeactive, 10 0\nbinde = , left, resizeactive, -10 0\nbinde = , up, resizeactive, 0 -10\nbinde = , down, resizeactive, 0 10\n\n# use reset to go back to the global submap\nbind = , escape, submap, reset\n\n# will reset the submap, which will return to the global submap\nsubmap = reset\n\n# keybinds further down will be global again...\n\n```\n\n{{< callout type=warning >}}\n\nDo not forget a keybind to reset the keymap while inside it! (In this case,\n`escape`)\n\n{{< /callout >}}\n\nIf you get stuck inside a keymap, you can use `hyprctl dispatch submap reset` to\ngo back. If you do not have a terminal open, tough luck buddy. You have been\nwarned.\n\nYou can also set the same keybind to perform multiple actions, such as resize\nand close the submap, like so:\n\n```ini\nbind = ALT, R, submap, resize\n\nsubmap = resize\n\nbind = , right, resizeactive, 10 0\nbind = , right, submap, reset\n# ...\n\nsubmap = reset\n\n```\n\nThis works because the binds are executed in the order they appear, and\nassigning multiple actions per bind is possible.\n\n### Nesting\n\nSubmaps can be nested, see the following example:\n\n```ini\nbind = $mainMod, M, submap, main_submap\nsubmap = main_submap\n\n# ...\n\n# nested_one\nbind = , 1, submap, nested_one\nsubmap = nested_one\n\n# ...\n\nbind = SHIFT, escape, submap, reset\nbind =      , escape, submap, main_submap\nsubmap = main_submap\n# /nested_one\n\n# nested_two\nbind = , 2, submap, nested_two\nsubmap = nested_two\n\n# ...\n\nbind = SHIFT, escape, submap, reset\nbind =      , escape, submap, main_submap\nsubmap = main_submap\n# /nested_two\n\nbind = , escape, submap, reset\nsubmap = reset\n\n```\n\n### Catch-All\n\nYou can also define a keybind via the special `catchall` keyword, which\nactivates no matter which key is pressed. This can be used to prevent any keys\nfrom passing to your active application while in a submap or to exit it\nimmediately when any unknown key is pressed:\n\n```ini\nbind = , catchall, submap, reset\n\n```",
+      "Description": "Keybind submaps, also known as _modes_ or _groups_, allow you to activate a\nseparate set of keybinds.\n\nFor example, if you want to enter a `resize`_mode_ that allows you to resize windows with the arrow keys, you can do it like this:\n\n```ini\n# Switch to a submap called `resize`.\nbind = ALT, R, submap, resize\n\n# Start a submap called \"resize\".\nsubmap = resize\n\n# Set repeatable binds for resizing the active window.\nbinde = , right, resizeactive, 10 0\nbinde = , left, resizeactive, -10 0\nbinde = , up, resizeactive, 0 -10\nbinde = , down, resizeactive, 0 10\n\n# Use `reset` to go back to the global submap\nbind = , escape, submap, reset\n\n# Reset the submap, which will return to the global submap\nsubmap = reset\n\n# Keybinds further down will be global again...\n\n```\n\n{{< callout type=warning >}}\n\nDo not forget a keybind (`escape`, in this case) to reset the keymap while inside it!\n\nIf you get stuck inside a keymap, you can use `hyprctl dispatch submap reset` to go back.\n\nIf you do not have a terminal open, tough luck buddy. You have been warned.\n\n{{< /callout >}}\n\nYou can also set the same keybind to perform multiple actions, such as resize\nand close the submap, like so:\n\n```ini\nbind = ALT, R, submap, resize\n\nsubmap = resize\n\nbind = , right, resizeactive, 10 0\nbind = , right, submap, reset\n# ...\n\nsubmap = reset\n\n```\n\nThis works because the binds are executed in the order they appear, and\nassigning multiple actions per bind is possible.\n\n### Nesting\n\nSubmaps can be nested, see the following example:\n\n```ini\nbind = $mainMod, M, submap, main_submap\nsubmap = main_submap\n\n# ...\n\n# nested_one\nbind = , 1, submap, nested_one\nsubmap = nested_one\n\n# ...\n\nbind = SHIFT, escape, submap, reset\nbind =      , escape, submap, main_submap\nsubmap = main_submap\n# /nested_one\n\n# nested_two\nbind = , 2, submap, nested_two\nsubmap = nested_two\n\n# ...\n\nbind = SHIFT, escape, submap, reset\nbind =      , escape, submap, main_submap\nsubmap = main_submap\n# /nested_two\n\nbind = , escape, submap, reset\nsubmap = reset\n\n```\n\n### Catch-All\n\nYou can also define a keybind via the special `catchall` keyword, which\nactivates no matter which key is pressed.\n\nThis can be used to prevent any keys from passing to your active application\nwhile in a submap or to exit it immediately when any unknown key is pressed:\n\n```ini\nbind = , catchall, submap, reset\n\n```",
       "Flags": []
     },
     {
@@ -1837,12 +1843,12 @@
     },
     {
       "Name": "animation",
-      "Description": "Animations are declared with the `animation` keyword.\n\n```ini\nanimation = NAME, ONOFF, SPEED, CURVE [,STYLE]\n\n```\n\n`ONOFF` use `0` to disable, `1` to enable. _Note:_ if it's `0`, you\ncan omit further args.\n\n`SPEED` is the amount of ds (1ds = 100ms) the animation will take.\n\n`CURVE` is the bezier curve name, see [curves](#curves).\n\n`STYLE` (optional) is the animation style.\n\nThe animations are a tree. If an animation is unset, it will inherit its\nparent's values. See [the animation tree](#animation-tree).\n\n### Examples\n\n```ini\nanimation = workspaces, 1, 8, default\nanimation = windows, 1, 10, myepiccurve, slide\nanimation = fade, 0\n\n```\n\n### Animation tree\n\n```txt\nglobal\n  ↳ windows - styles: slide, popin, gnomed\n    ↳ windowsIn - window open - styles: same as windows\n    ↳ windowsOut - window close - styles: same as windows\n    ↳ windowsMove - everything in between, moving, dragging, resizing.\n  ↳ layers - styles: slide, popin, fade\n    ↳ layersIn - layer open\n    ↳ layersOut - layer close\n  ↳ fade\n    ↳ fadeIn - fade in for window open\n    ↳ fadeOut - fade out for window close\n    ↳ fadeSwitch - fade on changing activewindow and its opacity\n    ↳ fadeShadow - fade on changing activewindow for shadows\n    ↳ fadeDim - the easing of the dimming of inactive windows\n    ↳ fadeLayers - for controlling fade on layers\n      ↳ fadeLayersIn - fade in for layer open\n      ↳ fadeLayersOut - fade out for layer close\n  ↳ border - for animating the border's color switch speed\n  ↳ borderangle - for animating the border's gradient angle - styles: once (default), loop\n  ↳ workspaces - styles: slide, slidevert, fade, slidefade, slidefadevert\n    ↳ workspacesIn - styles: same as workspaces\n    ↳ workspacesOut - styles: same as workspaces\n    ↳ specialWorkspace - styles: same as workspaces\n      ↳ specialWorkspaceIn - styles: same as workspaces\n      ↳ specialWorkspaceOut - styles: same as workspaces\n  ↳ zoomFactor - animates the screen zoom\n\n```\n\n{{< callout type=warning >}}\n\nUsing the `loop` style for `borderangle` requires Hyprland to _constantly_ render new frames at a frequency equal to your screen's refresh rate (e.g. 60 times per second for a 60hz monitor), which might stress your CPU/GPU and will impact battery life. \nThis will apply even if animations are disabled or borders are not visible.\n\n{{</ callout >}}",
+      "Description": "Animations are declared with the `animation` keyword.\n\n```ini\nanimation = NAME, ONOFF, SPEED, CURVE [,STYLE]\n\n```\n\n`ONOFF` use `0` to disable, `1` to enable. _Note:_ if it's `0`, you\ncan omit further args.\n\n`SPEED` is the amount of ds (1ds = 100ms) the animation will take.\n\n`CURVE` is the bezier curve name, see [curves](#curves).\n\n`STYLE` (optional) is the animation style.\n\nThe animations are a tree. If an animation is unset, it will inherit its\nparent's values. See [the animation tree](#animation-tree).\n\n### Examples\n\n```ini\nanimation = workspaces, 1, 8, default\nanimation = windows, 1, 10, myepiccurve, slide\nanimation = fade, 0\n\n```\n\n### Animation tree\n\n```txt\nglobal\n  ↳ windows - styles: slide, popin, gnomed\n    ↳ windowsIn - window open - styles: same as windows\n    ↳ windowsOut - window close - styles: same as windows\n    ↳ windowsMove - everything in between, moving, dragging, resizing.\n  ↳ layers - styles: slide, popin, fade\n    ↳ layersIn - layer open\n    ↳ layersOut - layer close\n  ↳ fade\n    ↳ fadeIn - fade in for window open\n    ↳ fadeOut - fade out for window close\n    ↳ fadeSwitch - fade on changing activewindow and its opacity\n    ↳ fadeShadow - fade on changing activewindow for shadows\n    ↳ fadeDim - the easing of the dimming of inactive windows\n    ↳ fadeLayers - for controlling fade on layers\n      ↳ fadeLayersIn - fade in for layer open\n      ↳ fadeLayersOut - fade out for layer close\n    ↳ fadePopups - for controlling fade on wayland popups\n      ↳ fadePopupsIn - fade in for wayland popup open\n      ↳ fadePopupsOut - fade out for wayland popup close\n    ↳ fadeDpms - for controlling fade when dpms is toggled\n  ↳ border - for animating the border's color switch speed\n  ↳ borderangle - for animating the border's gradient angle - styles: once (default), loop\n  ↳ workspaces - styles: slide, slidevert, fade, slidefade, slidefadevert\n    ↳ workspacesIn - styles: same as workspaces\n    ↳ workspacesOut - styles: same as workspaces\n    ↳ specialWorkspace - styles: same as workspaces\n      ↳ specialWorkspaceIn - styles: same as workspaces\n      ↳ specialWorkspaceOut - styles: same as workspaces\n  ↳ zoomFactor - animates the screen zoom\n  ↳ monitorAdded - monitor added zoom animation\n\n```\n\n{{< callout type=warning >}}\n\nUsing the `loop` style for `borderangle` requires Hyprland to _constantly_ render new frames at a frequency equal to your screen's refresh rate (e.g. 60 times per second for a 60hz monitor), which might stress your CPU/GPU and will impact battery life. \nThis will apply even if animations are disabled or borders are not visible.\n\n{{</ callout >}}",
       "Flags": []
     },
     {
       "Name": "bezier",
-      "Description": "Defining your own [Bézier curve](https://en.wikipedia.org/wiki/B%C3%A9zier_curve) can be done with the `bezier` keyword:\n\n```ini\nbezier = NAME, X0, Y0, X1, Y1\n\n```\n\nwhere `NAME` is a name of your choice and `X0, Y0, X1, Y1` are the the two control points for a Cubic Bézier curve. \nA good website to design your own Bézier can be [cssportal.com](https://www.cssportal.com/css-cubic-bezier-generator/). \nIf you want to instead choose from a list of pre-made Béziers, you can check out [easings.net](https://easings.net).\n\n### Example\n\n```ini\nbezier = overshoot, 0.05, 0.9, 0.1, 1.1\n\n```\n\n### Extras\n\nFor animation style `popin` in `windows`, you can specify a minimum percentage\nto start from. For example, the following will make the animation 80% -> 100% of\nthe size:\n\n```ini\nanimation = windows, 1, 8, default, popin 80%\n\n```\n\nFor animation styles `slidefade` and `slidefadevert` in `workspaces`, you can\nspecify a movement percentage. For example, the following will make windows move\n20% of the screen width:\n\n```ini\nanimation = workspaces, 1, 8, default, slidefade 20%\n\n```\n\nFor animation style `slide` in `windows` and `layers` you can specify a forced side. \nYou can choose between `top`, `bottom`, `left` or `right`.\n\n```ini\nanimation = windows, 1, 8, default, slide left\n\n```",
+      "Description": "Defining your own [Bézier curve](https://en.wikipedia.org/wiki/B%C3%A9zier_curve) can be done with the `bezier` keyword:\n\n```ini\nbezier = NAME, X0, Y0, X1, Y1\n\n```\n\nwhere `NAME` is a name of your choice and `X0, Y0, X1, Y1` are the the two control points for a Cubic Bézier curve. \nA good website to design your own Bézier can be [cssportal.com](https://www.cssportal.com/css-cubic-bezier-generator/). \nIf you want to instead choose from a list of pre-made Béziers, you can check out [easings.net](https://easings.net).\n\n### Example\n\n```ini\nbezier = overshoot, 0.05, 0.9, 0.1, 1.1\n\n```\n\n### Extras\n\nFor animation style `popin` in `windows`, you can specify a minimum percentage\nto start from. For example, the following will make the animation 80% -> 100% of\nthe size:\n\n```ini\nanimation = windows, 1, 8, default, popin 80%\n\n```\n\nFor animation styles `slide`, `slidevert`, `slidefade` and `slidefadevert` in `workspaces`, you can\nspecify a movement percentage. For example, the following will make windows move\n20% of the screen width:\n\n```ini\nanimation = workspaces, 1, 8, default, slidefade 20%\n\n```\n\nFor animation style `slide` in `windows` and `layers` you can specify a forced side. \nYou can choose between `top`, `bottom`, `left` or `right`.\n\n```ini\nanimation = windows, 1, 8, default, slide left\n\n```",
       "Flags": []
     },
     {
@@ -1857,12 +1863,12 @@
     },
     {
       "Name": "source",
-      "Description": "Use the `source` keyword to source another file.\n\nFor example, in your `hyprland.conf` you can:\n\n```ini\nsource = ~/.config/hypr/myColors.conf\n\n```\n\nAnd Hyprland will enter that file and parse it like a Hyprland config.\n\nPlease note it's LINEAR. Meaning lines above the `source =` will be parsed first,\nthen lines inside `~/.config/hypr/myColors.conf`, then lines below.",
+      "Description": "Use the `source` keyword to source another file. Globbing is supported\n\nFor example, in your `hyprland.conf` you can:\n\n```ini\nsource = ~/.config/hypr/myColors.conf\nsource = ~/.config/hypr/custom/*\n\n```\n\nAnd Hyprland will enter that file and parse it like a Hyprland config.\n\nPlease note it's LINEAR. Meaning lines above the `source =` will be parsed first,\nthen lines inside `~/.config/hypr/myColors.conf`, then lines below.",
       "Flags": []
     },
     {
       "Name": "env",
-      "Description": "{{< callout type=info >}}\n\nThe `env` keyword works just like `exec-once`, meaning it will only fire once on\nHyprland's launch.\n\n{{< /callout >}}\n\nYou can use the `env` keyword to set environment variables when Hyprland starts,\ne.g:\n\n```ini\nenv = XCURSOR_SIZE,24\n\n```\n\nYou can also add a `d` flag if you want the env var to be exported to D-Bus\n(systemd only):\n\n```ini\nenvd = XCURSOR_SIZE,24\n\n```\n\n{{< callout >}}\n\nHyprland puts the raw string to the env var. You should _not_ add quotes around\nthe values.\n\ne.g.:\n\n```ini\nenv = QT_QPA_PLATFORM,wayland\n\n```\n\nand _**NOT**_\n\n```ini\nenv = QT_QPA_PLATFORM,\"wayland\"\n\n```\n\n{{< /callout >}}",
+      "Description": "{{< callout type=info >}}\n\nA new environment cannot be passed to already running processes. If you change / add / remove an `env = ` entry\nwhen Hyprland is running, only newly spawned apps will pick up the changes.\n\n{{< /callout >}}\n\nYou can use the `env` keyword to set environment variables,\ne.g:\n\n```ini\nenv = XCURSOR_SIZE,24\n\n```\n\nYou can also add a `d` flag if you want the env var to be exported to D-Bus\n(systemd only):\n\n```ini\nenvd = XCURSOR_SIZE,24\n\n```\n\n{{< callout >}}\n\nHyprland puts the raw string to the env var. You should _not_ add quotes around\nthe values.\n\ne.g.:\n\n```ini\nenv = QT_QPA_PLATFORM,wayland\n\n```\n\nand _**NOT**_\n\n```ini\nenv = QT_QPA_PLATFORM,\"wayland\"\n\n```\n\n{{< /callout >}}",
       "Flags": [
         "d"
       ]
@@ -1887,7 +1893,7 @@
     },
     {
       "Name": "unbind",
-      "Description": "You can also unbind with `unbind`, e.g.:\n\n```ini\nunbind = SUPER, O\n\n```\n\nMay be useful for dynamic keybindings with `hyprctl`:\n\n```bash\nhyprctl keyword unbind SUPER, O\n\n```",
+      "Description": "You can also unbind a key with the `unbind` keyword, e.g.:\n\n```ini\nunbind = SUPER, O\n\n```\n\nThis may be useful for dynamic keybindings with `hyprctl`, e.g.:\n\n```bash\nhyprctl keyword unbind SUPER, O\n\n```\n\n{{< callout type=info >}}\nIn `unbind`, key is case-sensitive It must exactly match the case of the `bind` you are unbinding.\n\n```ini\nbind = SUPER, TAB, workspace, e+1\nunbind = SUPER, Tab # this will NOT unbind\nunbind = SUPER, TAB # this will unbind\n\n```\n\n{{< /callout >}}\n\n## Bind flags\n\n`bind` supports flags in this format:\n\n```ini\nbind[flags] = ...\n\n```\n\ne.g.:\n\n```ini\nbindrl = MOD, KEY, exec, amongus\n\n```\n\nAvailable flags:\n\nFlagNameDescription`l`lockedWill also work when an input inhibitor (e.g. a lockscreen) is active.`r`releaseWill trigger on release of a key.`c`clickWill trigger on release of a key or button as long as the mouse cursor stays inside `binds:drag_threshold`.`g`dragWill trigger on release of a key or button as long as the mouse cursor moves outside `binds:drag_threshold`.`o`long pressWill trigger on long press of a key.`e`repeatWill repeat when held.`n`non-consumingKey/mouse events will be passed to the active window in addition to triggering the dispatcher.`m`mouseSee the dedicated [Mouse Binds](#mouse-binds) section.`t`transparentCannot be shadowed by other binds.`i`ignore modsWill ignore modifiers.`s`separateWill arbitrarily combine keys between each mod/key, see [Keysym combos](#keysym-combos).`d`has descriptionWill allow you to write a description for your bind.`p`bypassBypasses the app's requests to inhibit keybinds.\n\nExample Usage:\n\n```ini\n# Example volume button that allows press and hold, volume limited to 150%\nbinde = , XF86AudioRaiseVolume, exec, wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%+\n\n# Example volume button that will activate even while an input inhibitor is active\nbindl = , XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-\n\n# Open wofi on first press, closes it on second\nbindr = SUPER, SUPER_L, exec, pkill wofi || wofi\n\n# Describe a bind\nbindd = SUPER, Q, Open my favourite terminal, exec, kitty\n\n# Skip player on long press and only skip 5s on normal press\nbindo = SUPER, XF86AudioNext, exec, playerctl next\nbind = SUPER, XF86AudioNext, exec, playerctl position +5\n\n```",
       "Flags": []
     }
   ]

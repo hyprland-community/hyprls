@@ -19,7 +19,7 @@ example, in the case of `kitty`:
 
 {{< callout type=warning >}}
 
-Rules are evaluated top to bottom, so the order they're written in does matter!  
+Rules are evaluated top to bottom, so the order they're written in does matter!
 More info in [Notes](#notes)
 
 {{< /callout >}}
@@ -79,7 +79,7 @@ The supported fields for parameters are:
 | workspace:\[w\] | Windows on matching workspace. `w` can be `id` or `name:string`. |
 | onworkspace:\[w\] | Windows on matching workspace. `w` can be `id`, `name:string` or `workspace selector`. |
 | content:\[none\|photo\|video\|game\] | Windows with specified content type |
-| xdgtag:\[string\] | Match a window by its xdgTag (see `hyprctl clients` to check if it has one) | 
+| xdgtag:\[string\] | Match a window by its xdgTag (see `hyprctl clients` to check if it has one) |
 
 Keep in mind that you _have_ to declare at least one field, but not all.
 
@@ -127,7 +127,7 @@ It is not possible to `float` (or any other static rule) a window based on a cha
 | persistentsize | Allows size persistence between application launches for floating windows. |
 | fullscreenstate \[internal\] \[client\] | Sets the focused window's fullscreen mode and the one sent to the client, where internal and client can be `0` - none, `1` - maximize, `2` - fullscreen, `3` - maximize and fullscreen. |
 | move \[x\] \[y\] | Moves a floating window (`x, y` -> int or %, e.g. `100` or `20%`.<br>You are also allowed to do `100%-` for the right/bottom anchor, e.g. `100%-20`. In addition, the option supports the subtraction of the window's size with `100%-w-`, e.g. `100%-w-20`. This results in a gap at the right/bottom edge of the screen to the window with the defined subtracted size). <br> Additionally, you can also do `cursor [x] [y]` where x and y are either pixels or percent. Percent is calculated from the window's size. Specify `onscreen` before other parameters to force the window into the screen (e.g. `move onscreen cursor 50% 50%`) |
-| size \[w\] \[h\] | Resizes a floating window (`w, h` -> int or %, e.g. `1280, 720` or `50%, 50%`.<br>`<` and `>` may also be prefixed in conjuction, to specify respectively the maximum or minimum allowed size. (e.g. `<1280` or `<40%` -> maximum size, `>300` or `>10%` -> minimum size).<br>Note that int values in pixels will be scaled by your monitor's scaling factor. |
+| size \[w\] \[h\] | Resizes a floating window (`w, h` -> int or %, e.g. `1280, 720` or `50%, 50%`.<br>`<` and `>` may also be prefixed in conjunction, to specify respectively the maximum or minimum allowed size. (e.g. `<1280` or `<40%` -> maximum size, `>300` or `>10%` -> minimum size).<br>Note that int values in pixels will be scaled by your monitor's scaling factor. |
 | center (\[opt\]) | If the window is floating, will center it on the monitor. Set opt to `1` to respect monitor reserved area. |
 | pseudo | Pseudotiles a window. |
 | monitor \[id\] | Sets the monitor on which a window should open. `id` can be either the id number or the name (e.g. `1` or `DP-1`). |
@@ -188,6 +188,7 @@ The following rules can also be set with [`setprop`](../Dispatchers#setprop):
 | scrollmouse \[float\] | Forces the window to override the variable `input:scroll_factor`. |
 | scrolltouchpad \[float\] | Forces the window to override the variable `input:touchpad:scroll_factor`. |
 | noscreenshare \[on\] | Hides the window and its popups from screen sharing by drawing black rectangles in their place. The rectangles are drawn even if other windows are above. |
+| novrr \[on\] | Disables VRR for the window. Only works when [`misc:vrr`](../Variables/#Misc) is set to `2` or `3`. |
 
 {{< callout type=info >}}
 

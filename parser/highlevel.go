@@ -103,7 +103,7 @@ type ConfigurationDecoration struct {
 	// rounded corners' radius (in layout px)
 	Rounding int `json:"rounding"`
 
-	// adjusts the curve used for rounding corners, larger is smoother, 2.0 is a circle, 4.0 is a squircle. [2.0 - 10.0]
+	// adjusts the curve used for rounding corners, larger is smoother, 2.0 is a circle, 4.0 is a squircle, 1.0 is a triangular corner. [1.0 - 10.0]
 	RoundingPower float32 `json:"rounding_power"`
 
 	// opacity of active windows. [0.0 - 1.0]
@@ -114,6 +114,9 @@ type ConfigurationDecoration struct {
 
 	// opacity of fullscreen windows. [0.0 - 1.0]
 	FullscreenOpacity float32 `json:"fullscreen_opacity"`
+
+	// enables dimming of parents of modal windows
+	DimModal bool `json:"dim_modal"`
 
 	// enables dimming of inactive windows
 	DimInactive bool `json:"dim_inactive"`
@@ -220,9 +223,6 @@ type ConfigurationAnimations struct {
 	// enable animations
 	Enabled bool `json:"enabled"`
 
-	// enable first launch animation
-	FirstLaunchAnimation bool `json:"first_launch_animation"`
-
 	// enable workspace wraparound, causing directional workspace animations to animate as if the first and last workspaces were adjacent
 	WorkspaceWraparound bool `json:"workspace_wraparound"`
 }
@@ -314,15 +314,6 @@ type ConfigurationInput struct {
 }
 
 type ConfigurationGestures struct {
-	// enable workspace swipe gesture on touchpad
-	WorkspaceSwipe bool `json:"workspace_swipe"`
-
-	// how many fingers for the touchpad gesture
-	WorkspaceSwipeFingers int `json:"workspace_swipe_fingers"`
-
-	// if enabled, workspace_swipe_fingers is considered the minimum number of fingers to swipe
-	WorkspaceSwipeMinFingers bool `json:"workspace_swipe_min_fingers"`
-
 	// in px, the distance of the touchpad gesture
 	WorkspaceSwipeDistance int `json:"workspace_swipe_distance"`
 
@@ -355,6 +346,9 @@ type ConfigurationGestures struct {
 
 	// if enabled, swiping will use the r prefix instead of the m prefix for finding workspaces.
 	WorkspaceSwipeUseR bool `json:"workspace_swipe_use_r"`
+
+	// the timeout for a window to close when using a 1:1 gesture, in ms
+	CloseMaxTimeout int `json:"close_max_timeout"`
 }
 
 type ConfigurationGroup struct {
@@ -443,8 +437,14 @@ type ConfigurationGroupGroupbar struct {
 	// how much to round the indicator
 	Rounding int `json:"rounding"`
 
+	// adjusts the curve used for rounding broupbar corners, larger is smoother, 2.0 is a circle, 4.0 is a squircle, 1.0 is a triangular corner. [1.0 - 10.0]
+	RoundingPower float32 `json:"rounding_power"`
+
 	// how much to round the gradients
 	GradientRounding int `json:"gradient_rounding"`
+
+	// adjusts the curve used for rounding gradient corners, larger is smoother, 2.0 is a circle, 4.0 is a squircle, 1.0 is a triangular corner. [1.0 - 10.0]
+	GradientRoundingPower float32 `json:"gradient_rounding_power"`
 
 	// round only the indicator edges of the entire groupbar
 	RoundOnlyEdges bool `json:"round_only_edges"`
@@ -517,6 +517,9 @@ type ConfigurationMisc struct {
 	// If DPMS is set to off, wake up the monitors if a key is pressed.
 	KeyPressEnablesDpms bool `json:"key_press_enables_dpms"`
 
+	// Name virtual keyboards after the processes that create them. E.g. /usr/bin/fcitx5 will have hl-virtual-keyboard-fcitx5.
+	NameVkAfterProc bool `json:"name_vk_after_proc"`
+
 	// Will make mouse focus follow the mouse when drag and dropping. Recommended to leave it enabled, especially for people using focus follows mouse at 0.
 	AlwaysFollowOnDnd bool `json:"always_follow_on_dnd"`
 
@@ -580,7 +583,7 @@ type ConfigurationMisc struct {
 	// disable the warning if hyprland-qtutils is not installed
 	DisableHyprlandQtutilsCheck bool `json:"disable_hyprland_qtutils_check"`
 
-	// delay after which the "lockdead" screen will apear in case a lockscreen app fails to cover all the outputs (5 seconds max)
+	// delay after which the "lockdead" screen will appear in case a lockscreen app fails to cover all the outputs (5 seconds max)
 	LockdeadScreenDelay int `json:"lockdead_screen_delay"`
 
 	// whether to enable the ANR (app not responding) dialog when your apps hang
@@ -876,7 +879,7 @@ type ConfigurationDwindle struct {
 	// the default split ratio on window open. 1 means even 50/50 split. [0.1 - 1.9]
 	DefaultSplitRatio float32 `json:"default_split_ratio"`
 
-	// specifies which window will receive the larger half of a split. positional - 0, current window - 1, opening window - 2 [0/1/2]
+	// specifies which window will receive the split ratio. 0 -> directional (the top or left window), 1 -> the current window
 	SplitBias int `json:"split_bias"`
 
 	// bindm movewindow will drop the window more precisely depending on where your mouse is.
