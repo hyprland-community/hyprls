@@ -2,6 +2,7 @@ package hyprls
 
 import (
 	"math/rand"
+	"os"
 	"testing"
 
 	"go.lsp.dev/protocol"
@@ -10,7 +11,11 @@ import (
 
 func init() {
 	if logger == nil {
-		logger, _ = zap.NewDevelopmentConfig().Build()
+		if os.Getenv("HYPRLS_DEBUG") != "" {
+			logger, _ = zap.NewDevelopmentConfig().Build()
+		} else {
+			logger, _ = zap.NewProductionConfig().Build()
+		}
 	}
 }
 

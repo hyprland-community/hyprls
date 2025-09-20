@@ -12,7 +12,14 @@ import (
 var OutputServerLogs string
 
 func main() {
-	logconf := zap.NewDevelopmentConfig()
+	var logconf zap.Config
+
+	if os.Getenv("HYPRLS_DEBUG") != "" {
+		logconf = zap.NewDevelopmentConfig()
+	} else {
+		logconf = zap.NewProductionConfig()
+	}
+
 	if OutputServerLogs != "" {
 		logconf.OutputPaths = []string{OutputServerLogs, "stderr"}
 	}
