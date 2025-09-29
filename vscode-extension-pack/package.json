@@ -4,7 +4,7 @@
   "description": "Extension pack for syntax highlighting and rich IDE support in Hyprland configuration files",
   "version": "0.1.2",
   "engines": {
-    "vscode": "^1.104.1"
+    "vscode": "^1.104.2"
   },
   "categories": [
     "Extension Packs"
@@ -14,7 +14,7 @@
     "fireblast.hyprlang-vscode"
   ],
   "devDependencies": {
-    "@vscode/vsce": "^3.6.0"
+    "@vscode/vsce": "^3.6.2"
   },
   "repository": "https://github.com/ewen-lbh/hyprls/tree/main/vscode-extension-pack",
   "license": "MIT",
