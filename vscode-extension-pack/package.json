@@ -4,7 +4,7 @@
   "description": "Extension pack for syntax highlighting and rich IDE support in Hyprland configuration files",
   "version": "0.1.2",
   "engines": {
-    "vscode": "^1.104.2"
+    "vscode": "^1.104.3"
   },
   "categories": [
     "Extension Packs"
