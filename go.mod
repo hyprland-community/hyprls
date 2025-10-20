@@ -1,6 +1,6 @@
 module github.com/hyprland-community/hyprls
 
-go 1.25.2
+go 1.25.3
 
 require (
 	github.com/MakeNowJust/heredoc/v2 v2.0.1
