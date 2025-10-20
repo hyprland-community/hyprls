@@ -12,7 +12,7 @@
   "categories": [],
   "keywords": [],
   "engines": {
-    "vscode": "^1.104.3"
+    "vscode": "^1.105.1"
   },
   "contributes": {
     "languages": [
@@ -51,13 +51,13 @@
   "devDependencies": {
     "@ortfo/db": "^1.6.1",
     "@types/mocha": "^10.0.10",
-    "@types/node": "^24.6.2",
-    "@types/vscode": "^1.104.0",
-    "@typescript-eslint/eslint-plugin": "^8.45.0",
-    "@typescript-eslint/parser": "^8.45.0",
+    "@types/node": "^24.8.1",
+    "@types/vscode": "^1.105.0",
+    "@typescript-eslint/eslint-plugin": "^8.46.1",
+    "@typescript-eslint/parser": "^8.46.1",
     "@vscode/test-electron": "^2.5.2",
     "@vscode/vsce": "^3.6.2",
-    "eslint": "^9.37.0",
+    "eslint": "^9.38.0",
     "mocha": "^11.7.4",
     "typescript": "^5.9.3"
   },
