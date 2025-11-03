@@ -51,13 +51,13 @@
   "devDependencies": {
     "@ortfo/db": "^1.6.1",
     "@types/mocha": "^10.0.10",
-    "@types/node": "^24.9.1",
+    "@types/node": "^24.10.0",
     "@types/vscode": "^1.105.0",
     "@typescript-eslint/eslint-plugin": "^8.46.2",
     "@typescript-eslint/parser": "^8.46.2",
     "@vscode/test-electron": "^2.5.2",
     "@vscode/vsce": "^3.6.2",
-    "eslint": "^9.38.0",
+    "eslint": "^9.39.0",
     "mocha": "^11.7.4",
     "typescript": "^5.9.3"
   },
