@@ -14,12 +14,14 @@ type Handler struct {
 	Logger *zap.Logger
 }
 
+type globalcontextKey string
+
 func NewHandler(ctx context.Context, server protocol.Server, logger *zap.Logger) (Handler, context.Context, error) {
 
 	return Handler{
 		Server: server,
 		Logger: logger,
-	}, context.WithValue(ctx, "state", state{}), nil
+	}, context.WithValue(ctx, globalcontextKey("state"), state{}), nil
 }
 
 const ignoreFile = ".hyprignore"
