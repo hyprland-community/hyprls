@@ -270,11 +270,13 @@ func Parse(input string) (Section, error) {
 
 		if line == "}" {
 			currentSection.End = Position{i, strings.Index(originalLine, "}")}
-			sectionsStack[sectionDepth-1].Subsections = append(sectionsStack[sectionDepth-1].Subsections, *sectionsStack[sectionDepth])
-			sectionsStack = sectionsStack[:sectionDepth]
-			sectionDepth--
-			if sectionDepth < 0 {
-				panic("unbalanced section")
+			if sectionDepth > 0 {
+				sectionsStack[sectionDepth-1].Subsections = append(sectionsStack[sectionDepth-1].Subsections, *sectionsStack[sectionDepth])
+				sectionsStack = sectionsStack[:sectionDepth]
+				sectionDepth--
+				if sectionDepth < 0 {
+					panic("unbalanced section")
+				}
 			}
 		}
 		endLine = i
