@@ -32,7 +32,7 @@ func (h Handler) Completion(ctx context.Context, params *protocol.CompletionPara
 		sec = &parser.Section{}
 	}
 
-	cursorIsAfterEquals := err == nil && strings.Contains(line, "=") && strings.Index(line, "=") < int(params.Position.Character)
+	cursorIsAfterEquals := strings.Contains(line, "=") && strings.Index(line, "=") < int(params.Position.Character)
 
 	// we are after the equals sign, suggest custom properties only
 	if cursorIsAfterEquals {
