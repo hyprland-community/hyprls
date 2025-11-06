@@ -8,7 +8,7 @@ import (
 )
 
 type Handler struct {
-	protocol.Server
+	Server protocol.Server
 	Logger *zap.Logger
 }
 

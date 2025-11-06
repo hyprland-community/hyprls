@@ -93,6 +93,7 @@ const (
 	ModSuper
 	Mod5
 )
+
 // FontWeight is an integer between 100 and 1000, or one of the following presets: thin ultralight light semilight book normal medium semibold bold ultrabold heavy ultraheavy
 type FontWeight uint8
 

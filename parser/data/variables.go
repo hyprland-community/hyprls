@@ -48,8 +48,6 @@ func (v VariableDefinition) GoType() string {
 
 }
 
-
-
 func (v VariableDefinition) ParserTypeString() string {
 	switch v.Type {
 	case "int":

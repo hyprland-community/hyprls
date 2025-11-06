@@ -3,6 +3,8 @@ package hyprls
 import (
 	"context"
 	"os"
+	"path/filepath"
+	"slices"
 	"strings"
 
 	"github.com/hyprland-community/hyprls/parser"
@@ -14,6 +16,7 @@ import (
 var logger *zap.Logger
 
 var openedFiles = make(map[protocol.URI]string)
+var ignores = []string{"hyprlock.conf", "hypridle.conf"} // should
 
 type state struct {
 }
@@ -90,6 +93,7 @@ func file(uri protocol.URI) (string, error) {
 	return string(contents), nil
 }
 
+// TODO: possible to optimize
 func currentLine(uri protocol.URI, position protocol.Position) (string, error) {
 	contents, err := file(uri)
 	if err != nil {
@@ -98,4 +102,9 @@ func currentLine(uri protocol.URI, position protocol.Position) (string, error) {
 
 	lines := strings.Split(contents, "\n")
 	return lines[position.Line], nil
+}
+
+func isExclude(uri protocol.URI) bool {
+	n := filepath.Base(uri.Filename())
+	return slices.Contains(ignores, n)
 }

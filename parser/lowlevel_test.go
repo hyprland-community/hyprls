@@ -6,7 +6,6 @@ import (
 	"os"
 	// "strings"
 	"testing"
-
 	// "github.com/andreyvit/diff"
 )
 
