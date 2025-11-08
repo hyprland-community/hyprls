@@ -20,11 +20,13 @@ jobs:
       - run: just check-for-hyprland-updates
 
       - name: Commit changes
+        id: commit
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: 🍱 Update parser data from wiki
 
-      - name: Bump version and push tag
+      - if: steps.commit.outputs.changes_detected == 'true'
+        name: Bump version and push tag
         uses: anothrNick/github-tag-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
