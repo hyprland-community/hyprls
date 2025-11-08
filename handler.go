@@ -57,12 +57,6 @@ func (h Handler) Initialize(ctx context.Context, params *protocol.InitializePara
 				OpenClose: true,
 				Change:    protocol.TextDocumentSyncKindFull,
 			},
-			Workspace: &protocol.ServerCapabilitiesWorkspace{
-				WorkspaceFolders: &protocol.ServerCapabilitiesWorkspaceFolders{
-					Supported:           true,
-					ChangeNotifications: true,
-				},
-			},
 		},
 		ServerInfo: &protocol.ServerInfo{
 			Name:    "hyprls",
