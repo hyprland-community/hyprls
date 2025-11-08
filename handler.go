@@ -2,26 +2,48 @@ package hyprls
 
 import (
 	"context"
+	"os"
+	"strings"
 
 	"go.lsp.dev/protocol"
 	"go.uber.org/zap"
 )
 
 type Handler struct {
-	protocol.Server
+	Server protocol.Server
 	Logger *zap.Logger
 }
+
+type GlobalContextKey string
 
 func NewHandler(ctx context.Context, server protocol.Server, logger *zap.Logger) (Handler, context.Context, error) {
 
 	return Handler{
 		Server: server,
 		Logger: logger,
-	}, context.WithValue(ctx, "state", state{}), nil
+	}, context.WithValue(ctx, GlobalContextKey("state"), state{}), nil
 }
+
+const ignoreFile = ".hyprlsignore"
 
 func (h Handler) Initialize(ctx context.Context, params *protocol.InitializeParams) (*protocol.InitializeResult, error) {
 	logger = h.Logger
+	workspaceFolders := params.WorkspaceFolders
+	logger.Info("Loading", zap.Any("workspace", workspaceFolders))
+
+	for _, workspaceFolder := range workspaceFolders {
+		f := protocol.URI(workspaceFolder.URI + "/" + ignoreFile).Filename()
+		if info, err := os.Stat(f); err == nil && !info.IsDir() {
+			logger.Debug("Loading ignore file" + ignoreFile)
+			b, err := os.ReadFile(f)
+			if err == nil {
+				contd := string(b)
+				ignores = strings.Split(contd, "\n")
+			}
+		}
+	}
+	logger.Debug("Ignoring files", zap.Any("ignores", ignores))
+
 	return &protocol.InitializeResult{
 		Capabilities: protocol.ServerCapabilities{
 			HoverProvider:          true,

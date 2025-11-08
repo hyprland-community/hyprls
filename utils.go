@@ -1,6 +1,8 @@
 package hyprls
 
-import "go.lsp.dev/protocol"
+import (
+	"go.lsp.dev/protocol"
+)
 
 func collapsedRange(position protocol.Position) protocol.Range {
 	return protocol.Range{
@@ -8,4 +10,3 @@ func collapsedRange(position protocol.Position) protocol.Range {
 		End:   position,
 	}
 }
-

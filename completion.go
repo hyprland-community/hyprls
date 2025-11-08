@@ -14,6 +14,9 @@ import (
 )
 
 func (h Handler) Completion(ctx context.Context, params *protocol.CompletionParams) (*protocol.CompletionList, error) {
+	if isFileIgnored(params.TextDocument.URI) {
+		return nil, nil
+	}
 	line, err := currentLine(params.TextDocument.URI, params.Position)
 	if err != nil {
 		return nil, nil
@@ -29,7 +32,7 @@ func (h Handler) Completion(ctx context.Context, params *protocol.CompletionPara
 		sec = &parser.Section{}
 	}
 
-	cursorIsAfterEquals := err == nil && strings.Contains(line, "=") && strings.Index(line, "=") < int(params.Position.Character)
+	cursorIsAfterEquals := strings.Contains(line, "=") && strings.Index(line, "=") < int(params.Position.Character)
 
 	// we are after the equals sign, suggest custom properties only
 	if cursorIsAfterEquals {
@@ -42,6 +45,9 @@ func (h Handler) Completion(ctx context.Context, params *protocol.CompletionPara
 		// Only propose if a dollar sign was typed or is just before the cursor
 		// Or we are after whitespace
 		// Or we are in the middle of a color completion (typed a r, and key is a color or gradient)
+		if params.Position.Character <= 0 {
+			return nil, nil
+		}
 		if !characterBeforeCursorIsDollarSign && !unicode.IsSpace(rune(line[params.Position.Character-1])) {
 			return nil, nil
 		}
@@ -50,8 +56,8 @@ func (h Handler) Completion(ctx context.Context, params *protocol.CompletionPara
 		var textEditRange protocol.Range
 		if characterBeforeCursorIsDollarSign {
 			textEditRange = protocol.Range{
-				protocol.Position{params.Position.Line, params.Position.Character - 1},
-				protocol.Position{params.Position.Line, params.Position.Character},
+				Start: protocol.Position{Line: params.Position.Line, Character: params.Position.Character - 1},
+				End:   protocol.Position{Line: params.Position.Line, Character: params.Position.Character},
 			}
 		} else {
 			textEditRange = collapsedRange(params.Position)
