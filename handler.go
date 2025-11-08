@@ -24,7 +24,7 @@ func NewHandler(ctx context.Context, server protocol.Server, logger *zap.Logger)
 	}, context.WithValue(ctx, globalcontextKey("state"), state{}), nil
 }
 
-const ignoreFile = ".hyprignore"
+const ignoreFile = ".hyprlsignore"
 
 func (h Handler) Initialize(ctx context.Context, params *protocol.InitializeParams) (*protocol.InitializeResult, error) {
 	logger = h.Logger
