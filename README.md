@@ -103,3 +103,13 @@ Install it [on OpenVSX](https://open-vsx.org/extension/gwenn°-lbh/vscode-hyprls
 
 Language server support is provided by the [Hyprlang extension](https://zed.dev/extensions?query=hyprlang).
 Detailed installation and setup instructions can be found in the [extension repository](https://github.com/WhySoBad/zed-hyprlang-extension) [maintainer = [@WhySoBad](https://github.com/WhySoBad)].
+
+## Configuration
+
+### Ignoring some files
+
+_Thanks to [@sansmoraxz](https://github.com/sansmoraxz) for this feature ^^_
+
+By default, HyprLS ignores `hyprlock.conf` and `hypridle.conf` files, since they aren't supported yet.
+
+You can create a `.hyprlsignore` file that lists filenames HyprLS should not run on. Files are relative to the workspace root, which is determined by your IDE (for example, for VSCode, it's the folder you opened it with)
