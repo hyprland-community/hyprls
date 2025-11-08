@@ -3,26 +3,20 @@ weight: 7
 title: Window Rules
 ---
 
-{{< callout type=warning >}}
+> [!WARNING]
+> Window rules are **case sensitive**. (e.g. `firefox` ≠
+> `Firefox`)
+> 
+> As of Hyprland v0.46.0, RegExes need to fully match the window values. For
+> example, in the case of `kitty`:
+> 
+> - `kitty`/`(kitty)`/`^(kitty)$`: Matches.
+> - `tty`: Used to match, now won't. Use `.*tty.*` to make it act like before, or
+>   consider using a more specific RegEx.
 
-Window rules are **case sensitive**. (e.g. `firefox` ≠
-`Firefox`)
-
-As of Hyprland v0.46.0, RegExes need to fully match the window values. For
-example, in the case of `kitty`:
-
-- `kitty`/`(kitty)`/`^(kitty)$`: Matches.
-- `tty`: Used to match, now won't. Use `.*tty.*` to make it act like before, or
-  consider using a more specific RegEx.
-
-{{< /callout >}}
-
-{{< callout type=warning >}}
-
-Rules are evaluated top to bottom, so the order they're written in does matter!
-More info in [Notes](#notes)
-
-{{< /callout >}}
+> [!WARNING]
+> Rules are evaluated top to bottom, so the order they're written in does matter!
+> More info in [Notes](#notes)
 
 ## Window Rules
 
@@ -43,22 +37,27 @@ Example rule:
 windowrule = float, class:kitty, title:kitty
 ```
 
-{{< callout type=info >}}
+Several rules can be specified in a single line, separated by commas. But have to be followed by at least one parameter.
 
-In the case of dynamic window titles such as browser windows, keep in mind how
-powerful RegEx is.
+Example:
+```ini
+windowrule = float, pin, size 400 400, move 0 0, class:kitty, initialTitle:kitty
+```
+Where float pin size and move are `RULES` and class and initialTitle are `PARAMETERS`.
 
-For example, a window rule of:
-`windowrule = opacity 0.3 override 0.3 override,title:(.*)(- Youtube)` will match
-_any_ window that contains a string of "- Youtube" after any other text. This
-could be multiple browser windows or other applications that contain the string
-for any reason.
-
-For the `windowrule = float,class:kitty,title:kitty` example, the
-`class:(kitty)` `WINDOW` field is what keeps the window rule specific to kitty
-terminals.
-
-{{< /callout >}}
+> [!NOTE]
+> In the case of dynamic window titles such as browser windows, keep in mind how
+> powerful RegEx is.
+> 
+> For example, a window rule of:
+> `windowrule = opacity 0.3 override 0.3 override,title:(.*)(- Youtube)` will match
+> _any_ window that contains a string of "- Youtube" after any other text. This
+> could be multiple browser windows or other applications that contain the string
+> for any reason.
+> 
+> For the `windowrule = float,class:kitty,title:kitty` example, the
+> `class:(kitty)` `WINDOW` field is what keeps the window rule specific to kitty
+> terminals.
 
 The supported fields for parameters are:
 
@@ -75,29 +74,24 @@ The supported fields for parameters are:
 | pinned:\[0/1\] | Pinned windows. |
 | focus:\[0/1\] | Currently focused window. |
 | group:\[0/1\] | Grouped windows. |
+| modal:\[0/1\] | Modal windows (e.g. "Are you sure" popups) |
 | fullscreenstate:\[internal\] \[client\] | Windows with matching `fullscreenstate`. `internal` and `client` can be `*` - any, `0` - none, `1` - maximize, `2` - fullscreen, `3` - maximize and fullscreen. |
 | workspace:\[w\] | Windows on matching workspace. `w` can be `id` or `name:string`. |
 | onworkspace:\[w\] | Windows on matching workspace. `w` can be `id`, `name:string` or `workspace selector`. |
 | content:\[none\|photo\|video\|game\] | Windows with specified content type |
-| xdgtag:\[string\] | Match a window by its xdgTag (see `hyprctl clients` to check if it has one) |
+| xdgTag:\[string\] | Match a window by its xdgTag (see `hyprctl clients` to check if it has one) | 
 
 Keep in mind that you _have_ to declare at least one field, but not all.
 
-{{< callout type=info >}}
-
-To get more information about a window's class, title, XWayland status or its
-size, you can use `hyprctl clients`.
-
-{{< /callout >}}
+> [!NOTE]
+> To get more information about a window's class, title, XWayland status or its
+> size, you can use `hyprctl clients`.
 
 
-{{< callout type=info >}}
-
-In the output of the `hyprctl clients` command:
-`fullscreen` refers to `fullscreenstate.internal` and
-`fullscreenClient` refers to `fullscreenstate.client`
-
-{{< /callout >}}
+> [!NOTE]
+> In the output of the `hyprctl clients` command:
+> `fullscreen` refers to `fullscreenstate.internal` and
+> `fullscreenClient` refers to `fullscreenstate.client`
 
 ### RegEx writing
 
@@ -112,11 +106,8 @@ If you want to _negate_ a ReGex, as in pass only when the RegEx _fails_, you can
 
 Static rules are evaluated once when the window is opened and never again. This essentially means that it is always the `initialTitle` and `initialClass` which will be found when matching on `title` and `class`, respectively.
 
-{{< callout type=warning >}}
-
-It is not possible to `float` (or any other static rule) a window based on a change in the `title` after the window has been created. This applies to all static rules listed here.
-
-{{< /callout >}}
+> [!WARNING]
+> It is not possible to `float` (or any other static rule) a window based on a change in the `title` after the window has been created. This applies to all static rules listed here.
 
 | Rule | Description |
 | ---- | ----------- |
@@ -134,7 +125,7 @@ It is not possible to `float` (or any other static rule) a window based on a cha
 | workspace \[w\] | Sets the workspace on which a window should open (for workspace syntax, see [dispatchers->workspaces](../Dispatchers#workspaces)). <br> You can also set \[w\] to `unset`. This will unset all previous workspace rules applied to this window. Additionally you can add `silent` after the workspace to make the window open silently. |
 | noinitialfocus | Disables the initial focus to the window |
 | pin | Pins the window  (i.e. show it on all workspaces). _Note: floating only_. |
-| unset | Removes all previously set rules for the given parameters. Please note it has to match _exactly_. |
+| unset \[rule\] | Unset rules for the matching `PARAMETERS` (exact match required) or a specific `RULE`. No rule defaults to `all`. |
 | nomaxsize | Removes max size limitations. Especially useful with windows that report invalid max sizes (e.g. winecfg). |
 | stayfocused | Forces focus on the window as long as it's visible. |
 | group \[options\] | Sets window group properties. See the note below. |
@@ -153,8 +144,8 @@ Dynamic rules are re-evaluated every time a property changes.
 | idleinhibit \[mode\] | Sets an idle inhibit rule for the window. If active, apps like `hypridle` will not fire. Modes: `none`, `always`, `focus`, `fullscreen`. |
 | opacity \[a\] | Additional opacity multiplier. Options for a: `float` -> sets an overall opacity, `float float` -> sets activeopacity and inactiveopacity respectively, `float float float` -> sets activeopacity, inactiveopacity and fullscreenopacity respectively. |
 | tag \[name\] | Applies the tag `name` to the window, use prefix `+`/`-` to set/unset flag, or no prefix to toggle the flag. |
-| maxsize \[w\] \[h\] | Sets the maximum size (x,y -> int). |
-| minsize \[w\] \[h\] | Sets the minimum size (x,y -> int).|
+| maxsize \[w\] \[h\] | Sets the maximum size (x,y -> int). Applies to floating windows. (use `misc:size_limits_tiled` to include tiled windows.) |
+| minsize \[w\] \[h\] | Sets the minimum size (x,y -> int). Applies to floating windows. (use `misc:size_limits_tiled` to include tiled windows.) |
 
 The following rules can also be set with [`setprop`](../Dispatchers#setprop):
 
@@ -190,17 +181,14 @@ The following rules can also be set with [`setprop`](../Dispatchers#setprop):
 | noscreenshare \[on\] | Hides the window and its popups from screen sharing by drawing black rectangles in their place. The rectangles are drawn even if other windows are above. |
 | novrr \[on\] | Disables VRR for the window. Only works when [`misc:vrr`](../Variables/#Misc) is set to `2` or `3`. |
 
-{{< callout type=info >}}
-
-When using window rules, \[on\] can be set to `0` for _disabled_, `1` for _enabled_, or left blank to use the default value.
-
-When using `setprop`, \[on\] can be set to `0` for _disabled_, `1` for _enabled_,
-`toggle` to toggle the state or `unset` to unset previous values.
-
-When using `setprop`, \[int\] can also be `unset` to unset previous
-values.
-
-{{< /callout >}}
+> [!NOTE]
+> When using window rules, \[on\] can be set to `0` for _disabled_, `1` for _enabled_, or left blank to use the default value.
+> 
+> When using `setprop`, \[on\] can be set to `0` for _disabled_, `1` for _enabled_,
+> `toggle` to toggle the state or `unset` to unset previous values.
+> 
+> When using `setprop`, \[int\] can also be `unset` to unset previous
+> values.
 
 ### `group` window rule options
 
@@ -214,14 +202,11 @@ values.
 - `override` \[other options\] - Override other `group` rules, e.g. You can make all windows in a particular workspace open as a group, and use `group override barred` to make windows with specific titles open as normal windows.
 - `unset` - Clear all `group` rules.
 
-{{< callout type=info >}}
-
-The `group` rule without options is a shorthand for `group set`.
-
-By default, `set` and `lock` only affect new windows once. The `always`
-qualifier makes them always effective.
-
-{{< /callout >}}
+> [!NOTE]
+> The `group` rule without options is a shorthand for `group set`.
+> 
+> By default, `set` and `lock` only affect new windows once. The `always`
+> qualifier makes them always effective.
 
 ### Tags
 
@@ -309,24 +294,21 @@ windowrule = opacity 0.8 0.8,class:kitty
 Here, all kitty windows will have `opacity 0.8`, even if they are floating.
 The rest of the floating windows will have `opacity 0.5`.
 
-{{< callout type=info >}}
-
-Opacity is a PRODUCT of all opacities by default. For example, setting
-`activeopacity` to `0.5` and `opacity` to `0.5` will result in a total opacity of
-`0.25`. <br>
-You are allowed to set opacities over `1.0`, but any opacity product over `1.0`
-will cause graphical glitches. <br>
-For example, using `0.5 * 2 = 1` is fine, but `0.5 * 4 = 2` will cause graphical glitches. <br>
-You can put `override` after an opacity value to override it to an exact value
-rather than a multiplier.
-For example, to set active and inactive opacity to 0.8, and make fullscreen windows
-fully opaque regardless of other opacity rules:
-
-```ini
-windowrule = opacity 0.8 override 0.8 override 1.0 override, class:kitty
-```
-
-{{< /callout >}}
+> [!NOTE]
+> Opacity is a PRODUCT of all opacities by default. For example, setting
+> `activeopacity` to `0.5` and `opacity` to `0.5` will result in a total opacity of
+> `0.25`. <br>
+> You are allowed to set opacities over `1.0`, but any opacity product over `1.0`
+> will cause graphical glitches. <br>
+> For example, using `0.5 * 2 = 1` is fine, but `0.5 * 4 = 2` will cause graphical glitches. <br>
+> You can put `override` after an opacity value to override it to an exact value
+> rather than a multiplier.
+> For example, to set active and inactive opacity to 0.8, and make fullscreen windows
+> fully opaque regardless of other opacity rules:
+> 
+> ```ini
+> windowrule = opacity 0.8 override 0.8 override 1.0 override, class:kitty
+> ```
 
 ## Layer Rules
 
@@ -360,3 +342,5 @@ namespaces in `hyprctl layers`) or `address` is an address in the form of
 | animation \[style\] | Allows you to set a specific animation style for this layer. |
 | order \[n\] | Sets the order relative to other layers. A higher `n` means closer to the edge of the monitor. Can be negative. `n = 0` if unspecified. |
 | abovelock \[interactable\] | Renders the layer above the lockscreen when the session is locked. If set to `true`, you can interact with the layer on the lockscreen, otherwise it will only be rendered above it. |
+| noscreenshare \[on\] | Hides the layer from screen sharing by drawing a black rectangle over it. |
+

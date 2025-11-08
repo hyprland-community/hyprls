@@ -26,31 +26,19 @@ the layout pages and not here. (See the Sidebar for Dwindle and Master layouts)
 | gradient | a gradient, in the form of `color color ... [angle]` where `color` is a color (see above) and angle is an angle in degrees, in the format of `123deg` e.g. `45deg` (e.g. `rgba(11ee11ff) rgba(1111eeff) 45deg`) Angle is optional and will default to `0deg` |
 | font_weight | an integer between 100 and 1000, or one of the following presets: `thin` `ultralight` `light` `semilight` `book` `normal` `medium` `semibold` `bold` `ultrabold` `heavy` `ultraheavy` |
 
-{{< callout type=info >}}
+> [!NOTE] **Colors**
+> 
+> You have 3 options:
+> - rgba(), e.g. `rgba(b3ff1aee)`, or the decimal equivalent `rgba(179,255,26,0.933)`
+> (decimal rgba/rgb values should have no spaces between numbers)
+> - rgb(), e.g. `rgb(b3ff1a)`, or the decimal equivalent  `rgb(179,255,26)`
+> - legacy, e.g. `0xeeb3ff1a` -> ARGB order
 
-**_Colors:_**
-
-You have 3 options:
-
-rgba(), e.g. `rgba(b3ff1aee)`, or the decimal equivalent `rgba(179,255,26,0.933)`
-
-(decimal rgba/rgb values should have no spaces between numbers)
-
-rgb(), e.g. `rgb(b3ff1a)`, or the decimal equivalent  `rgb(179,255,26)`
-
-legacy, e.g. `0xeeb3ff1a` -> ARGB order
-
-{{< /callout >}}
-
-{{< callout type=info >}}
-
-**_Mod list:_**
-
-```ini
-SHIFT CAPS CTRL/CONTROL ALT MOD2 MOD3 SUPER/WIN/LOGO/MOD4 MOD5
-```
-
-{{< /callout >}}
+> [!NOTE] **Mod list**
+> 
+> ```ini
+> SHIFT CAPS CTRL/CONTROL ALT MOD2 MOD3 SUPER/WIN/LOGO/MOD4 MOD5
+> ```
 
 ## Sections
 
@@ -75,6 +63,7 @@ SHIFT CAPS CTRL/CONTROL ALT MOD2 MOD3 SUPER/WIN/LOGO/MOD4 MOD5
 | hover_icon_on_border | show a cursor icon when hovering over borders, only used when `general:resize_on_border` is on. | bool | true |
 | allow_tearing | master switch for allowing tearing to occur. See [the Tearing page](../Tearing). | bool | false |
 | resize_corner | force floating windows to use a specific corner when being resized (1-4 going clockwise from top left, 0 to disable) | int | 0 |
+| modal_parent_blocking | whether parent windows of modals will be interactive | bool | true |
 
 #### Snap
 
@@ -88,25 +77,22 @@ _Subcategory `general:snap:`_
 | border_overlap | if true, windows snap such that only one border's worth of space is between them | bool | false |
 | respect_gaps | if true, snapping will respect gaps between windows(set in general:gaps_in) | bool | false |
 
-{{< callout type=important >}}
-
-A subcategory is a nested category:
-
-```ini
-general {
-    # ...
-    # ...
-
-    snap {
-        # ...
-        # ...
-    }
-}
-```
-
-Doing `general:snap {` is **invalid**!
-
-{{< /callout >}}
+> [!IMPORTANT]
+> A subcategory is a nested category:
+> 
+> ```ini
+> general {
+>     # ...
+>     # ...
+> 
+>     snap {
+>         # ...
+>         # ...
+>     }
+> }
+> ```
+> 
+> Doing `general:snap {` is **invalid**!
 
 ### Decoration
 
@@ -148,15 +134,12 @@ _Subcategory `decoration:blur:`_
 | input_methods | whether to blur input methods (e.g. fcitx5) | bool | false |
 | input_methods_ignorealpha | works like ignorealpha in layer rules. If pixel opacity is below set value, will not blur. [0.0 - 1.0] | float | 0.2 |
 
-{{< callout type=info >}}
-
-`blur:size` and `blur:passes` have to be at least 1.
-
-Increasing `blur:passes` is necessary to prevent blur looking wrong on higher
-`blur:size` values, but remember that higher `blur:passes` will require more
-strain on the GPU.
-
-{{< /callout >}}
+> [!NOTE]
+> `blur:size` and `blur:passes` have to be at least 1.
+> 
+> Increasing `blur:passes` is necessary to prevent blur looking wrong on higher
+> `blur:size` values, but remember that higher `blur:passes` will require more
+> strain on the GPU.
 
 #### Shadow
 
@@ -181,11 +164,8 @@ _Subcategory `decoration:shadow:`_
 | enabled | enable animations | bool | true |
 | workspace_wraparound | enable workspace wraparound, causing directional workspace animations to animate as if the first and last workspaces were adjacent | bool | false |
 
-{{< callout type=info >}}
-
-_[More about Animations](../Animations)._
-
-{{< /callout >}}
+> [!NOTE]
+> _[More about Animations](../Animations)._
 
 ### Input
 
@@ -204,6 +184,7 @@ _[More about Animations](../Animations)._
 | sensitivity | Sets the mouse input sensitivity. Value is clamped to the range -1.0 to 1.0. [libinput#pointer-acceleration](https://wayland.freedesktop.org/libinput/doc/latest/pointer-acceleration.html#pointer-acceleration) | float | 0.0 |
 | accel_profile | Sets the cursor acceleration profile. Can be one of `adaptive`, `flat`. Can also be `custom`, see [below](#custom-accel-profiles). Leave empty to use `libinput`'s default mode for your input device. [libinput#pointer-acceleration](https://wayland.freedesktop.org/libinput/doc/latest/pointer-acceleration.html#pointer-acceleration) [adaptive/flat/custom]| str | \[\[Empty\]\] |
 | force_no_accel | Force no cursor acceleration. This bypasses most of your pointer settings to get as raw of a signal as possible. **Enabling this is not recommended due to potential cursor desynchronization.** | bool | false |
+| rotation | Sets the rotation of a device in degrees clockwise off the logical neutral position. Value is clamped to the range 0 to 359. | int | 0 |
 | left_handed | Switches RMB and LMB | bool | false |
 | scroll_points | Sets the scroll acceleration profile, when `accel_profile` is set to `custom`. Has to be in the form `<step> <points>`. Leave empty to have a flat scroll curve. | str | \[\[Empty\]\] |
 | scroll_method | Sets the scroll method. Can be one of `2fg` (2 fingers), `edge`, `on_button_down`, `no_scroll`. [libinput#scrolling](https://wayland.freedesktop.org/libinput/doc/latest/scrolling.html) [2fg/edge/on_button_down/no_scroll] | str | \[\[Empty\]\] |
@@ -220,55 +201,46 @@ _[More about Animations](../Animations)._
 | off_window_axis_events | Handles axis events around (gaps/border for tiled, dragarea/border for floated) a focused window. `0` ignores axis events `1` sends out-of-bound coordinates `2` fakes pointer coordinates to the closest point inside the window `3` warps the cursor to the closest point inside the window | int | 1 |
 | emulate_discrete_scroll | Emulates discrete scrolling from high resolution scrolling events. `0` disables it, `1` enables handling of non-standard events only, and `2` force enables all scroll wheel events to be handled | int | 1 |
 
-{{< callout type=info >}}
+> [!NOTE] **XKB Settings**
+>
+> You can find a list of models, layouts, variants and options in
+> [`/usr/share/X11/xkb/rules/base.lst`](file:///usr/share/X11/xkb/rules/base.lst).
+> Alternatively, you can use the `localectl` command to discover what is available
+> on your system.
+> 
+> For switchable keyboard configurations, take a look at
+> [the uncommon tips & tricks page entry](../Uncommon-tips--tricks/#switchable-keyboard-layouts).
 
-### XKB Settings
+> [!NOTE] **Follow Mouse Cursor**
+> - 0 - Cursor movement will not change focus.
+> - 1 - Cursor movement will always change focus to the window under the cursor.
+> - 2 - Cursor focus will be detached from keyboard focus. Clicking on a window
+>   will move keyboard focus to that window.
+> - 3 - Cursor focus will be completely separate from keyboard focus. Clicking on
+>   a window will not change keyboard focus.
 
-You can find a list of models, layouts, variants and options in
-[`/usr/share/X11/xkb/rules/base.lst`](file:///usr/share/X11/xkb/rules/base.lst).
-Alternatively, you can use the `localectl` command to discover what is available
-on your system.
-
-For switchable keyboard configurations, take a look at
-[the uncommon tips & tricks page entry](../Uncommon-tips--tricks/#switchable-keyboard-layouts).
-
-{{< /callout >}}
-
-{{< callout type=info >}}
-
-### Follow Mouse Cursor
-
-- 0 - Cursor movement will not change focus.
-- 1 - Cursor movement will always change focus to the window under the cursor.
-- 2 - Cursor focus will be detached from keyboard focus. Clicking on a window
-  will move keyboard focus to that window.
-- 3 - Cursor focus will be completely separate from keyboard focus. Clicking on
-  a window will not change keyboard focus.
-
-### Custom accel profiles
-
-#### `accel_profile`
-
-`custom <step> <points...>`
-
-Example: `custom 200 0.0 0.5`
-
-#### `scroll_points`
-
-NOTE: Only works when `accel_profile` is set to `custom`.
-
-`<step> <points...>`
-
-Example: `0.2 0.0 0.5 1 1.2 1.5`
-
-To mimic the Windows acceleration curves, take a look at
-[this script](https://gist.github.com/fufexan/de2099bc3086f3a6c83d61fc1fcc06c9).
-
-See
-[the libinput doc](https://wayland.freedesktop.org/libinput/doc/latest/pointer-acceleration.html)
-for more insights on how it works.
-
-{{< /callout >}}
+> [!NOTE] **Custom Accel Profiles**
+> 
+> #### `accel_profile`
+> 
+> `custom <step> <points...>`
+> 
+> Example: `custom 200 0.0 0.5`
+> 
+> #### `scroll_points`
+> 
+> NOTE: Only works when `accel_profile` is set to `custom`.
+> 
+> `<step> <points...>`
+> 
+> Example: `0.2 0.0 0.5 1 1.2 1.5`
+> 
+> To mimic the Windows acceleration curves, take a look at
+> [this script](https://gist.github.com/fufexan/de2099bc3086f3a6c83d61fc1fcc06c9).
+> 
+> See
+> [the libinput doc](https://wayland.freedesktop.org/libinput/doc/latest/pointer-acceleration.html)
+> for more insights on how it works.
 
 #### Touchpad
 
@@ -305,7 +277,7 @@ _Subcategory `input:virtualkeyboard:`_
 
 | name | description | type | default |
 | --- | --- | --- | --- |
-| share_states | Unify key down states and modifier states with other keyboards. | bool | false |
+| share_states | Unify key down states and modifier states with other keyboards. 0 -> no, 1 -> yes, 2 -> yes unless IME client | int | 2 |
 | release_pressed_on_close | Release all pressed keys by virtual keyboard on close. | bool | false |
 
 #### Tablet
@@ -347,17 +319,14 @@ _Subcategory `gestures:`_
 | workspace_swipe_use_r | if enabled, swiping will use the `r` prefix instead of the `m` prefix for finding workspaces. | bool | false |
 | close_max_timeout | the timeout for a window to close when using a 1:1 gesture, in ms | int | 1000 |
 
-{{< callout type=info >}}
-
-`workspace_swipe`, `workspace_swipe_fingers` and `workspace_swipe_min_fingers` were removed in favor of the new gestures system.
-
-You can add this gesture config to replicate the swiping functionality with 3 fingers. See the [gestures](../Gestures) page for more info.
-
-```ini
-gesture = 3, horizontal, workspace
-```
-
-{{< /callout >}}
+> [!NOTE]
+> `workspace_swipe`, `workspace_swipe_fingers` and `workspace_swipe_min_fingers` were removed in favor of the new gestures system.
+> 
+> You can add this gesture config to replicate the swiping functionality with 3 fingers. See the [gestures](../Gestures) page for more info.
+> 
+> ```ini
+> gesture = 3, horizontal, workspace
+> ```
 
 ### Group
 
@@ -424,6 +393,7 @@ _Subcategory `misc:`_
 |---|---|---|---|
 | disable_hyprland_logo | disables the random Hyprland logo / anime girl background. :( | bool | false |
 | disable_splash_rendering | disables the Hyprland splash rendering. (requires a monitor reload to take effect) | bool | false |
+| disable_scale_notification | disables notification popup when a monitor fails to set a suitable scale | bool | false |
 | col.splash | Changes the color of the splash text (requires a monitor reload to take effect). | color | 0xffffffff |
 | font_family | Set the global default font to render the text including debug fps/notification, config error messages and etc., selected from system fonts. | string | Sans |
 | splash_font_family | Changes the font used to render the splash text, selected from system fonts (requires a monitor reload to take effect). | string | [\[Empty]] |
@@ -456,7 +426,8 @@ _Subcategory `misc:`_
 | disable_hyprland_qtutils_check | disable the warning if hyprland-qtutils is not installed | bool | false |
 | lockdead_screen_delay | delay after which the "lockdead" screen will appear in case a lockscreen app fails to cover all the outputs (5 seconds max) | int | 1000 |
 | enable_anr_dialog | whether to enable the ANR (app not responding) dialog when your apps hang | bool | true |
-| anr_missed_pings | number of missed pings before showing the ANR dialog | int | 1 |
+| anr_missed_pings | number of missed pings before showing the ANR dialog | int | 5 |
+| size_limits_tiled | whether to apply minsize and maxsize rules to tiled windows | bool | false |
 
 ### Binds
 
@@ -513,6 +484,8 @@ _Subcategory `render:`_
 | send_content_type | Report content type to allow monitor profile autoswitch (may result in a black screen during the switch) | bool | true |
 | cm_auto_hdr | Auto-switch to HDR in fullscreen when needed. 0 - off, 1 - switch to `cm, hdr`, 2 - switch to `cm, hdredid` | int | 1 |
 | new_render_scheduling | Automatically uses triple buffering when needed, improves FPS on underpowered devices. | bool | false |
+| non_shader_cm | Enable CM without shader. 0 - disable, 1 - whenever possible, 2 - DS and passthrough only, 3 - disable and ignore CM issues | int | 3 |
+| cm_sdr_eotf | Default transfer function for displaying SDR apps. 0 - Treat unspecified as sRGB, 1 - Treat unspecified as Gamma 2.2, 2 - Treat unspecified and sRGB as Gamma 2.2 | int | 0 |
 
 `cm_auto_hdr` requires `--target-colorspace-hint-mode=source` mpv option to work with mpv versions greater than v0.40.0
 
@@ -541,6 +514,7 @@ _Subcategory `cursor:`_
 | hide_on_touch | Hides the cursor when the last input was a touch input until a mouse input is done. | bool | true |
 | use_cpu_buffer | Makes HW cursors use a CPU buffer. Required on Nvidia to have HW cursors. 0 - off, 1 - on, 2 - auto (nvidia only) | int | 2 |
 | warp_back_after_non_mouse_input | Warp the cursor back to where it was after using a non-mouse input to move it, and then returning back to mouse. | bool | false |
+| zoom_disable_aa | disable antialiasing when zooming, which means things will be pixelated instead of blurry | bool | false |
 
 ### Ecosystem
 
@@ -583,11 +557,8 @@ Video:
 
 _Subcategory `debug:`_
 
-{{< callout type=warning >}}
-
-Only for developers.
-
-{{< /callout >}}
+> [!WARNING]
+> Only for developers.
 
 | name | description | type | default |
 | --- | --- | --- | --- |

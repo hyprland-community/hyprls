@@ -11,7 +11,7 @@ layout pages (See the sidebar).
 | Param type | Description |
 | --- | --- |
 | window | a window. Any of the following: class regex (by default, optionally `class:`), `initialclass:` initial class regex, `title:` title regex, `initialtitle` initial title regex, `tag:` window tag regex, `pid:` the pid, `address:` the address, `activewindow` an active window, `floating` the first floating window on the current workspace, `tiled` the first tiled window on the current workspace |
-| workspace | see below. |
+| workspace | see [below]({{< relref "#workspaces" >}}). |
 | direction | `l` `r` `u` `d` left right up down |
 | monitor | One of: direction, ID, name, `current`, relative (e.g. `+1` or `-1`) |
 | resizeparams | relative pixel delta vec2 (e.g. `10 -10`), optionally a percentage of the window size (e.g. `20 25%`) or `exact` followed by an exact vec2 (e.g. `exact 1280 720`), optionally a percentage of the screen size (e.g. `exact 50% 50%`) |
@@ -41,9 +41,10 @@ layout pages (See the sidebar).
 | togglefloating | toggles the current window's floating state | left empty / `active` for current, or `window` for a specific window |
 | setfloating | sets the current window's floating state to true | left empty / `active` for current, or `window` for a specific window |
 | settiled | sets the current window's floating state to false | left empty / `active` for current, or `window` for a specific window |
-| fullscreen | toggles the focused window's fullscreen mode | 0 - fullscreen (takes your entire screen), 1 - maximize (keeps gaps and bar(s)) |
-| fullscreenstate | sets the focused window's fullscreen mode and the one sent to the client | `internal client`, where internal (the hyprland window) and client (the application) can be `-1` - current, `0` - none, `1` - maximize, `2` - fullscreen, `3` - maximize and fullscreen. |
+| fullscreen | sets the focused window's fullscreen mode | `mode action`, where mode can be 0 - fullscreen (takes your entire screen) or 1 - maximize (keeps gaps and bar(s)), while action is optional and can be `toggle` (default), `set` or `unset`. |
+| fullscreenstate | sets the focused window's fullscreen mode and the one sent to the client | `internal client action`, where internal (the hyprland window) and client (the application) can be `-1` - current, `0` - none, `1` - maximize, `2` - fullscreen, `3` - maximize and fullscreen. action is optional and can be `toggle` (default) or `set`. |
 | dpms | sets all monitors' DPMS status. Do not use with a keybind directly. | `on`, `off`, or `toggle`. For specific monitor add monitor name after a space |
+| forceidle | sets elapsed time for all idle timers, ignoring idle inhibitors. Timers return to normal behavior upon the next activity. Do not use with a keybind directly. | floatvalue (number of seconds) |
 | pin | pins a window (i.e. show it on all workspaces) _note: floating only_ | left empty / `active` for current, or `window` for a specific window |
 | movefocus | moves the focus in a direction | direction |
 | movewindow | moves the active window in a direction or to a monitor. For floating windows, moves the window to the screen edge in that direction | direction or `mon:` and a monitor, optionally followed by a space and `silent` to prevent the focus from moving with the window|
@@ -89,24 +90,18 @@ layout pages (See the sidebar).
 | setprop | Sets a window property | `window property value` |
 | toggleswallow | If a window is swallowed by the focused window, unswallows it. Execute again to swallow it back | none |
 
-{{< callout type=warning >}}
+> [!WARNING]
+> [uwsm](../../Useful-Utilities/Systemd-start) users should avoid using `exit` dispatcher, or terminating Hyprland process directly, as exiting Hyprland this way removes it from under its clients and interferes with ordered shutdown sequence. Use `exec, uwsm stop` (or [other variants](https://github.com/Vladimir-csp/uwsm#how-to-stop)) which will gracefully bring down graphical session (and login session bound to it, if any). If you experience problems with units entering inconsistent states, affecting subsequent sessions, use `exec, loginctl terminate-user ""` instead (terminates all units of the user).
+> 
+> It's also strongly advised to replace the `exit` dispatcher inside `hyprland.conf` keybinds section accordingly.
 
-[uwsm](../../Useful-Utilities/Systemd-start) users should avoid using `exit` dispatcher, or terminating Hyprland process directly, as exiting Hyprland this way removes it from under its clients and interferes with ordered shutdown sequence. Use `exec, uwsm stop` (or [other variants](https://github.com/Vladimir-csp/uwsm#how-to-stop)) which will gracefully bring down graphical session (and login session bound to it, if any). If you experience problems with units entering inconsistent states, affecting subsequent sessions, use `exec, loginctl terminate-user ""` instead (terminates all units of the user).
-
-It's also strongly advised to replace the `exit` dispatcher inside `hyprland.conf` keybinds section accordingly.
-
-{{< /callout >}}
-
-{{< callout type=warning >}}
-
-It is NOT recommended to set DPMS with a keybind directly, as it might cause
-undefined behavior. Instead, consider something like
-
-```ini
-bind = MOD, KEY, exec, sleep 1 && hyprctl dispatch dpms off
-```
-
-{{< /callout >}}
+> [!WARNING]
+> It is NOT recommended to set DPMS or forceidle with a keybind directly, as it
+> might cause undefined behavior. Instead, consider something like
+> 
+> ```ini
+> bind = MOD, KEY, exec, sleep 1 && hyprctl dispatch dpms off
+> ```
 
 ### Grouped (tabbed) windows
 
@@ -157,33 +152,23 @@ You have nine choices:
 
 - Special Workspace: `special` or `special:name` for named special workspaces.
 
-{{< callout type=warning >}}
+> [!WARNING]
+> `special` is supported ONLY on `movetoworkspace` and `movetoworkspacesilent`.  
+> Any other dispatcher will result in undocumented behavior.
 
-`special` is supported ONLY on `movetoworkspace` and `movetoworkspacesilent`.
-Any other dispatcher will result in undocumented behavior.
-
-{{< /callout >}}
-
-{{< callout >}}
-
-Numerical workspaces (e.g. `1`, `2`, `13371337`) are allowed **ONLY** between 1
-and 2147483647 (inclusive)
-
-Neither `0` nor negative numbers are allowed.
-
-{{< /callout >}}
+> [!WARNING]
+> Numerical workspaces (e.g. `1`, `2`, `13371337`) are allowed **ONLY** between 1
+> and 2147483647 (inclusive).  
+> Neither `0` nor negative numbers are allowed.
 
 ## Special Workspace
 
 A special workspace is what is called a "scratchpad" in some other places. A
 workspace that you can toggle on/off on any monitor.
 
-{{< callout type=info >}}
-
-You can define multiple named special workspaces, but the amount of those is
-limited to 97 at a time.
-
-{{< /callout >}}
+> [!NOTE]
+> You can define multiple named special workspaces, but the amount of those is
+> limited to 97 at a time.
 
 For example, to move a window/application to a special workspace you can use the
 following syntax:
