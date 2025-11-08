@@ -16,7 +16,7 @@ import (
 var logger *zap.Logger
 
 var openedFiles = make(map[protocol.URI]string)
-var ignores = []string{"hyprlock.conf", "hypridle.conf"} // should
+var ignores = []string{"hyprlock.conf", "hypridle.conf"}
 
 type state struct {
 }
@@ -93,7 +93,6 @@ func file(uri protocol.URI) (string, error) {
 	return string(contents), nil
 }
 
-// TODO: possible to optimize
 func currentLine(uri protocol.URI, position protocol.Position) (string, error) {
 	contents, err := file(uri)
 	if err != nil {
