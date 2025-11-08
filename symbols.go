@@ -9,7 +9,7 @@ import (
 )
 
 func (h Handler) DocumentSymbol(ctx context.Context, params *protocol.DocumentSymbolParams) ([]interface{}, error) {
-	if isExclude(params.TextDocument.URI) {
+	if isFileIgnored(params.TextDocument.URI) {
 		return nil, nil
 	}
 	document, err := parse(params.TextDocument.URI)

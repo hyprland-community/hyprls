@@ -9,7 +9,7 @@ import (
 )
 
 func (h Handler) DidChange(ctx context.Context, params *protocol.DidChangeTextDocumentParams) error {
-	if isExclude(params.TextDocument.URI) {
+	if isFileIgnored(params.TextDocument.URI) {
 		return nil
 	}
 	logger.Debug("LSP:DidChange", zap.Any("params", params))
@@ -20,7 +20,7 @@ func (h Handler) DidChange(ctx context.Context, params *protocol.DidChangeTextDo
 }
 
 func (h Handler) DidClose(ctx context.Context, params *protocol.DidCloseTextDocumentParams) error {
-	if isExclude(params.TextDocument.URI) {
+	if isFileIgnored(params.TextDocument.URI) {
 		return nil
 	}
 	delete(openedFiles, params.TextDocument.URI)
@@ -28,7 +28,7 @@ func (h Handler) DidClose(ctx context.Context, params *protocol.DidCloseTextDocu
 }
 
 func (h Handler) DidOpen(ctx context.Context, params *protocol.DidOpenTextDocumentParams) error {
-	if isExclude(params.TextDocument.URI) {
+	if isFileIgnored(params.TextDocument.URI) {
 		return nil
 	}
 	file(params.TextDocument.URI)

@@ -26,7 +26,7 @@ func (h Handler) ColorPresentation(ctx context.Context, params *protocol.ColorPr
 }
 
 func (h Handler) DocumentColor(ctx context.Context, params *protocol.DocumentColorParams) ([]protocol.ColorInformation, error) {
-	if isExclude(params.TextDocument.URI) {
+	if isFileIgnored(params.TextDocument.URI) {
 		return nil, nil
 	}
 	document, err := parse(params.TextDocument.URI)

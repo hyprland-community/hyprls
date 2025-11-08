@@ -11,7 +11,7 @@ import (
 )
 
 func (h Handler) Hover(ctx context.Context, params *protocol.HoverParams) (*protocol.Hover, error) {
-	if isExclude(params.TextDocument.URI) {
+	if isFileIgnored(params.TextDocument.URI) {
 		return nil, nil
 	}
 	line, err := currentLine(params.TextDocument.URI, params.Position)

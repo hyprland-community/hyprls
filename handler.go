@@ -38,8 +38,7 @@ func (h Handler) Initialize(ctx context.Context, params *protocol.InitializePara
 			b, err := os.ReadFile(f)
 			if err == nil {
 				contd := string(b)
-				excludes := strings.Split(contd, "\n")
-				ignores = excludes
+				ignores = strings.Split(contd, "\n")
 			}
 		}
 	}

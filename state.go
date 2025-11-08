@@ -104,7 +104,7 @@ func currentLine(uri protocol.URI, position protocol.Position) (string, error) {
 	return lines[position.Line], nil
 }
 
-func isExclude(uri protocol.URI) bool {
+func isFileIgnored(uri protocol.URI) bool {
 	n := filepath.Base(uri.Filename())
 	return slices.Contains(ignores, n)
 }

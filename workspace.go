@@ -6,16 +6,16 @@ import (
 	"go.lsp.dev/protocol"
 )
 
-func extractExcludes(params *protocol.DidChangeConfigurationParams) (excludes []string) {
+func extractIncludes(params *protocol.DidChangeConfigurationParams) (extractedIgnores []string) {
 	if settings, ok := (params.Settings).(map[string]any); ok {
-		if exclude, ok := settings["exclude"]; ok {
-			if s, ok := exclude.(string); ok {
-				excludes = append(excludes, s)
+		if ignore, ok := settings["ignore"]; ok {
+			if s, ok := ignore.(string); ok {
+				extractedIgnores = append(extractedIgnores, s)
 			}
-			if arr, ok := exclude.([]any); ok {
+			if arr, ok := ignore.([]any); ok {
 				for _, e := range arr {
 					if s, ok := e.(string); ok {
-						excludes = append(excludes, s)
+						extractedIgnores = append(extractedIgnores, s)
 					}
 				}
 			}
@@ -25,6 +25,6 @@ func extractExcludes(params *protocol.DidChangeConfigurationParams) (excludes []
 }
 
 func (h Handler) DidChangeConfiguration(ctx context.Context, params *protocol.DidChangeConfigurationParams) error {
-	ignores = extractExcludes(params)
+	ignores = extractIncludes(params)
 	return nil
 }

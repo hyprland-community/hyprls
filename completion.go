@@ -14,7 +14,7 @@ import (
 )
 
 func (h Handler) Completion(ctx context.Context, params *protocol.CompletionParams) (*protocol.CompletionList, error) {
-	if isExclude(params.TextDocument.URI) {
+	if isFileIgnored(params.TextDocument.URI) {
 		return nil, nil
 	}
 	line, err := currentLine(params.TextDocument.URI, params.Position)
