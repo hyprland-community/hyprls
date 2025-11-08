@@ -25,8 +25,7 @@ jobs:
           commit_message: 🍱 Update parser data from wiki
 
       - name: Bump version and push tag
-        id: tag_version
-        uses: miguelfito/github-bump-and-tag-action@v1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          default_bump: minor
+        uses: anothrNick/github-tag-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BUMP: minor
