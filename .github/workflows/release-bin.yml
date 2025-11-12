@@ -49,6 +49,8 @@ jobs:
           files: hyprls-macos
         
       - if: matrix.os == 'windows'
+        run: mv hyprls hyprls.exe
+      - if: matrix.os == 'windows'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ inputs.tag || github.ref_name }}
