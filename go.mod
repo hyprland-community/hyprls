@@ -4,7 +4,7 @@ go 1.25.4
 
 require (
 	github.com/MakeNowJust/heredoc/v2 v2.0.1
-	github.com/PuerkitoBio/goquery v1.10.3
+	github.com/PuerkitoBio/goquery v1.11.0
 	github.com/davecgh/go-spew v1.1.1
 	go.lsp.dev/jsonrpc2 v0.10.0
 	go.uber.org/multierr v1.11.0
@@ -15,8 +15,8 @@ require (
 	github.com/andybalholm/cascadia v1.3.3 // indirect
 	go.lsp.dev/pkg v0.0.0-20210717090340-384b27a52fb2 // indirect
 	go.lsp.dev/uri v0.3.0 // indirect
-	golang.org/x/net v0.39.0 // indirect
-	golang.org/x/text v0.24.0 // indirect
+	golang.org/x/net v0.47.0 // indirect
+	golang.org/x/text v0.31.0 // indirect
 )
 
 require (
@@ -28,5 +28,5 @@ require (
 	github.com/segmentio/encoding v0.4.0 // indirect
 	github.com/yuin/goldmark v1.7.13
 	go.lsp.dev/protocol v0.12.0
-	golang.org/x/sys v0.32.0 // indirect
+	golang.org/x/sys v0.38.0 // indirect
 )
