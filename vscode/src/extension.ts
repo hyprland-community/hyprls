@@ -26,8 +26,7 @@ export function activate(context: ExtensionContext) {
       transport: TransportKind.stdio,
     },
     debug: {
-      command: "go",
-      args: ["run", "./cmd/hyprls"],
+      command: "./hyprlang-lsp",
       options: {
         cwd: path.join(context.extensionPath, ".."),
       },
