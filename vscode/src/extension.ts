@@ -4,6 +4,7 @@
  * ------------------------------------------------------------------------------------------ */
 
 import { commands, ExtensionContext, workspace } from "vscode"
+import * as path from "path"
 
 import {
   LanguageClient,
@@ -25,7 +26,11 @@ export function activate(context: ExtensionContext) {
       transport: TransportKind.stdio,
     },
     debug: {
-      command: "/home/uwun/projects/hyprls/hyprlang-lsp",
+      command: "go",
+      args: ["run", "./cmd/hyprls"],
+      options: {
+        cwd: path.join(context.extensionPath, ".."),
+      },
       transport: TransportKind.stdio,
     },
   }
