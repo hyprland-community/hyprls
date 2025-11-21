@@ -37,6 +37,7 @@ export function activate(context: ExtensionContext) {
     outputChannelName: "HyprLS",
     synchronize: {
       fileEvents: workspace.createFileSystemWatcher("*.hl"),
+      configurationSection: "hyprls",
     },
   }
 
