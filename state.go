@@ -1,7 +1,6 @@
 package hyprls
 
 import (
-	"context"
 	"os"
 	"path/filepath"
 	"slices"
@@ -16,13 +15,9 @@ import (
 var logger *zap.Logger
 
 var openedFiles = make(map[protocol.URI]string)
-var ignores = []string{"hyprlock.conf", "hypridle.conf"}
+var Ignores = []string{"hyprlock.conf", "hypridle.conf"}
 
 type state struct {
-}
-
-func (h Handler) state(ctx context.Context) state {
-	return ctx.Value("state").(state)
 }
 
 func parse(uri protocol.URI) (parser.Section, error) {
@@ -105,5 +100,5 @@ func currentLine(uri protocol.URI, position protocol.Position) (string, error) {
 
 func isFileIgnored(uri protocol.URI) bool {
 	n := filepath.Base(uri.Filename())
-	return slices.Contains(ignores, n)
+	return slices.Contains(Ignores, n)
 }

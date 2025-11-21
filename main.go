@@ -28,6 +28,7 @@ func StartServer(logger *zap.Logger, logClientIn string) {
 
 	conn.Go(ctx, protocol.ServerHandler(handler, jsonrpc2.MethodNotFoundHandler))
 	<-conn.Done()
+	logger.Info("server stopped")
 }
 
 type readWriteCloser struct {

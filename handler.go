@@ -38,11 +38,11 @@ func (h Handler) Initialize(ctx context.Context, params *protocol.InitializePara
 			b, err := os.ReadFile(f)
 			if err == nil {
 				contd := string(b)
-				ignores = strings.Split(contd, "\n")
+				Ignores = strings.Split(contd, "\n")
 			}
 		}
 	}
-	logger.Debug("Ignoring files", zap.Any("ignores", ignores))
+	logger.Debug("Ignoring files", zap.Any("ignores", Ignores))
 
 	return &protocol.InitializeResult{
 		Capabilities: protocol.ServerCapabilities{
@@ -56,6 +56,12 @@ func (h Handler) Initialize(ctx context.Context, params *protocol.InitializePara
 			TextDocumentSync: protocol.TextDocumentSyncOptions{
 				OpenClose: true,
 				Change:    protocol.TextDocumentSyncKindFull,
+			},
+			Workspace: &protocol.ServerCapabilitiesWorkspace{
+				WorkspaceFolders: &protocol.ServerCapabilitiesWorkspaceFolders{
+					Supported:           true,
+					ChangeNotifications: true,
+				},
 			},
 		},
 		ServerInfo: &protocol.ServerInfo{
