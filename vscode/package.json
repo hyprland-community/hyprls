@@ -48,7 +48,10 @@
             "type": "string"
           },
           "description": "List of files or patterns to ignore",
-          "default": []
+          "default": [
+            "hyprlock.conf",
+            "hypridle.conf"
+          ]
         }
       }
     }
