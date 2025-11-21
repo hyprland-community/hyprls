@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"go.lsp.dev/protocol"
+	"go.uber.org/zap"
 )
 
 func extractIgnores(params *protocol.DidChangeConfigurationParams) (ignores []string) {
@@ -22,6 +23,7 @@ func extractIgnores(params *protocol.DidChangeConfigurationParams) (ignores []st
 }
 
 func (h Handler) DidChangeConfiguration(ctx context.Context, params *protocol.DidChangeConfigurationParams) error {
-	ignores = extractIgnores(params)
+	Ignores = extractIgnores(params)
+	h.Logger.Info("configuration changed", zap.Strings("ignores", Ignores))
 	return nil
 }
