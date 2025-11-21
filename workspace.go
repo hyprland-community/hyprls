@@ -14,8 +14,12 @@ func extractIgnores(params *protocol.DidChangeConfigurationParams) (ignores []st
 		}
 
 		if ignore, ok := settings["ignore"]; ok {
-			if arr, ok := ignore.([]string); ok {
-				ignores = append(ignores, arr...)
+			if arr, ok := ignore.([]any); ok {
+				for _, v := range arr {
+					if s, ok := v.(string); ok {
+						ignores = append(ignores, s)
+					}
+				}
 			}
 		}
 	}
