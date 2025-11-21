@@ -35,7 +35,23 @@
         "title": "Restart language server",
         "command": "vscode-hyprls.restart-lsp"
       }
-    ]
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "HyprLS",
+      "properties": {
+        "hyprls.ignore": {
+          "type": [
+            "array"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "List of files or patterns to ignore",
+          "default": []
+        }
+      }
+    }
   },
   "activationEvents": [
     "onLanguage:hyprlang"
