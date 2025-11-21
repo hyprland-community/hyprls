@@ -21,10 +21,6 @@ var ignores = []string{"hyprlock.conf", "hypridle.conf"}
 type state struct {
 }
 
-func (h Handler) state(ctx context.Context) state {
-	return ctx.Value("state").(state)
-}
-
 func parse(uri protocol.URI) (parser.Section, error) {
 	contents, err := file(uri)
 	if err != nil {
