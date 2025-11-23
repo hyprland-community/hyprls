@@ -40,7 +40,7 @@ export function activate(context: ExtensionContext) {
     documentSelector: [{ scheme: "file", language: "hyprlang" }],
     outputChannelName: "HyprLS",
     synchronize: {
-      fileEvents: workspace.createFileSystemWatcher("*.hl"),
+      fileEvents: workspace.createFileSystemWatcher("**/.hyprlsignore"),
       configurationSection: "hyprls",
     },
   }

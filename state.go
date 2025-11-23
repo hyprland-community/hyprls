@@ -15,7 +15,8 @@ import (
 var logger *zap.Logger
 
 var openedFiles = make(map[protocol.URI]string)
-var Ignores = []string{"hyprlock.conf", "hypridle.conf"}
+var defaultIgnores = []string{"hyprlock.conf", "hypridle.conf"}
+var Ignores = defaultIgnores
 
 type state struct {
 }
