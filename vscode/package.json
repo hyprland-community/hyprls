@@ -52,6 +52,11 @@
             "hyprlock.conf",
             "hypridle.conf"
           ]
+        },
+        "hyprls.preferIgnoreFile": {
+          "type": "boolean",
+          "description": "Whether to prefer .hyprignore file over 'hyprls.ignore' setting",
+          "default": true
         }
       }
     }
