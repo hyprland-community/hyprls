@@ -39,14 +39,6 @@ func (h Handler) Declaration(ctx context.Context, params *protocol.DeclarationPa
 	return nil, errors.New("unimplemented")
 }
 
-func (h Handler) DidChangeConfiguration(ctx context.Context, params *protocol.DidChangeConfigurationParams) error {
-	return errors.New("unimplemented")
-}
-
-func (h Handler) DidChangeWatchedFiles(ctx context.Context, params *protocol.DidChangeWatchedFilesParams) error {
-	return errors.New("unimplemented")
-}
-
 func (h Handler) DidChangeWorkspaceFolders(ctx context.Context, params *protocol.DidChangeWorkspaceFoldersParams) error {
 	return errors.New("unimplemented")
 }

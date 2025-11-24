@@ -12,7 +12,7 @@
   "categories": [],
   "keywords": [],
   "engines": {
-    "vscode": "^1.999.0"
+    "vscode": "^1.106.0"
   },
   "contributes": {
     "languages": [
@@ -35,7 +35,31 @@
         "title": "Restart language server",
         "command": "vscode-hyprls.restart-lsp"
       }
-    ]
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "HyprLS",
+      "properties": {
+        "hyprls.ignore": {
+          "type": [
+            "array"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "List of files or patterns to ignore",
+          "default": [
+            "hyprlock.conf",
+            "hypridle.conf"
+          ]
+        },
+        "hyprls.preferIgnoreFile": {
+          "type": "boolean",
+          "description": "Whether to prefer .hyprignore file over 'hyprls.ignore' setting",
+          "default": true
+        }
+      }
+    }
   },
   "activationEvents": [
     "onLanguage:hyprlang"

@@ -76,10 +76,52 @@ vim.api.nvim_create_autocmd({'BufEnter', 'BufWinEnter'}, {
 						name = "hyprlang",
 						cmd = {"hyprls"},
 						root_dir = vim.fn.getcwd(),
-				}
+						settings = {
+							hyprls = {
+								preferIgnoreFile = true, -- set to false to prefer `hyprls.ignore`
+								ignore = {"hyprlock.conf", "hypridle.conf"}
+							}
+						}
+					}
 		end
 })
 ```
+
+You can control whether HyprLS prefers a workspace `.hyprlsignore` file or the editor settings with the `hyprls.preferIgnoreFile` option. Example configurations:
+
+- Using `vim.lsp.start` (example above) — set `settings.hyprls.preferIgnoreFile` to `false` to force the server to use `settings.hyprls.ignore`.
+
+- Using `nvim-lspconfig`:
+
+```lua
+local lspconfig = require('lspconfig')
+lspconfig.hyprlang.setup{
+	cmd = {"hyprls"},
+	settings = {
+		hyprls = {
+			preferIgnoreFile = false,
+			ignore = {"hyprlock.conf", "hypridle.conf"}
+		}
+	}
+}
+```
+
+When `preferIgnoreFile` is `true` (the default), HyprLS will read `.hyprlsignore` from your workspace root. When it's `false`, it will use the `hyprls.ignore` array from your editor configuration instead.
+
+Example `.hyprlsignore` (create this file at the workspace root):
+
+```
+# ignore session-specific files
+hyprlock.conf
+hypridle.conf
+# ignore any file named workspace-specific.ignore
+workspace-specific.ignore
+```
+
+Notes for Neovim users:
+
+- If you set `preferIgnoreFile = true`, HyprLS will use the workspace `.hyprlsignore` file and ignore any `settings.hyprls.ignore` values passed from Neovim.
+- If you set `preferIgnoreFile = false`, HyprLS will use the `ignore` list you provide in `settings.hyprls` (see `nvim-lspconfig` example above).
 
 ### With Emacs
 Language server support is provided by the [lsp-bridge](https://github.com/manateelazycat/lsp-bridge).

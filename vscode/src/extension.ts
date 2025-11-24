@@ -4,6 +4,7 @@
  * ------------------------------------------------------------------------------------------ */
 
 import { commands, ExtensionContext, workspace } from "vscode"
+import * as path from "path"
 
 import {
   LanguageClient,
@@ -25,7 +26,10 @@ export function activate(context: ExtensionContext) {
       transport: TransportKind.stdio,
     },
     debug: {
-      command: "/home/uwun/projects/hyprls/hyprlang-lsp",
+      command: "./hyprlang-lsp",
+      options: {
+        cwd: path.join(context.extensionPath, ".."),
+      },
       transport: TransportKind.stdio,
     },
   }
@@ -36,7 +40,8 @@ export function activate(context: ExtensionContext) {
     documentSelector: [{ scheme: "file", language: "hyprlang" }],
     outputChannelName: "HyprLS",
     synchronize: {
-      fileEvents: workspace.createFileSystemWatcher("*.hl"),
+      fileEvents: workspace.createFileSystemWatcher("**/.hyprlsignore"),
+      configurationSection: "hyprls",
     },
   }
 
