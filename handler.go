@@ -55,6 +55,16 @@ func (h *Handler) parseIgnoresFile(uri protocol.URI) ([]string, error) {
 		}
 		contd := string(b)
 		ignores := strings.Split(contd, "\n")
+		// drop all comments and empty lines
+		var filteredIgnores = make([]string, 0, len(ignores))
+		for _, ig := range ignores {
+			ig = strings.TrimSpace(ig)
+			if ig == "" || strings.HasPrefix(ig, "#") || strings.HasPrefix(ig, "//") {
+				continue
+			}
+			filteredIgnores = append(filteredIgnores, ig)
+		}
+		ignores = filteredIgnores
 		h.Logger.Info("Loaded ignores from file", zap.String("file", f), zap.Strings("ignores", ignores))
 		return ignores, nil
 	} else {
