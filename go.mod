@@ -8,7 +8,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1
 	go.lsp.dev/jsonrpc2 v0.10.0
 	go.uber.org/multierr v1.11.0
-	go.uber.org/zap v1.27.0
+	go.uber.org/zap v1.27.1
 )
 
 require (
