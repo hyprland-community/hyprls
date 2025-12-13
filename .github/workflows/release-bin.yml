@@ -23,24 +23,23 @@ jobs:
 
       - run: |
           function build_and_archive() {
-            GOOS=$1 GOARCH=$2 go build -o hyprls cmd/hyprls/main.go
-            tar -cvzf hyprls-$1-$3.tar.gz hyprls
-            zip hyprls-$1-$3.zip hyprls
+            GOOS=$2 GOARCH=$3 go build -o $1 cmd/hyprls/main.go
+            tar -cvzf hyprls-$2-$4.tar.gz $1
+            zip hyprls-$2-$4.zip $1
           }
 
-          build_and_archive "windows" "386" "x86"
-          build_and_archive "windows" "arm64" "aarch64"
-          build_and_archive "windows" "amd64" "x86_64"
-          mv hyprls hyprls.exe
+          build_and_archive "hyprls.exe" "windows" "386" "x86"
+          build_and_archive "hyprls.exe" "windows" "arm64" "aarch64"
+          build_and_archive "hyprls.exe" "windows" "amd64" "x86_64"
 
-          build_and_archive "darwin" "arm64" "aarch64"
+          build_and_archive "hyprls" "darwin" "arm64" "aarch64"
           mv hyprls hyprls-macos
-          build_and_archive "darwin" "amd64" "x86_64"
+          build_and_archive "hyprls" "darwin" "amd64" "x86_64"
 
-          build_and_archive "linux" "386" "x86"
-          build_and_archive "linux" "riscv64" "riscv64"
-          build_and_archive "linux" "arm64" "aarch64"
-          build_and_archive "linux" "amd64" "x86_64"
+          build_and_archive "hyprls" "linux" "386" "x86"
+          build_and_archive "hyprls" "linux" "riscv64" "riscv64"
+          build_and_archive "hyprls" "linux" "arm64" "aarch64"
+          build_and_archive "hyprls" "linux" "amd64" "x86_64"
 
           # for legacy reasons, we also alias linux/amd64 zip archive as hyprls.zip
           cp hyprls-linux-x86_64.zip hyprls.zip
