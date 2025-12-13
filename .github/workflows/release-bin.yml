@@ -14,45 +14,49 @@ permissions:
 
 jobs:
   build:
-    strategy:
-      fail-fast: true
-      matrix: 
-        os: [ubuntu, macos, windows]
-
-    runs-on: ${{ matrix.os }}-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - 
+      -
         uses: actions/setup-go@v6
         with: { go-version: 1.25.5 }
 
-      - run: go build -o hyprls cmd/hyprls/main.go
+      - run: |
+          function build_and_archive() {
+            GOOS=$1 GOARCH=$2 go build -o hyprls cmd/hyprls/main.go
+            tar -cvzf hyprls-$1-$3.tar.gz hyprls
+            zip hyprls-$1-$3.zip hyprls
+          }
 
-      - if: matrix.os == 'ubuntu'
-        run: zip hyprls.zip hyprls
-      - if: matrix.os == 'ubuntu'
-        uses: softprops/action-gh-release@v2
+          build_and_archive "windows" "arm64" "aarch64"
+          build_and_archive "windows" "amd64" "x86_64"
+
+          build_and_archive "darwin" "arm64" "aarch64"
+          build_and_archive "darwin" "amd64" "x86_64"
+
+          build_and_archive "linux" "riscv64" "riscv64"
+          build_and_archive "linux" "arm64" "aarch64"
+          build_and_archive "linux" "amd64" "x86_64"
+          # for legacy reasons, we also alias linux/amd64 zip archive as hyprls.zip
+          cp hyprls-linux-x86_64.zip hyprls.zip
+
+      - uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ inputs.tag || github.ref_name }}
           token: ${{ github.token }}
           files: |
+            hyprls-windows-aarch64.tar.gz
+            hyprls-windows-aarch64.zip
+            hyprls-windows-x86_64.tar.gz
+            hyprls-windows-x86_64.zip
+            hyprls-darwin-aarch64.tar.gz
+            hyprls-darwin-aarch64.zip
+            hyprls-darwin-x86_64.tar.gz
+            hyprls-darwin-x86_64.zip
+            hyprls-linux-aarch64.tar.gz
+            hyprls-linux-aarch64.zip
+            hyprls-linux-x86_64.tar.gz
+            hyprls-linux-x86_64.zip
+            hyprls-linux-riscv64.tar.gz
+            hyprls-linux-riscv64.zip
             hyprls.zip
-            hyprls
-
-      - if: matrix.os == 'macos'
-        run: mv hyprls hyprls-macos
-      - if: matrix.os == 'macos'
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ inputs.tag || github.ref_name }}
-          token: ${{ github.token }}
-          files: hyprls-macos
-        
-      - if: matrix.os == 'windows'
-        run: mv hyprls hyprls.exe
-      - if: matrix.os == 'windows'
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ inputs.tag || github.ref_name }}
-          token: ${{ github.token }}
-          files: hyprls.exe
