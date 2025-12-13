@@ -30,9 +30,11 @@ jobs:
 
           build_and_archive "windows" "arm64" "aarch64"
           build_and_archive "windows" "amd64" "x86_64"
+          mv hyprls hyprls.exe
 
           build_and_archive "darwin" "arm64" "aarch64"
           build_and_archive "darwin" "amd64" "x86_64"
+          mv hyprls hyprls-macos
 
           build_and_archive "linux" "riscv64" "riscv64"
           build_and_archive "linux" "arm64" "aarch64"
@@ -60,3 +62,6 @@ jobs:
             hyprls-linux-riscv64.tar.gz
             hyprls-linux-riscv64.zip
             hyprls.zip
+            hyprls
+            hyprls-macos
+            hyprls.exe
