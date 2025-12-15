@@ -20,7 +20,7 @@ jobs:
       - run: just check-for-hyprland-updates
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           commit-message: 🍱 Update parser data from wiki
           title: Update data from wiki
