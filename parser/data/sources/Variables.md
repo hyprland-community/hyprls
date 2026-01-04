@@ -47,7 +47,6 @@ the layout pages and not here. (See the Sidebar for Dwindle and Master layouts)
 | name | description | type | default |
 |---|---|---|---|
 | border_size | size of the border around windows | int | 1 |
-| no_border_on_floating | disable borders for floating windows | bool | false |
 | gaps_in | gaps between windows, also supports css style gaps (top, right, bottom, left -> 5,10,15,20) | int | 5 |
 | gaps_out | gaps between windows and monitor edges, also supports css style gaps (top, right, bottom, left -> 5,10,15,20) | int | 20 |
 | float_gaps | gaps between windows and monitor edges for floating windows, also supports css style gaps (top, right, bottom, left -> 5 10 15 20). -1 means default | int | 0 |
@@ -64,6 +63,7 @@ the layout pages and not here. (See the Sidebar for Dwindle and Master layouts)
 | allow_tearing | master switch for allowing tearing to occur. See [the Tearing page](../Tearing). | bool | false |
 | resize_corner | force floating windows to use a specific corner when being resized (1-4 going clockwise from top left, 0 to disable) | int | 0 |
 | modal_parent_blocking | whether parent windows of modals will be interactive | bool | true |
+| locale | overrides the system locale (e.g. en_US, es) | str | \[\[Empty\]\] |
 
 #### Snap
 
@@ -107,7 +107,7 @@ _Subcategory `general:snap:`_
 | dim_inactive | enables dimming of inactive windows | bool | false |
 | dim_strength | how much inactive windows should be dimmed [0.0 - 1.0] | float | 0.5 |
 | dim_special | how much to dim the rest of the screen by when a special workspace is open. [0.0 - 1.0] | float | 0.2 |
-| dim_around | how much the `dimaround` window rule should dim by. [0.0 - 1.0] | float | 0.4 |
+| dim_around | how much the `dim_around` window rule should dim by. [0.0 - 1.0] | float | 0.4 |
 | screen_shader | a path to a custom shader to be applied at the end of rendering. See `examples/screenShader.frag` for an example. | str | \[\[Empty\]\] |
 | border_part_of_window | whether the window border should be a part of the window | bool | true |
 
@@ -130,9 +130,9 @@ _Subcategory `decoration:blur:`_
 | vibrancy_darkness | How strong the effect of `vibrancy` is on dark areas . [0.0 - 1.0] | float | 0.0 |
 | special | whether to blur behind the special workspace (note: expensive) | bool | false |
 | popups | whether to blur popups (e.g. right-click menus) | bool | false |
-| popups_ignorealpha | works like ignorealpha in layer rules. If pixel opacity is below set value, will not blur. [0.0 - 1.0] | float | 0.2 |
+| popups_ignorealpha | works like ignore_alpha in layer rules. If pixel opacity is below set value, will not blur. [0.0 - 1.0] | float | 0.2 |
 | input_methods | whether to blur input methods (e.g. fcitx5) | bool | false |
-| input_methods_ignorealpha | works like ignorealpha in layer rules. If pixel opacity is below set value, will not blur. [0.0 - 1.0] | float | 0.2 |
+| input_methods_ignorealpha | works like ignore_alpha in layer rules. If pixel opacity is below set value, will not blur. [0.0 - 1.0] | float | 0.2 |
 
 > [!NOTE]
 > `blur:size` and `blur:passes` have to be at least 1.
@@ -368,7 +368,7 @@ _Subcategory `group:groupbar:`_
 | text_offset | adjust vertical position for titles | int | 0 |
 | scrolling | whether scrolling in the groupbar changes group active window | bool | true |
 | rounding | how much to round the indicator | int | 1 |
-| rounding_power |  adjusts the curve used for rounding broupbar corners, larger is smoother, 2.0 is a circle, 4.0 is a squircle, 1.0 is a triangular corner. [1.0 - 10.0] | float |  2.0 |
+| rounding_power |  adjusts the curve used for rounding groupbar corners, larger is smoother, 2.0 is a circle, 4.0 is a squircle, 1.0 is a triangular corner. [1.0 - 10.0] | float |  2.0 |
 | gradient_rounding | how much to round the gradients | int | 2 |
 | gradient_rounding_power | adjusts the curve used for rounding gradient corners, larger is smoother, 2.0 is a circle, 4.0 is a squircle, 1.0 is a triangular corner. [1.0 - 10.0] | float | 2.0 |
 | round_only_edges | round only the indicator edges of the entire groupbar | bool | true |
@@ -384,6 +384,7 @@ _Subcategory `group:groupbar:`_
 | gaps_in | gap size between gradients | int | 2 |
 | gaps_out | gap size between gradients and window | int | 2 |
 | keep_upper_gap | add or remove upper gap | bool | true |
+| blur | applies blur to the groupbar indicators and gradients | bool | false |
 
 ### Misc
 
@@ -417,17 +418,18 @@ _Subcategory `misc:`_
 | session_lock_xray | if true, keep rendering workspaces below your lockscreen | bool | false |
 | background_color | change the background color. (requires enabled `disable_hyprland_logo`) | color | 0x111111 |
 | close_special_on_empty | close the special workspace if the last window is removed | bool | true |
-| new_window_takes_over_fullscreen | if there is a fullscreen or maximized window, decide whether a new tiled window opened should replace it, stay behind or disable the fullscreen/maximized state. 0 - behind, 1 - takes over, 2 - unfullscreen/unmaxize [0/1/2] | int | 0 |
+| on_focus_under_fullscreen | if there is a fullscreen or maximized window, decide whether a tiled window requested to focus should replace it, stay behind or disable the fullscreen/maximized state. 0 - ignore focus request (keep focus on fullscreen window), 1 - takes over, 2 - unfullscreen/unmaximize [0/1/2] | int | 2 |
 | exit_window_retains_fullscreen | if true, closing a fullscreen window makes the next focused window fullscreen | bool | false |
 | initial_workspace_tracking | if enabled, windows will open on the workspace they were invoked on. 0 - disabled, 1 - single-shot, 2 - persistent (all children too) | int | 1 |
 | middle_click_paste | whether to enable middle-click-paste (aka primary selection) | bool | true |
-| render_unfocused_fps | the maximum limit for renderunfocused windows' fps in the background (see also [Window-Rules](../Window-Rules/#dynamic-rules) - `renderunfocused`)| int | 15 |
+| render_unfocused_fps | the maximum limit for render_unfocused windows' fps in the background (see also [Window-Rules](../Window-Rules/#dynamic-effects) - `render_unfocused`)| int | 15 |
 | disable_xdg_env_checks | disable the warning if XDG environment is externally managed | bool | false |
 | disable_hyprland_qtutils_check | disable the warning if hyprland-qtutils is not installed | bool | false |
 | lockdead_screen_delay | delay after which the "lockdead" screen will appear in case a lockscreen app fails to cover all the outputs (5 seconds max) | int | 1000 |
 | enable_anr_dialog | whether to enable the ANR (app not responding) dialog when your apps hang | bool | true |
 | anr_missed_pings | number of missed pings before showing the ANR dialog | int | 5 |
-| size_limits_tiled | whether to apply minsize and maxsize rules to tiled windows | bool | false |
+| size_limits_tiled | whether to apply min_size and max_size rules to tiled windows | bool | false |
+| disable_watchdog_warning | whether to disable the warning about not using start-hyprland | bool | false |
 
 ### Binds
 
@@ -485,7 +487,7 @@ _Subcategory `render:`_
 | cm_auto_hdr | Auto-switch to HDR in fullscreen when needed. 0 - off, 1 - switch to `cm, hdr`, 2 - switch to `cm, hdredid` | int | 1 |
 | new_render_scheduling | Automatically uses triple buffering when needed, improves FPS on underpowered devices. | bool | false |
 | non_shader_cm | Enable CM without shader. 0 - disable, 1 - whenever possible, 2 - DS and passthrough only, 3 - disable and ignore CM issues | int | 3 |
-| cm_sdr_eotf | Default transfer function for displaying SDR apps. 0 - Treat unspecified as sRGB, 1 - Treat unspecified as Gamma 2.2, 2 - Treat unspecified and sRGB as Gamma 2.2 | int | 0 |
+| cm_sdr_eotf | Default transfer function for displaying SDR apps. 0 - Default (currently gamma22), 1 - Treat unspecified as Gamma 2.2, 2 - Treat unspecified and sRGB as Gamma 2.2, 3 - Treat unspecified as sRGB (previous default) | int | 0 |
 
 `cm_auto_hdr` requires `--target-colorspace-hint-mode=source` mpv option to work with mpv versions greater than v0.40.0
 
@@ -509,9 +511,11 @@ _Subcategory `cursor:`_
 | default_monitor | the name of a default monitor for the cursor to be set to on startup (see `hyprctl monitors` for names) | str | [[EMPTY]] |
 | zoom_factor | the factor to zoom by around the cursor. Like a magnifying glass. Minimum 1.0 (meaning no zoom) | float | 1.0 |
 | zoom_rigid | whether the zoom should follow the cursor rigidly (cursor is always centered if it can be) or loosely | bool | false |
+| zoom_detached_camera | detach the camera from the mouse when zoomed in, only ever moving the camera to keep the mouse in view when it goes past the screen edges | bool | true |
 | enable_hyprcursor | whether to enable hyprcursor support | bool | true |
 | hide_on_key_press | Hides the cursor when you press any key until the mouse is moved. | bool | false |
 | hide_on_touch | Hides the cursor when the last input was a touch input until a mouse input is done. | bool | true |
+| hide_on_tablet | Hides the cursor when the last input was a tablet input until a mouse input is done. | bool | true |
 | use_cpu_buffer | Makes HW cursors use a CPU buffer. Required on Nvidia to have HW cursors. 0 - off, 1 - on, 2 - auto (nvidia only) | int | 2 |
 | warp_back_after_non_mouse_input | Warp the cursor back to where it was after using a non-mouse input to move it, and then returning back to mouse. | bool | false |
 | zoom_disable_aa | disable antialiasing when zooming, which means things will be pixelated instead of blurry | bool | false |
@@ -526,32 +530,15 @@ _Subcategory `ecosystem:`_
 | no_donation_nag | disable the popup that shows up twice a year encouraging to donate. | bool | false |
 | enforce_permissions | whether to enable [permission control](../Permissions). | bool | false |
 
-### Experimental
+### Quirks
 
-_Subcategory `experimental:`_
+_Subcategory `quirks:`_
 
 | name | description | type | default |
 | --- | --- | --- | --- |
-| xx_color_management_v4 | enable color management protocol | bool | false |
+| prefer_hdr | Report HDR mode as preferred. 0 - off, 1 - always, 2 - gamescope only | int | 0 |
 
-Since The release of `Mesa 25.1.1` settings below are no longer required, so just skip.
-
-Requires a client with `frog-color-management-v1` or `xx-color-management-v4` support like gamescope or https://github.com/Zamundaaa/VK_hdr_layer
-
-Steam:
-
-`DXVK_HDR=1 gamescope -f --hdr-enabled -- %command%`
-
-`ENABLE_HDR_WSI=1 DXVK_HDR=1 DISPLAY= %command%` (requires wayland-enabled proton version)
-
-Non-steam:
-
-`ENABLE_HDR_WSI=1 DXVK_HDR=1 DISPLAY= wine executable.exe`
-
-Video:
-
-`ENABLE_HDR_WSI=1 mpv --vo=gpu-next --target-colorspace-hint --gpu-api=vulkan --gpu-context=waylandvk "filename"`
-
+Some clients expect monitor to be in HDR mode prior to the client start. This breaks auto HDR activation and can cause whitescreen and flickering. Use `prefer_hdr` to fix it,
 
 ### Debug
 
