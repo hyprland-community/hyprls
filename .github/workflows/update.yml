@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
     steps:
       - uses: ConorMacBride/install-package@v1
         with:
@@ -21,6 +22,7 @@ jobs:
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v8
+
         with:
           commit-message: 🍱 Update parser data from wiki
           title: Update data from wiki
