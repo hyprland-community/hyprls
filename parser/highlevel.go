@@ -12,6 +12,7 @@ type Configuration struct {
 	Gestures   ConfigurationGestures   `json:"gestures"`
 	Group      ConfigurationGroup      `json:"group"`
 	Misc       ConfigurationMisc       `json:"misc"`
+	Layout     ConfigurationLayout     `json:"layout"`
 	Binds      ConfigurationBinds      `json:"binds"`
 	XWayland   ConfigurationXWayland   `json:"xwayland"`
 	OpenGL     ConfigurationOpenGL     `json:"opengl"`
@@ -52,7 +53,7 @@ type ConfigurationGeneral struct {
 	// active border color for window that cannot be added to a group
 	ColNogroupBorderActive GradientValue `json:"col.nogroup_border_active"`
 
-	// which layout to use. [dwindle/master]
+	// which layout to use. [dwindle/master/scrolling/monocle]
 	Layout string `json:"layout"`
 
 	// if true, will not fall back to the next available window when moving focus in a direction where no window was found
@@ -528,6 +529,9 @@ type ConfigurationGroupGroupbar struct {
 	// adjust vertical position for titles
 	TextOffset int `json:"text_offset"`
 
+	// set horizontal padding for titles
+	TextPadding int `json:"text_padding"`
+
 	// whether scrolling in the groupbar changes group active window
 	Scrolling bool `json:"scrolling"`
 
@@ -702,6 +706,14 @@ type ConfigurationMisc struct {
 	DisableWatchdogWarning bool `json:"disable_watchdog_warning"`
 }
 
+type ConfigurationLayout struct {
+	// whenever only a single window is shown on a screen, add padding so that it conforms to the specified aspect ratio. A value like 4 3 on a 16:9 screen will make it a 4:3 window in the middle with padding to the sides.
+	SingleWindowAspectRatio [2]float32 `json:"single_window_aspect_ratio"`
+
+	// sets a tolerance for single_window_aspect_ratio, so that if the padding that would have been added is smaller than the specified fraction of the height or width of the screen, it will not attempt to adjust the window size [0 - 1]
+	SingleWindowAspectRatioTolerance int `json:"single_window_aspect_ratio_tolerance"`
+}
+
 type ConfigurationBinds struct {
 	// if disabled, will not pass the mouse events to apps / dragging windows around if a keybind has been triggered.
 	PassMouseWhenBound bool `json:"pass_mouse_when_bound"`
@@ -735,9 +747,6 @@ type ConfigurationBinds struct {
 
 	// If enabled, apps that request keybinds to be disabled (e.g. VMs) will not be able to do so.
 	DisableKeybindGrabbing bool `json:"disable_keybind_grabbing"`
-
-	// If enabled, moving a window or focus over the edge of a monitor with a direction will move it to the next monitor in that direction.
-	WindowDirectionMonitorFallback bool `json:"window_direction_monitor_fallback"`
 
 	// If enabled, Allow fullscreen to pinned windows, and restore their pinned status afterwards
 	AllowPinFullscreen bool `json:"allow_pin_fullscreen"`
@@ -796,8 +805,8 @@ type ConfigurationRender struct {
 	// Enable CM without shader. 0 - disable, 1 - whenever possible, 2 - DS and passthrough only, 3 - disable and ignore CM issues
 	NonShaderCm int `json:"non_shader_cm"`
 
-	// Default transfer function for displaying SDR apps. 0 - Default (currently gamma22), 1 - Treat unspecified as Gamma 2.2, 2 - Treat unspecified and sRGB as Gamma 2.2, 3 - Treat unspecified as sRGB (previous default)
-	CmSdrEotf int `json:"cm_sdr_eotf"`
+	// Default transfer function for displaying SDR apps. default - Use default value (Gamma 2.2), gamma22 - Treat unspecified as Gamma 2.2, gamma22force - Treat unspecified and sRGB as Gamma 2.2, srgb - Treat unspecified as sRGB
+	CmSdrEotf string `json:"cm_sdr_eotf"`
 }
 
 type ConfigurationCursor struct {
@@ -890,6 +899,9 @@ type ConfigurationDebug struct {
 
 	// (epilepsy warning!) flash areas updated with damage tracking
 	DamageBlink bool `json:"damage_blink"`
+
+	// enables OpenGL debugging with glGetError and EGL_KHR_debug, requires a restart after changing.
+	GlDebugging bool `json:"gl_debugging"`
 
 	// disable logging to a file
 	DisableLogs bool `json:"disable_logs"`
@@ -1005,10 +1017,4 @@ type ConfigurationDwindle struct {
 
 	// bindm movewindow will drop the window more precisely depending on where your mouse is.
 	PreciseMouseMove bool `json:"precise_mouse_move"`
-
-	// whenever only a single window is shown on a screen, add padding so that it conforms to the specified aspect ratio. A value like 4 3 on a 16:9 screen will make it a 4:3 window in the middle with padding to the sides.
-	SingleWindowAspectRatio [2]float32 `json:"single_window_aspect_ratio"`
-
-	// sets a tolerance for single_window_aspect_ratio, so that if the padding that would have been added is smaller than the specified fraction of the height or width of the screen, it will not attempt to adjust the window size [0 - 1]
-	SingleWindowAspectRatioTolerance int `json:"single_window_aspect_ratio_tolerance"`
 }

@@ -135,7 +135,7 @@ Dynamic effects are re-evaluated every time a property changes.
 
 | Effect | argument | Description |
 | ---- | ----------- | --- |
-| persistent_size | \[on\] | Allows size persistence between application launches for floating windows. |
+| persistent_size | \[on\] | For floating windows, internally store their size. When a new floating window opens with the same class and title, restore the saved size. |
 | no_max_size | \[on\] | Removes max size limitations. Especially useful with windows that report invalid max sizes (e.g. winecfg). |
 | stay_focused | \[on\] | Forces focus on the window as long as it's visible. |
 | animation | \[style\] (\[opt\]) | Forces an animation onto a window, with a selected opt. Opt is optional. |
@@ -284,6 +284,10 @@ windowrule = opacity 0.8 0.8, match:class kitty
 Here, all kitty windows will have `opacity 0.8`, even if they are floating.
 The rest of the floating windows will have `opacity 0.5`.
 
+> [!IMPORTANT]
+> Named rules take precedence over anonymous ones. That is, rules are evaluated top
+> to bottom, but all named rules get evaluated first, then all anonymous ones.
+
 > [!NOTE]
 > Opacity is a PRODUCT of all opacities by default. For example, setting
 > `active_opacity` to `0.5` and `opacity` to `0.5` will result in a total opacity of
@@ -346,3 +350,14 @@ but they have different props and effects.
 | order | \[n\] | Sets the order relative to other layers. A higher `n` means closer to the edge of the monitor. Can be negative. `n = 0` if unspecified. |
 | above_lock | \[0/1/2\] | If non-zero, renders the layer above the lockscreen when the session is locked. If set to `2`, you can interact with the layer on the lockscreen, otherwise it will only be rendered above it. |
 | no_screen_share | \[on\] | Hides the layer from screen sharing by drawing a black rectangle over it. |
+
+### Examples
+```
+layerrule = blur on, match:namespace waybar
+
+layerrule {
+  name = no_anim_for_selection
+  no_anim = on
+  match:namespace = selection
+}
+```
