@@ -59,7 +59,6 @@ layout pages (See the sidebar).
 | tagwindow | apply tag to current or the first window matching | `tag [window]`, e.g. `+code ^(foot)$`, `music` |
 | focuswindow | focuses the first window matching | window |
 | focusmonitor | focuses a monitor | monitor |
-| splitratio | changes the split ratio | floatvalue |
 | movecursortocorner | moves the cursor to the corner of the active window | direction, 0 - 3, bottom left - 0, bottom right - 1, top right - 2, top left - 3 |
 | movecursor | moves the cursor to a specified position | `x y` |
 | renameworkspace | rename a workspace | `id name`, e.g. `2 work` |
@@ -212,6 +211,10 @@ address:0x13371337 immediate unset
 address:0x13371337 border_size relative -2
 address:0x13371337 rounding_power relative 0.1
 ```
+
+Some props are expanded from their window rule parents which take multiple arguments:
+- `border_color` -> `active_border_color`, `inactive_border_color`
+- `opacity` -> `opacity`, `opacity_inactive`, `opacity_fullscreen`, `opacity_override`, `opacity_inactive_override`, `opacity_fullscreen_override`
 
 ### Fullscreenstate
 

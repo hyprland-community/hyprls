@@ -55,7 +55,7 @@ the layout pages and not here. (See the Sidebar for Dwindle and Master layouts)
 | col.active_border | border color for the active window | gradient | 0xffffffff |
 | col.nogroup_border | inactive border color for window that cannot be added to a group (see `denywindowfromgroup` dispatcher) | gradient | 0xffffaaff |
 | col.nogroup_border_active | active border color for window that cannot be added to a group | gradient | 0xffff00ff |
-| layout | which layout to use. [dwindle/master] | str | dwindle |
+| layout | which layout to use. \[dwindle/master/scrolling/monocle\] | str | dwindle |
 | no_focus_fallback | if true, will not fall back to the next available window when moving focus in a direction where no window was found | bool | false |
 | resize_on_border | enables resizing windows by clicking and dragging on borders and gaps | bool | false |
 | extend_border_grab_area | extends the area around the border where you can click and drag on, only used when `general:resize_on_border` is on. | int | 15 |
@@ -204,7 +204,7 @@ _Subcategory `decoration:shadow:`_
 > [!NOTE] **XKB Settings**
 >
 > You can find a list of models, layouts, variants and options in
-> [`/usr/share/X11/xkb/rules/base.lst`](file:///usr/share/X11/xkb/rules/base.lst).
+> [`/usr/share/X11/xkb/rules/evdev.lst`](file:///usr/share/X11/xkb/rules/evdev.lst).
 > Alternatively, you can use the `localectl` command to discover what is available
 > on your system.
 > 
@@ -366,6 +366,7 @@ _Subcategory `group:groupbar:`_
 | priority | sets the decoration priority for groupbars | int | 3 |
 | render_titles | whether to render titles in the group bar decoration | bool | true |
 | text_offset | adjust vertical position for titles | int | 0 |
+| text_padding | set horizontal padding for titles | int | 0 |
 | scrolling | whether scrolling in the groupbar changes group active window | bool | true |
 | rounding | how much to round the indicator | int | 1 |
 | rounding_power |  adjusts the curve used for rounding groupbar corners, larger is smoother, 2.0 is a circle, 4.0 is a squircle, 1.0 is a triangular corner. [1.0 - 10.0] | float |  2.0 |
@@ -431,6 +432,15 @@ _Subcategory `misc:`_
 | size_limits_tiled | whether to apply min_size and max_size rules to tiled windows | bool | false |
 | disable_watchdog_warning | whether to disable the warning about not using start-hyprland | bool | false |
 
+### Layout
+
+_Subcategory `layout:`_
+
+| name | description | type | default |
+|---|---|---|---|
+| single_window_aspect_ratio | whenever only a single window is shown on a screen, add padding so that it conforms to the specified aspect ratio. A value like `4 3` on a 16:9 screen will make it a 4:3 window in the middle with padding to the sides. | Vec2D | 0 0 |
+| single_window_aspect_ratio_tolerance | sets a tolerance for `single_window_aspect_ratio`, so that if the padding that would have been added is smaller than the specified fraction of the height or width of the screen, it will not attempt to adjust the window size [0 - 1] | int | 0.1 | 
+
 ### Binds
 
 _Subcategory `binds:`_
@@ -448,7 +458,6 @@ _Subcategory `binds:`_
 | movefocus_cycles_fullscreen | If enabled, when on a fullscreen window, `movefocus` will cycle fullscreen, if not, it will move the focus in a direction. | bool | false |
 | movefocus_cycles_groupfirst | If enabled, when in a grouped window, movefocus will cycle windows in the groups first, then at each ends of tabs, it'll move on to other windows/groups | bool | false |
 | disable_keybind_grabbing | If enabled, apps that request keybinds to be disabled (e.g. VMs) will not be able to do so. | bool | false |
-| window_direction_monitor_fallback | If enabled, moving a window or focus over the edge of a monitor with a direction will move it to the next monitor in that direction. | bool | true |
 | allow_pin_fullscreen | If enabled, Allow fullscreen to pinned windows, and restore their pinned status afterwards | bool | false |
 | drag_threshold | Movement threshold in pixels for window dragging and c/g bind flags. 0 to disable and grab on mousedown. | int | 0 |
 
@@ -487,7 +496,7 @@ _Subcategory `render:`_
 | cm_auto_hdr | Auto-switch to HDR in fullscreen when needed. 0 - off, 1 - switch to `cm, hdr`, 2 - switch to `cm, hdredid` | int | 1 |
 | new_render_scheduling | Automatically uses triple buffering when needed, improves FPS on underpowered devices. | bool | false |
 | non_shader_cm | Enable CM without shader. 0 - disable, 1 - whenever possible, 2 - DS and passthrough only, 3 - disable and ignore CM issues | int | 3 |
-| cm_sdr_eotf | Default transfer function for displaying SDR apps. 0 - Default (currently gamma22), 1 - Treat unspecified as Gamma 2.2, 2 - Treat unspecified and sRGB as Gamma 2.2, 3 - Treat unspecified as sRGB (previous default) | int | 0 |
+| cm_sdr_eotf | Default transfer function for displaying SDR apps. default - Use default value (Gamma 2.2), gamma22 - Treat unspecified as Gamma 2.2, gamma22force - Treat unspecified and sRGB as Gamma 2.2, srgb - Treat unspecified as sRGB| str | default |
 
 `cm_auto_hdr` requires `--target-colorspace-hint-mode=source` mpv option to work with mpv versions greater than v0.40.0
 
@@ -551,6 +560,7 @@ _Subcategory `debug:`_
 | --- | --- | --- | --- |
 | overlay | print the debug performance overlay. Disable VFR for accurate results. | bool | false |
 | damage_blink | (epilepsy warning!) flash areas updated with damage tracking | bool | false |
+| gl_debugging | enables OpenGL debugging with glGetError and EGL_KHR_debug, requires a restart after changing. | bool | false |
 | disable_logs | disable logging to a file | bool | true |
 | disable_time | disables time logging | bool | true |
 | damage_tracking | redraw only the needed bits of the display. Do **not** change. (default: full - 2) monitor - 1, none - 0 | int | 2 |

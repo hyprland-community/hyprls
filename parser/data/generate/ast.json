@@ -102,7 +102,7 @@
         },
         {
           "Name": "layout",
-          "Description": "which layout to use. [dwindle/master]",
+          "Description": "which layout to use. [dwindle/master/scrolling/monocle]",
           "Type": "str",
           "Default": "dwindle"
         },
@@ -984,6 +984,12 @@
               "Default": "0"
             },
             {
+              "Name": "text_padding",
+              "Description": "set horizontal padding for titles",
+              "Type": "int",
+              "Default": "0"
+            },
+            {
               "Name": "scrolling",
               "Description": "whether scrolling in the groupbar changes group active window",
               "Type": "bool",
@@ -1413,6 +1419,26 @@
     },
     {
       "Path": [
+        "Layout"
+      ],
+      "Subsections": [],
+      "Variables": [
+        {
+          "Name": "single_window_aspect_ratio",
+          "Description": "whenever only a single window is shown on a screen, add padding so that it conforms to the specified aspect ratio. A value like 4 3 on a 16:9 screen will make it a 4:3 window in the middle with padding to the sides.",
+          "Type": "Vec2D",
+          "Default": "0 0"
+        },
+        {
+          "Name": "single_window_aspect_ratio_tolerance",
+          "Description": "sets a tolerance for single_window_aspect_ratio, so that if the padding that would have been added is smaller than the specified fraction of the height or width of the screen, it will not attempt to adjust the window size [0 - 1]",
+          "Type": "int",
+          "Default": "0.1"
+        }
+      ]
+    },
+    {
+      "Path": [
         "Binds"
       ],
       "Subsections": [],
@@ -1482,12 +1508,6 @@
           "Description": "If enabled, apps that request keybinds to be disabled (e.g. VMs) will not be able to do so.",
           "Type": "bool",
           "Default": "false"
-        },
-        {
-          "Name": "window_direction_monitor_fallback",
-          "Description": "If enabled, moving a window or focus over the edge of a monitor with a direction will move it to the next monitor in that direction.",
-          "Type": "bool",
-          "Default": "true"
         },
         {
           "Name": "allow_pin_fullscreen",
@@ -1617,9 +1637,9 @@
         },
         {
           "Name": "cm_sdr_eotf",
-          "Description": "Default transfer function for displaying SDR apps. 0 - Default (currently gamma22), 1 - Treat unspecified as Gamma 2.2, 2 - Treat unspecified and sRGB as Gamma 2.2, 3 - Treat unspecified as sRGB (previous default)",
-          "Type": "int",
-          "Default": "0"
+          "Description": "Default transfer function for displaying SDR apps. default - Use default value (Gamma 2.2), gamma22 - Treat unspecified as Gamma 2.2, gamma22force - Treat unspecified and sRGB as Gamma 2.2, srgb - Treat unspecified as sRGB",
+          "Type": "str",
+          "Default": "default"
         }
       ]
     },
@@ -1818,6 +1838,12 @@
         {
           "Name": "damage_blink",
           "Description": "(epilepsy warning!) flash areas updated with damage tracking",
+          "Type": "bool",
+          "Default": "false"
+        },
+        {
+          "Name": "gl_debugging",
+          "Description": "enables OpenGL debugging with glGetError and EGL_KHR_debug, requires a restart after changing.",
           "Type": "bool",
           "Default": "false"
         },
@@ -2058,18 +2084,6 @@
           "Description": "bindm movewindow will drop the window more precisely depending on where your mouse is.",
           "Type": "bool",
           "Default": "false"
-        },
-        {
-          "Name": "single_window_aspect_ratio",
-          "Description": "whenever only a single window is shown on a screen, add padding so that it conforms to the specified aspect ratio. A value like 4 3 on a 16:9 screen will make it a 4:3 window in the middle with padding to the sides.",
-          "Type": "Vec2D",
-          "Default": "0 0"
-        },
-        {
-          "Name": "single_window_aspect_ratio_tolerance",
-          "Description": "sets a tolerance for single_window_aspect_ratio, so that if the padding that would have been added is smaller than the specified fraction of the height or width of the screen, it will not attempt to adjust the window size [0 - 1]",
-          "Type": "int",
-          "Default": "0.1"
         }
       ]
     }
@@ -2077,7 +2091,7 @@
   "keywords": [
     {
       "Name": "submap",
-      "Description": "Keybind submaps, also known as _modes_ or _groups_, allow you to activate a\nseparate set of keybinds.\n\nFor example, if you want to enter a `resize`_mode_ that allows you to resize windows with the arrow keys, you can do it like this:\n\n```ini\n# Switch to a submap called `resize`.\nbind = ALT, R, submap, resize\n\n# Start a submap called \"resize\".\nsubmap = resize\n\n# Set repeatable binds for resizing the active window.\nbinde = , right, resizeactive, 10 0\nbinde = , left, resizeactive, -10 0\nbinde = , up, resizeactive, 0 -10\nbinde = , down, resizeactive, 0 10\n\n# Use `reset` to go back to the global submap\nbind = , escape, submap, reset\n\n# Reset the submap, which will return to the global submap\nsubmap = reset\n\n# Keybinds further down will be global again...\n\n```\n\n> [!WARNING]\n> Do not forget a keybind (`escape`, in this case) to reset the keymap while inside it!\n> \n> If you get stuck inside a keymap, you can use `hyprctl dispatch submap reset` to go back.\n> \n> If you do not have a terminal open, tough luck buddy. You have been warned.\n\nYou can also set the same keybind to perform multiple actions, such as resize\nand close the submap, like so:\n\n```ini\nbind = ALT, R, submap, resize\n\nsubmap = resize\n\nbind = , right, resizeactive, 10 0\nbind = , right, submap, reset\n# ...\n\nsubmap = reset\n\n```\n\nThis works because the binds are executed in the order they appear, and\nassigning multiple actions per bind is possible.\n\nYou can set a keybind that will be active no matter the current submap with the submap universal bind flag.\n\n```ini\nbindu = $mainMod, K, exec, kitty\n\n```\n\n### Nesting\n\nSubmaps can be nested, see the following example:\n\n```ini\nbind = $mainMod, M, submap, main_submap\nsubmap = main_submap\n\n# ...\n\n# nested_one\nbind = , 1, submap, nested_one\nsubmap = nested_one\n\n# ...\n\nbind = SHIFT, escape, submap, reset\nbind =      , escape, submap, main_submap\nsubmap = main_submap\n# /nested_one\n\n# nested_two\nbind = , 2, submap, nested_two\nsubmap = nested_two\n\n# ...\n\nbind = SHIFT, escape, submap, reset\nbind =      , escape, submap, main_submap\nsubmap = main_submap\n# /nested_two\n\nbind = , escape, submap, reset\nsubmap = reset\n\n```\n\n### Automatically close a submap on dispatch\n\nSubmaps can be automatically closed or sent to another submap by appending `,` followed by a submap or _reset_.\n\n```ini\nbind = SUPER,a, submap, submapA\n\n# Sets the submap to submapB after pressing a.\nsubmap = submapA, submapB\nbind = ,a,exec, someCoolThing.sh\nsubmap = reset\n\n# Reset submap to default after pressing a.\nsubmap = submapB, reset\nbind = ,a,exec, soemOtherCoolThing.sh\nsubmap = reset\n\n```\n\n### Catch-All\n\nYou can also define a keybind via the special `catchall` keyword, which\nactivates no matter which key is pressed.\n\nThis can be used to prevent any keys from passing to your active application\nwhile in a submap or to exit it immediately when any unknown key is pressed:\n\n```ini\nbind = , catchall, submap, reset\n\n```",
+      "Description": "Keybind submaps, also known as _modes_ or _groups_, allow you to activate a\nseparate set of keybinds.\n\nFor example, if you want to enter a `resize`_mode_ that allows you to resize windows with the arrow keys, you can do it like this:\n\n```ini\n# Switch to a submap called `resize`.\nbind = ALT, R, submap, resize\n\n# Start a submap called \"resize\".\nsubmap = resize\n\n# Set repeatable binds for resizing the active window.\nbinde = , right, resizeactive, 10 0\nbinde = , left, resizeactive, -10 0\nbinde = , up, resizeactive, 0 -10\nbinde = , down, resizeactive, 0 10\n\n# Use `reset` to go back to the global submap\nbind = , escape, submap, reset\n\n# Reset the submap, which will return to the global submap\nsubmap = reset\n\n# Keybinds further down will be global again...\n\n```\n\n> [!WARNING]\n> Do not forget a keybind (`escape`, in this case) to reset the keymap while inside it!\n> \n> If you get stuck inside a keymap, you can use `hyprctl dispatch submap reset` to go back.\n> \n> If you do not have a terminal open, tough luck buddy. You have been warned.\n\nYou can also set the same keybind to perform multiple actions, such as resize\nand close the submap, like so:\n\n```ini\nbind = ALT, R, submap, resize\n\nsubmap = resize\n\nbind = , right, resizeactive, 10 0\nbind = , right, submap, reset\n# ...\n\nsubmap = reset\n\n```\n\nThis works because the binds are executed in the order they appear, and\nassigning multiple actions per bind is possible.\n\nYou can set a keybind that will be active no matter the current submap with the submap universal bind flag.\n\n```ini\nbindu = $mainMod, K, exec, kitty\n\n```\n\n### Nesting\n\nSubmaps can be nested, see the following example:\n\n```ini\nbind = $mainMod, M, submap, main_submap\nsubmap = main_submap\n\n# ...\n\n# nested_one\nbind = , 1, submap, nested_one\nsubmap = nested_one\n\n# ...\n\nbind = SHIFT, escape, submap, reset\nbind =      , escape, submap, main_submap\nsubmap = main_submap\n# /nested_one\n\n# nested_two\nbind = , 2, submap, nested_two\nsubmap = nested_two\n\n# ...\n\nbind = SHIFT, escape, submap, reset\nbind =      , escape, submap, main_submap\nsubmap = main_submap\n# /nested_two\n\nbind = , escape, submap, reset\nsubmap = reset\n\n```\n\n### Automatically close a submap on dispatch\n\nSubmaps can be automatically closed or sent to another submap by appending `,` followed by a submap or _reset_.\n\n```ini\nbind = SUPER,a, submap, submapA\n\n# Sets the submap to submapB after pressing a.\nsubmap = submapA, submapB\nbind = ,a,exec, someCoolThing.sh\nsubmap = reset\n\n# Reset submap to default after pressing a.\nsubmap = submapB, reset\nbind = ,a,exec, someOtherCoolThing.sh\nsubmap = reset\n\n```\n\n### Catch-All\n\nYou can also define a keybind via the special `catchall` keyword, which\nactivates no matter which key is pressed.\n\nThis can be used to prevent any keys from passing to your active application\nwhile in a submap or to exit it immediately when any unknown key is pressed:\n\n```ini\nbind = , catchall, submap, reset\n\n```",
       "Flags": []
     },
     {
@@ -2092,7 +2106,7 @@
     },
     {
       "Name": "layerrule",
-      "Description": "Some things in Wayland are not windows, but layers. That includes, for example:\napp launchers, status bars, or wallpapers.\n\nThose have specific rules, separate from windows. Their syntax is the exact same,\nbut they have different props and effects.\n\n### Props\n\nFieldArgumentDescriptionmatch:namespace[RegEx]namespace of the layer, check `hyprctl layers`.\n\n### Effects\n\neffectargumentdescriptionno_anim[on]Disables animations.blur[on]Enables blur for the layer.blur_popups[on]Enables blur for the popups.ignore_alpha[a]Makes blur ignore pixels with opacity of `a` or lower. `a` is float value from `0` to `1`. `a = 0` if unspecified.dim_around[on]Dims everything behind the layer.xray[on]Sets the blur xray mode for a layer. `0` for off, `1` for on, `unset` for default.animation[style]Allows you to set a specific animation style for this layer.order[n]Sets the order relative to other layers. A higher `n` means closer to the edge of the monitor. Can be negative. `n = 0` if unspecified.above_lock[0/1/2]If non-zero, renders the layer above the lockscreen when the session is locked. If set to `2`, you can interact with the layer on the lockscreen, otherwise it will only be rendered above it.no_screen_share[on]Hides the layer from screen sharing by drawing a black rectangle over it.",
+      "Description": "Some things in Wayland are not windows, but layers. That includes, for example:\napp launchers, status bars, or wallpapers.\n\nThose have specific rules, separate from windows. Their syntax is the exact same,\nbut they have different props and effects.\n\n### Props\n\nFieldArgumentDescriptionmatch:namespace[RegEx]namespace of the layer, check `hyprctl layers`.\n\n### Effects\n\neffectargumentdescriptionno_anim[on]Disables animations.blur[on]Enables blur for the layer.blur_popups[on]Enables blur for the popups.ignore_alpha[a]Makes blur ignore pixels with opacity of `a` or lower. `a` is float value from `0` to `1`. `a = 0` if unspecified.dim_around[on]Dims everything behind the layer.xray[on]Sets the blur xray mode for a layer. `0` for off, `1` for on, `unset` for default.animation[style]Allows you to set a specific animation style for this layer.order[n]Sets the order relative to other layers. A higher `n` means closer to the edge of the monitor. Can be negative. `n = 0` if unspecified.above_lock[0/1/2]If non-zero, renders the layer above the lockscreen when the session is locked. If set to `2`, you can interact with the layer on the lockscreen, otherwise it will only be rendered above it.no_screen_share[on]Hides the layer from screen sharing by drawing a black rectangle over it.\n\n### Examples\n\n```\nlayerrule = blur on, match:namespace waybar\n\nlayerrule {\n  name = no_anim_for_selection\n  no_anim = on\n  match:namespace = selection\n}\n\n```",
       "Flags": []
     },
     {
@@ -2134,12 +2148,12 @@
     },
     {
       "Name": "monitor",
-      "Description": "The general config of a monitor looks like this:\n\n```ini\nmonitor = name, resolution, position, scale\n\n```\n\nA common example:\n\n```ini\nmonitor = DP-1, 1920x1080@144, 0x0, 1\n\n```\n\nThis will make the monitor on `DP-1` a `1920x1080` display, at\n144Hz, `0x0` off from the top left corner, with a scale of 1 (unscaled).\n\nTo list all available monitors (active and inactive):\n\n```bash\nhyprctl monitors all\n\n```\n\nMonitors are positioned on a virtual \"layout\". The `position` is the position,\nin pixels, of said display in the layout. (calculated from the top-left corner)\n\nFor example:\n\n```ini\nmonitor = DP-1, 1920x1080, 0x0, 1\nmonitor = DP-2, 1920x1080, 1920x0, 1\n\n```\n\nwill tell Hyprland to put DP-1 on the _left_ of DP-2, while\n\n```ini\nmonitor = DP-1, 1920x1080, 1920x0, 1\nmonitor = DP-2, 1920x1080, 0x0, 1\n\n```\n\nwill tell Hyprland to put DP-1 on the _right_.\n\nThe `position` may contain _negative_ values, so the above example could also be\nwritten as\n\n```ini\nmonitor = DP-1, 1920x1080, 0x0, 1\nmonitor = DP-2, 1920x1080, -1920x0, 1\n\n```\n\nHyprland uses an inverse Y cartesian system. Thus, a negative y coordinate\nplaces a monitor higher, and a positive y coordinate will place it lower.\n\nFor example:\n\n```ini\nmonitor = DP-1, 1920x1080, 0x0, 1\nmonitor = DP-2, 1920x1080, 0x-1080, 1\n\n```\n\nwill tell Hyprland to put DP-2 _above_ DP-1, while\n\n```ini\nmonitor = DP-1, 1920x1080, 0x0, 1\nmonitor = DP-2, 1920x1080, 0x1080, 1\n\n```\n\nwill tell Hyprland to put DP-2 _below_.\n\n> [!NOTE]\n> The position is calculated with the scaled (and transformed) resolution, meaning\n> if you want your 4K monitor with scale 2 to the left of your 1080p one, you'd\n> use the position `1920x0` for the second screen (3840 / 2). If the monitor is\n> also rotated 90 degrees (vertical), you'd use `1080x0`.\n\n> [!WARNING]\n> No monitors can overlap. This means that if your set positions make any monitors\n> overlap, you will get a warning.\n\nLeaving the name empty will define a fallback rule to use when no other rules\nmatch.\n\nThere are a few special values for the resolutions:\n\n- `preferred` - use the display's preferred size and refresh rate.\n- `highres` - use the highest supported resolution.\n- `highrr` - use the highest supported refresh rate.\n- `maxwidth` - use the widest supported resolution.\n\nPosition also has a few special values:\n\n- `auto` - let Hyprland decide on a position. By default, it places each new monitor to the right of existing ones,\n    using the monitor's top left corner as the root point.\n- `auto-right/left/up/down` - place the monitor to the right/left, above or below other monitors,\n    also based on each monitor's top left corner as the root.\n- `auto-center-right/left/up/down` - place the monitor to the right/left, above or below other monitors,\n    but calculate placement from each monitor's center rather than its top left corner.\n\n_**Please Note:**_ While specifying a monitor direction for your first monitor is allowed, this does nothing and it will\nbe positioned at (0,0). Also, the direction is always from the center out, so you can specify `auto-up` then `auto-left`,\nbut the left monitors will just be left of the origin and above the origin. You can also specify duplicate directions and\nmonitors will continue to go in that direction.\n\nYou can also use `auto` as a scale to let Hyprland decide on a scale for you.\nThese depend on the PPI of the monitor.\n\nRecommended rule for quickly plugging in random monitors:\n\n```ini\nmonitor = , preferred, auto, 1\n\n```\n\nThis will make any monitor that was not specified with an explicit rule\nautomatically placed on the right of the other(s), with its preferred\nresolution.\n\nFor more specific rules, you can also use the output's description (see\n`hyprctl monitors` for more details). If the output of `hyprctl monitors` looks\nlike the following:\n\n```yaml\nMonitor eDP-1 (ID 0):\n        1920x1080@60.00100 at 0x0\n        description: Chimei Innolux Corporation 0x150C (eDP-1)\n        make: Chimei Innolux Corporation\n        model: 0x150C\n        [...]\n\n```\n\nthen the `description` value up to, but not including the portname `(eDP-1)` can\nbe used to specify the monitor:\n\n```ini\nmonitor = desc:Chimei Innolux Corporation 0x150C, preferred, auto, 1.5\n\n```\n\nRemember to remove the `(portname)`!\n\n### Custom modelines\n\nYou can set up a custom modeline by changing the resolution field to a modeline,\nfor example:\n\n```ini\nmonitor = DP-1, modeline 1071.101 3840 3848 3880 3920 2160 2263 2271 2277 +hsync -vsync, 0x0, 1\n\n```\n\n### Disabling a monitor\n\nTo disable a monitor, use\n\n```ini\nmonitor = name, disable\n\n```\n\n> [!WARNING]\n> Disabling a monitor will literally remove it from the layout, moving all windows\n> and workspaces to any remaining ones. If you want to disable your monitor in a\n> screensaver style (just turn off the monitor) use the `dpms`[dispatcher](https://wiki.hyprland.org/Configuring/Dispatchers).",
+      "Description": "The general config of a monitor looks like this:\n\n```ini\nmonitor = name, resolution, position, scale\n\n```\n\nA common example:\n\n```ini\nmonitor = DP-1, 1920x1080@144, 0x0, 1\n\n```\n\nThis will make the monitor on `DP-1` a `1920x1080` display, at\n144Hz, `0x0` off from the top left corner, with a scale of 1 (unscaled).\n\nTo list all available monitors (active and inactive):\n\n```bash\nhyprctl monitors all\n\n```\n\nMonitors are positioned on a virtual \"layout\". The `position` is the position,\nin pixels, of said display in the layout. (calculated from the top-left corner)\n\nFor example:\n\n```ini\nmonitor = DP-1, 1920x1080, 0x0, 1\nmonitor = DP-2, 1920x1080, 1920x0, 1\n\n```\n\nwill tell Hyprland to put DP-1 on the _left_ of DP-2, while\n\n```ini\nmonitor = DP-1, 1920x1080, 1920x0, 1\nmonitor = DP-2, 1920x1080, 0x0, 1\n\n```\n\nwill tell Hyprland to put DP-1 on the _right_.\n\nThe `position` may contain _negative_ values, so the above example could also be\nwritten as\n\n```ini\nmonitor = DP-1, 1920x1080, 0x0, 1\nmonitor = DP-2, 1920x1080, -1920x0, 1\n\n```\n\nHyprland uses an inverse Y cartesian system. Thus, a negative y coordinate\nplaces a monitor higher, and a positive y coordinate will place it lower.\n\nFor example:\n\n```ini\nmonitor = DP-1, 1920x1080, 0x0, 1\nmonitor = DP-2, 1920x1080, 0x-1080, 1\n\n```\n\nwill tell Hyprland to put DP-2 _above_ DP-1, while\n\n```ini\nmonitor = DP-1, 1920x1080, 0x0, 1\nmonitor = DP-2, 1920x1080, 0x1080, 1\n\n```\n\nwill tell Hyprland to put DP-2 _below_.\n\n> [!NOTE]\n> The position is calculated with the scaled (and transformed) resolution, meaning\n> if you want your 4K monitor with scale 2 to the left of your 1080p one, you'd\n> use the position `1920x0` for the second screen (3840 / 2). If the monitor is\n> also rotated 90 degrees (vertical), you'd use `1080x0`.\n\n> [!WARNING]\n> No monitors can overlap. This means that if your set positions make any monitors\n> overlap, you will get a warning.\n\n> [!NOTE]\n> \"Invalid scale\" warnings will pop up if your scale does not create valid\n> logical pixels. A valid scale must divide your resolution cleanly (without\n> decimals). For example 1920x1080 / 1.5 = 1280x720 -> OK, but\n> when / 1.4 -> 1371.4286x771.42857 -> not ok.\n\nLeaving the name empty will define a fallback rule to use when no other rules\nmatch.\n\nThere are a few special values for the resolutions:\n\n- `preferred` - use the display's preferred size and refresh rate.\n- `highres` - use the highest supported resolution.\n- `highrr` - use the highest supported refresh rate.\n- `maxwidth` - use the widest supported resolution.\n\nPosition also has a few special values:\n\n- `auto` - let Hyprland decide on a position. By default, it places each new monitor to the right of existing ones,\n    using the monitor's top left corner as the root point.\n- `auto-right/left/up/down` - place the monitor to the right/left, above or below other monitors,\n    also based on each monitor's top left corner as the root.\n- `auto-center-right/left/up/down` - place the monitor to the right/left, above or below other monitors,\n    but calculate placement from each monitor's center rather than its top left corner.\n\n_**Please Note:**_ While specifying a monitor direction for your first monitor is allowed, this does nothing and it will\nbe positioned at (0,0). Also, the direction is always from the center out, so you can specify `auto-up` then `auto-left`,\nbut the left monitors will just be left of the origin and above the origin. You can also specify duplicate directions and\nmonitors will continue to go in that direction.\n\nYou can also use `auto` as a scale to let Hyprland decide on a scale for you.\nThese depend on the PPI of the monitor.\n\nRecommended rule for quickly plugging in random monitors:\n\n```ini\nmonitor = , preferred, auto, 1\n\n```\n\nThis will make any monitor that was not specified with an explicit rule\nautomatically placed on the right of the other(s), with its preferred\nresolution.\n\nFor more specific rules, you can also use the output's description (see\n`hyprctl monitors` for more details). If the output of `hyprctl monitors` looks\nlike the following:\n\n```yaml\nMonitor eDP-1 (ID 0):\n        1920x1080@60.00100 at 0x0\n        description: Chimei Innolux Corporation 0x150C (eDP-1)\n        make: Chimei Innolux Corporation\n        model: 0x150C\n        [...]\n\n```\n\nthen the `description` value up to, but not including the portname `(eDP-1)` can\nbe used to specify the monitor:\n\n```ini\nmonitor = desc:Chimei Innolux Corporation 0x150C, preferred, auto, 1.5\n\n```\n\nRemember to remove the `(portname)`!\n\n### Custom modelines\n\nYou can set up a custom modeline by changing the resolution field to a modeline,\nfor example:\n\n```ini\nmonitor = DP-1, modeline 1071.101 3840 3848 3880 3920 2160 2263 2271 2277 +hsync -vsync, 0x0, 1\n\n```\n\n### Disabling a monitor\n\nTo disable a monitor, use\n\n```ini\nmonitor = name, disable\n\n```\n\n> [!WARNING]\n> Disabling a monitor will literally remove it from the layout, moving all windows\n> and workspaces to any remaining ones. If you want to disable your monitor in a\n> screensaver style (just turn off the monitor) use the `dpms`[dispatcher](https://wiki.hyprland.org/Configuring/Dispatchers).",
       "Flags": []
     },
     {
       "Name": "bind",
-      "Description": "```ini\nbind = MODS, key, dispatcher, params\n\n```\n\nfor example,\n\n```ini\nbind = SUPER_SHIFT, Q, exec, firefox\n\n```\n\nwill bind opening Firefox to SUPER + SHIFT + Q\n\n> [!NOTE]\n> For binding keys without a modkey, leave it empty:\n> \n> ```ini\n> bind = , Print, exec, grim\n> \n> ```\n\n_For a complete mod list, see [Variables](https://wiki.hyprland.org/Configuring/Variables/#variable-types)._\n\n_The dispatcher list can be found in\n[Dispatchers](https://wiki.hyprland.org/Configuring/Dispatchers/#list-of-dispatchers)._",
+      "Description": "```ini\nbind = MODS, key, dispatcher, params\n\n```\n\nfor example,\n\n```ini\nbind = SUPER_SHIFT, Q, exec, firefox\n\n```\n\nwill bind opening Firefox to SUPER + SHIFT + Q\n\n> [!NOTE]\n> For binding keys without a modkey, leave it empty:\n> \n> ```ini\n> bind = , Print, exec, grim\n> \n> ```\n\n_For a complete mod list, see [Variables](https://wiki.hyprland.org/Configuring/Variables/#variable-types)._\n\n_The dispatcher list can be found in\n[Dispatchers](https://wiki.hyprland.org/Configuring/Dispatchers/#list-of-dispatchers)._\n\n### Comma Syntax\n\nBinds use commas as **argument separators**. The `bind` keyword expects exactly\n4 arguments, so you need exactly 3 commas:\n\n```ini\nbind = MODS, key, dispatcher, params\n#      1     2    3          4\n\n```\n\n> [!NOTE]\n> Trailing commas in example configs (e.g., `bind = SUPER, Tab, cyclenext,`) indicate\n> an empty `params` argument. Only include a trailing comma when the last argument\n> is intentionally empty.\n\n```ini\nbind = SUPER, F, exec, firefox   # OK - 4 args\nbind = , Print, exec, grim       # OK - 4 args (empty first = no modifier)\nbind = SUPER, F, exec, firefox,  # NOT OK - tries to exec `firefox,` which doesn't exist\nbind = SUPER, Tab, cyclenext,    # OK - 4 args (empty last arg (dispatcher needs no params))\n\n```\n\n> [!WARNING]\n> An accidental trailing comma becomes part of the argument (e.g., `firefox,` instead\n> of `firefox`). If a keybind isn't working, check for trailing commas!",
       "Flags": [
         "r",
         "l",
