@@ -26,13 +26,13 @@ var Keywords = []KeywordDefinition{
 	},
 	{
 		Name:                     "windowrule",
-		documentationHeadingSlug: "window-rules-v1",
+		documentationHeadingSlug: "window-rules",
 		documentationFile:        "Window-Rules",
 		Flags:                    []string{},
 	},
 	{
 		Name:                     "windowrulev2",
-		documentationHeadingSlug: "window-rules-v2",
+		documentationHeadingSlug: "syntax",
 		documentationFile:        "Window-Rules",
 		Flags:                    []string{},
 	},
@@ -44,7 +44,7 @@ var Keywords = []KeywordDefinition{
 	},
 	{
 		Name:                     "workspace",
-		documentationHeadingSlug: "workspace-rules",
+		documentationHeadingSlug: "rules",
 		documentationFile:        "Workspace-Rules",
 		Flags:                    []string{},
 	},
