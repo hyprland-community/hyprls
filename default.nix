@@ -7,11 +7,9 @@ in import (fetchTree nixpkgs.locked) {
 
 buildGoApplication {
   pname = "hyprls";
-  version = "0.7.0";
+  version = "0.13.0";
   pwd = ./.;
   src = ./.;
-
-  go = pkgs.go_1_26;
 
   postBuild = ''
     rm $GOPATH/bin/generate
