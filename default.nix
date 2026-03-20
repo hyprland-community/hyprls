@@ -1,20 +1,13 @@
-{ pkgs ? (
-    let
-      inherit (builtins) fetchTree fromJSON readFile;
-      inherit ((fromJSON (readFile ./flake.lock)).nodes) nixpkgs gomod2nix;
-    in
-    import (fetchTree nixpkgs.locked) {
-      overlays = [
-        (import "${fetchTree gomod2nix.locked}/overlay.nix")
-      ];
-    }
-  )
-, buildGoApplication ? pkgs.buildGoApplication
-}:
+{ pkgs ? (let
+  inherit (builtins) fetchTree fromJSON readFile;
+  inherit ((fromJSON (readFile ./flake.lock)).nodes) nixpkgs gomod2nix;
+in import (fetchTree nixpkgs.locked) {
+  overlays = [ (import "${fetchTree gomod2nix.locked}/overlay.nix") ];
+}), buildGoApplication ? pkgs.buildGoApplication }:
 
 buildGoApplication {
   pname = "hyprls";
-  version = "0.7.0";
+  version = "0.13.0";
   pwd = ./.;
   src = ./.;
 
@@ -23,5 +16,5 @@ buildGoApplication {
   '';
 
   modules = ./gomod2nix.toml;
-  checkFlags = ["-skip=TestHighLevelParse"]; # not yet implemented
+  checkFlags = [ "-skip=TestHighLevelParse" ]; # not yet implemented
 }
