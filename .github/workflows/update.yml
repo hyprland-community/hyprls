@@ -16,7 +16,7 @@ jobs:
         with:
           apt: moreutils
       - uses: actions/checkout@v6
-      - uses: extractions/setup-just@v3
+      - uses: extractions/setup-just@v4
 
       - run: just check-for-hyprland-updates
 
