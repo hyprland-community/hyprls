@@ -44,7 +44,7 @@ jobs:
           # for legacy reasons, we also alias linux/amd64 zip archive as hyprls.zip
           cp hyprls-linux-x86_64.zip hyprls.zip
 
-      - uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ inputs.tag || github.ref_name }}
           token: ${{ github.token }}
