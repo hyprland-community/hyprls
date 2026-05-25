@@ -16,9 +16,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
       -
-        uses: actions/setup-go@v6
+        uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6
         with: { go-version: 1.26.3 }
 
       - run: |
@@ -44,7 +44,7 @@ jobs:
           # for legacy reasons, we also alias linux/amd64 zip archive as hyprls.zip
           cp hyprls-linux-x86_64.zip hyprls.zip
 
-      - uses: softprops/action-gh-release@v3
+      - uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda # v3
         with:
           tag_name: ${{ inputs.tag || github.ref_name }}
           token: ${{ github.token }}
