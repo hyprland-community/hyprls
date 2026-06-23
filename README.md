@@ -1,3 +1,10 @@
+---
+
+Hyprland 0.55 announced the switch to Lua for it's config files (which is a good thing imo!), so this project is now archived. Thanks to all contributors, this was my first project with actual random contributors proposing PRs, it was great :D
+---
+
+
+
 # HyprLS
 
 <table>
