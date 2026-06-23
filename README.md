@@ -2,7 +2,7 @@
 
 Hyprland 0.55 announced the switch to Lua for its config files (which is a good thing imo!), so this project will be archived in a few Hyprland versions (once they completely drop support for the hyprlang language)
 
-Thanks to all contributors, this was my first project that had actual random contributors proposing PRs, it was great :D
+Thanks to everyone who contributed, this was my first project that had actual random contributors proposing PRs, it was great :D
 
 ---
 
