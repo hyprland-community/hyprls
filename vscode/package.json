@@ -75,7 +75,7 @@
   "devDependencies": {
     "@ortfo/db": "^1.6.1",
     "@types/mocha": "^10.0.10",
-    "@types/node": "^25.9.3",
+    "@types/node": "^26.0.0",
     "@types/vscode": "^1.120.0",
     "@typescript-eslint/eslint-plugin": "^8.61.0",
     "@typescript-eslint/parser": "^8.61.0",
