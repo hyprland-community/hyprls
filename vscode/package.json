@@ -75,18 +75,18 @@
   "devDependencies": {
     "@ortfo/db": "^1.6.1",
     "@types/mocha": "^10.0.10",
-    "@types/node": "^26.0.0",
-    "@types/vscode": "^1.120.0",
-    "@typescript-eslint/eslint-plugin": "^8.61.0",
-    "@typescript-eslint/parser": "^8.61.0",
+    "@types/node": "^26.0.1",
+    "@types/vscode": "^1.125.0",
+    "@typescript-eslint/eslint-plugin": "^8.62.0",
+    "@typescript-eslint/parser": "^8.62.0",
     "@vscode/test-electron": "^3.0.0",
     "@vscode/vsce": "^3.9.2",
-    "eslint": "^10.5.0",
+    "eslint": "^10.6.0",
     "mocha": "^11.7.6",
     "typescript": "^6.0.3"
   },
   "dependencies": {
-    "vscode-languageclient": "^10.0.0"
+    "vscode-languageclient": "^10.0.1"
   },
   "icon": "icon.png",
   "displayName": "HyprLS"
